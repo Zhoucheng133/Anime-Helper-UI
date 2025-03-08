@@ -6,6 +6,7 @@ import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
 import { createPinia } from 'pinia';
 import router from './router';
+import { ConfirmationService, ToastService } from 'primevue';
 
 const color="sky";
 const MyPreset = definePreset(Aura, {
@@ -37,5 +38,7 @@ app.use(PrimeVue, {
     preset: MyPreset
   }
 });
+app.use(ToastService);
+app.use(ConfirmationService)
 
 app.mount('#app')

@@ -8,6 +8,18 @@ const router=createRouter({
       path: "/list",
       component: ()=>import("../pages/list.vue")
     },
+    {
+      path: "/",
+      component: ()=>import("../pages/_blank.vue")
+    },
+    {
+      path: "/login",
+      component: ()=>import("../pages/login.vue")
+    },
+    {
+      path: "/register",
+      component: ()=>import("../pages/register.vue")
+    }
   ]
 })
 
