@@ -5,11 +5,11 @@
       <div class="sub">Hi, 欢迎回来👋</div>
       <div class="item">
         <div className="label">用户名</div>
-        <InputText type="text" v-model="username" style="width: 100%;" />
+        <InputText type="text" v-model="username" style="width: 100%;" @keyup.enter="loginHandler" />
       </div>
       <div class="item">
         <div className="label">密码</div>
-        <InputText type="password" v-model="password" style="width: 100%;" />
+        <InputText type="password" v-model="password" style="width: 100%;" @keyup.enter="loginHandler" />
       </div>
       <Button style="margin-top: 30px; width: 100%; margin-bottom: 120px;" @click="loginHandler">登录</Button>
     </div>
@@ -33,7 +33,6 @@ const password=ref("");
 document.title="AnimeHelper | 登录";
 
 const loginHandler=async ()=>{
-
   const {data: response}=await axios.post(`${hostname}/api/login`, {
     username: username.value,
     password: password.value
