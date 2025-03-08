@@ -4,30 +4,94 @@
       <img src="/icon.svg" alt="" width="40px">
       <div class="head_label">AnimeHelper</div>
     </div>
-
-    <div class="menus" v-if="store().token.length!=0">
+    <div class="menus" v-if="!(store().token.length==0) && !mobile">
       <Button label="列表" variant="text" severity="secondary" @click="toRoute('/list')" :disabled="route.path=='/list'" icon="pi pi-list"/>
       <Button label="每日放送" variant="text"severity="secondary" @click="toRoute('/calendar')" :disabled="route.path=='/calendar'" icon="pi pi-calendar"/>
       <Button label="所有" variant="text" severity="secondary" @click="toRoute('/all')" :disabled="route.path=='/all'" icon="pi pi-server"/>
       <Button label="下载器" variant="text" severity="secondary" @click="toRoute('/downloader')" :disabled="route.path=='/downloader'" icon="pi pi-download"/>
     </div>
     <div class="signout_area">
-      <Button icon="pi pi-sign-out" class="signout" variant="text" severity="danger" />
+      <Button icon="pi pi-sign-out" class="signout" variant="text" severity="danger" v-if="!(store().token.length==0) && !mobile" @click="logoutHandler" />
+      <Button icon="pi pi-bars" class="signout" variant="text" v-if="!(store().token.length==0) && mobile" @click="menuHandler" />
+      <Menu ref="menu" id="overlay_menu" :model="menuItems" :popup="true" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import store from '../store';
-import { Button } from 'primevue';
+import { Button, Menu } from 'primevue';
+import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const route=useRoute();
 const router=useRouter();
 
+const menuItems=ref([
+  {
+    label: '菜单',
+    items: [
+      {
+        label: '列表',
+        icon: 'pi pi-list',
+        command: ()=>toRoute('/list')
+      },
+      {
+        label: '每日放送',
+        icon: 'pi pi-calendar',
+        command: ()=>toRoute('/calendar')
+      },
+      {
+        label: '所有',
+        icon: 'pi pi-server',
+        command: ()=>toRoute('/all')
+      },
+      {
+        label: '下载器',
+        icon: 'pi pi-download',
+        command: ()=>toRoute('/downloader')
+      }
+    ]
+  },
+  {
+    items: [
+      {
+        label: '注销',
+        icon: 'pi pi-sign-out',
+        command: ()=>logoutHandler()
+      }
+    ]
+  }
+])
+
+const mobile=ref(false);
+
 const toRoute=(path: string)=>{
   router.push(path);
 }
+
+const menu = ref();
+function menuHandler(event: any){
+  menu.value.toggle(event);
+}
+
+function logoutHandler(){
+  localStorage.clear();
+  window.location.href="/";
+}
+
+function calWidth(){
+  if(window.innerWidth<800){
+    mobile.value=true;
+  }else{
+    mobile.value=false;
+  }
+}
+
+onMounted(()=>{
+  calWidth();
+  window.onresize=()=>calWidth();
+})
 
 </script>
 
