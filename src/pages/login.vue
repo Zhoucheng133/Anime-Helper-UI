@@ -11,7 +11,7 @@
         <div className="label">密码</div>
         <InputText type="password" v-model="password" style="width: 100%;" />
       </div>
-      <Button style="margin-top: 30px; width: 100%; margin-bottom: 50px;" @click="loginHandler">登录</Button>
+      <Button style="margin-top: 30px; width: 100%; margin-bottom: 120px;" @click="loginHandler">登录</Button>
     </div>
   </div>
 </template>
@@ -23,11 +23,14 @@ import { useToast } from 'primevue/usetoast';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import hostname from '../env/hostname';
+import store from '../store';
 const toast = useToast();
 const router=useRouter();
 
 const username=ref("");
 const password=ref("");
+
+document.title="AnimeHelper | 登录";
 
 const loginHandler=async ()=>{
 
@@ -37,8 +40,8 @@ const loginHandler=async ()=>{
   })
   if(response.ok){
     localStorage.setItem("token", response.msg);
-    toast.add({ severity: 'success', summary: '登录成功', detail: '正在跳转到主页', life: 3000 });
-    router.push("/");
+    store().token=response.msg;
+    router.push("/list");
   }else{
     toast.add({ severity: 'error', summary: '登录失败', detail: response.msg, life: 3000 });
   }

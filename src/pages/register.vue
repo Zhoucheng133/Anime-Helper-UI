@@ -15,7 +15,7 @@
         <div className="label">重复密码</div>
         <InputText type="password" v-model="rePassword" style="width: 100%;" />
       </div>
-      <Button style="margin-top: 30px; width: 100%; margin-bottom: 50px;" @click="registerHandler">注册</Button>
+      <Button style="margin-top: 30px; width: 100%; margin-bottom: 120px;" @click="registerHandler">注册</Button>
     </div>
   </div>
 </template>
@@ -33,6 +33,8 @@ const router=useRouter();
 const username=ref("");
 const password=ref("");
 const rePassword=ref("");
+
+document.title="AnimeHelper | 注册"
 
 const registerHandler=async ()=>{
   if(username.value.length==0){
