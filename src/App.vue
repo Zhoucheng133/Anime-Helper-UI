@@ -23,12 +23,12 @@ onMounted(async ()=>{
   const {data: response}=await axios.get(`${hostname}/api/init`);
   if(response.msg){
     loading.value=false;
-    router.push("/register")
+    router.replace("/register")
   }else{
     const token=localStorage.getItem("token");
     if(token==null){
       loading.value=false;
-      router.push("/login")
+      router.replace("/login")
     }else{
       const {data: response}=await axios.get(`${hostname}/api/auth`, {
         headers: {
@@ -38,10 +38,9 @@ onMounted(async ()=>{
       loading.value=false;
       if(response.ok){
         store().token=token;
-        router.push("/list");
       }else{
         toast.add({ severity: 'error', summary: '身份验证失败', detail: '令牌过期或无效', life: 3000 });
-        router.push("/login")
+        router.replace("/login")
       }
     }
   }

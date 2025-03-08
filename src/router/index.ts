@@ -10,7 +10,7 @@ const router=createRouter({
     },
     {
       path: "/",
-      component: ()=>import("../pages/_blank.vue")
+      redirect: "/list"
     },
     {
       path: "/login",
@@ -19,6 +19,18 @@ const router=createRouter({
     {
       path: "/register",
       component: ()=>import("../pages/register.vue")
+    },
+    {
+      path: "/calendar",
+      component: ()=>import("../pages/calendar.vue")
+    },
+    {
+      path: "/all",
+      component: ()=>import("../pages/all.vue")
+    },
+    {
+      path: "/downloader",
+      component: ()=>import("../pages/downloader.vue")
     }
   ]
 })

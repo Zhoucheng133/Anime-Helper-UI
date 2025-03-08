@@ -7,6 +7,7 @@ import Aura from '@primeuix/themes/aura';
 import { createPinia } from 'pinia';
 import router from './router';
 import { ConfirmationService, ToastService } from 'primevue';
+import 'primeicons/primeicons.css';
 
 const color="sky";
 const MyPreset = definePreset(Aura, {
