@@ -5,6 +5,7 @@ import { definePreset } from '@primeuix/themes';
 import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
 import { createPinia } from 'pinia';
+import router from './router';
 
 const color="sky";
 const MyPreset = definePreset(Aura, {
@@ -29,6 +30,7 @@ const pinia = createPinia()
 
 const app = createApp(App);
 
+app.use(router)
 app.use(pinia)
 app.use(PrimeVue, {
   theme: {
