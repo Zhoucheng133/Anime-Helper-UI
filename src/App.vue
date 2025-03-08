@@ -1,4 +1,5 @@
 <template>
+  <TitleBar />
   <Toast />
   <ConfirmPopup />
   <router-view v-if="!loading"></router-view>
@@ -11,6 +12,8 @@ import axios from 'axios';
 import { useRouter } from 'vue-router';
 import Toast from 'primevue/toast';
 import { ConfirmPopup, useToast } from 'primevue';
+import TitleBar from './components/title_bar.vue';
+import store from './store';
 
 const loading=ref(true);
 const router=useRouter();
@@ -34,6 +37,7 @@ onMounted(async ()=>{
       });
       loading.value=false;
       if(response.ok){
+        store().token=token;
         router.push("/list");
       }else{
         toast.add({ severity: 'error', summary: '身份验证失败', detail: '令牌过期或无效', life: 3000 });
