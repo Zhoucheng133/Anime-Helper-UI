@@ -67,6 +67,12 @@ function paginatorChange(val: number){
 }
 </script>
 
+<style>
+.p-progressbar-determinate .p-progressbar-value{
+  transition: width .4s ease-in-out !important;
+}
+</style>
+
 <style scoped>
 .progress_area{
   display: grid;
