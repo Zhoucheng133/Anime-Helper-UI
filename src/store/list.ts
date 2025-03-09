@@ -1,6 +1,6 @@
 import axios from "axios";
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import hostname from "../env/hostname";
 import store from ".";
 
@@ -98,6 +98,12 @@ export default defineStore("list", ()=>{
   function calProgress(item: ListType){
     return item.now / analyseEpisode(item) * 100;
   }
+
+  watch(searchKeyWord, ()=>{
+    if(selectedFilter.value.code=='search'){
+      getList();
+    }
+  })
 
   return {
     searchKeyWord,
