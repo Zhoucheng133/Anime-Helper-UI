@@ -3,9 +3,9 @@
     <div class="tool_bar">
       <Button label="添加" />
       <Select v-model="list().selectedFilter" :options="list().filters" scroll-height="20rem" optionLabel="name" @change="list().getList()" />
-      <InputText style="width: 100%;" v-if="list().selectedFilter.name=='搜索'" />
+      <InputText style="width: 100%" v-if="list().selectedFilter.name=='搜索'" v-model="list().searchKeyWord" />
       <div v-if="list().selectedFilter.name=='更新周'">
-        <Select v-model="list().selectedWeekday" :options="list().weekdays" scroll-height="20rem" style="width: 120px;" />
+        <Select v-model="list().selectedWeekday" :options="list().weekdays" scroll-height="20rem" style="width: 120px;" optionLabel="name" @change="list().getList()" />
       </div>
       <div v-else></div>
     </div>
@@ -27,9 +27,12 @@
         </template>
         
       </Column>
-      <Column header="进度" style="min-width: 200px;">
+      <Column header="进度" style="min-width: 270px;">
         <template #body="slotProps">
-           <ProgressBar :value="list().calProgress(slotProps.data)" style="height: 6px" :show-value="false"/>
+          <div class="progress_area">
+          <ProgressBar :value="list().calProgress(slotProps.data)" style="height: 6px" :show-value="false"/>
+            <div class="progress_label">{{ slotProps.data.now }} / {{ list().analyseEpisode(slotProps.data) }}</div>
+          </div>
         </template>
       </Column>
       <Column header="操作" style="min-width: 200px;"></Column>
@@ -55,6 +58,17 @@ function paginatorChange(val: number){
 </script>
 
 <style scoped>
+.progress_area{
+  display: grid;
+  grid-template-columns: auto 90px;
+  align-items: center;
+}
+.progress_label{
+  font-size: 14px;
+  user-select: none;
+  margin-left: 10px;
+  text-align: right;
+}
 .done_tag{
   color: #475569;
   background-color: #f1f5f9;
@@ -93,6 +107,7 @@ function paginatorChange(val: number){
 }
 .tool_bar{
   margin-top: 10px;
+  height: 42px;
   display: grid;
   grid-template-columns: 60px 120px auto;
   gap: 10px;
