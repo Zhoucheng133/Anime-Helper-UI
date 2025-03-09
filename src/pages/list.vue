@@ -34,7 +34,8 @@
       </Column>
       <Column header="操作" style="min-width: 200px;"></Column>
     </DataTable>
-    <Paginator :rows="20" :totalRecords="list().length" @update:first="paginatorChange"></Paginator>
+    <Paginator :rows="20" :totalRecords="list().length" @update:first="paginatorChange" template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+      currentPageReportTemplate="第 {currentPage} 页 | 共 {totalPages} 页" />
     <div style="height: 50px;"></div>    
   </div>
 </template>
