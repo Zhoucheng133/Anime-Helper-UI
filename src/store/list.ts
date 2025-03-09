@@ -12,16 +12,16 @@ export interface ListType{
   time: number,
 }
 
-export function calculateEpisodesReleased(firstEpisodeTimestamp: number): number {
-  const tmp = new Date();
-  const currentDate = new Date(tmp.getFullYear(), tmp.getMonth(), tmp.getDate());
-  const difference = currentDate.getTime() - firstEpisodeTimestamp;
-  const daysPassed=Math.floor(difference / (1000 * 60 * 60 * 24));
-  const weeksPassed = Math.floor(daysPassed / 7);
-  return Math.max(weeksPassed, 0) + 1;
-}
-
 export default defineStore("list", ()=>{
+  function calculateEpisodesReleased(firstEpisodeTimestamp: number): number {
+    
+    const tmp = new Date();
+    const currentDate = new Date(tmp.getFullYear(), tmp.getMonth(), tmp.getDate());
+    const difference = currentDate.getTime() - firstEpisodeTimestamp;
+    const daysPassed=Math.floor(difference / (1000 * 60 * 60 * 24));
+    const weeksPassed = Math.floor(daysPassed / 7);
+    return Math.max(weeksPassed, 0) + 1;
+  }
   const filters=ref([
     {name: "所有", code: "none"},
     {name: "进行中", code: "progress"},
@@ -76,7 +76,21 @@ export default defineStore("list", ()=>{
     return false;
   }
 
+  function analyseEpisode(item: ListType){
+    if(item.time==0){
+      return item.episode;
+    }
+    return calculateEpisodesReleased(item.time)>item.episode?item.episode:calculateEpisodesReleased(item.time);
+  }
+
+  function calProgress(item: ListType){
+    return item.now / analyseEpisode(item) * 100;
+  }
+
   return {
+    calProgress,
+    analyseEpisode,
+    calculateEpisodesReleased,
     offset,
     getWeekday,
     onUpudate,

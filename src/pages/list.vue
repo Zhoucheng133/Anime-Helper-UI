@@ -27,7 +27,11 @@
         </template>
         
       </Column>
-      <Column header="进度" style="min-width: 200px;"></Column>
+      <Column header="进度" style="min-width: 200px;">
+        <template #body="slotProps">
+           <ProgressBar :value="list().calProgress(slotProps.data)" style="height: 6px" :show-value="false"/>
+        </template>
+      </Column>
       <Column header="操作" style="min-width: 200px;"></Column>
     </DataTable>
     <Paginator :rows="20" :totalRecords="list().length" @update:first="paginatorChange"></Paginator>
@@ -36,7 +40,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Button, Select, InputText, DataTable, Column, Paginator } from 'primevue';
+import { Button, Select, InputText, DataTable, Column, Paginator, ProgressBar } from 'primevue';
 import list from '../store/list';
 
 document.title="AnimeHelper | 列表";
