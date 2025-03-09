@@ -35,7 +35,7 @@
           </div>
         </template>
       </Column>
-      <Column header="操作" style="min-width: 200px;">
+      <Column header="操作" style="min-width: 230px;">
         <template #body="slotProps">
           <ButtonGroup>
             <Button severity="secondary" size="small"><i class="pi pi-pen-to-square" style="font-size: 12px;"/></Button>
