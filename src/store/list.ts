@@ -3,8 +3,9 @@ import { defineStore } from "pinia";
 import { ref, watch } from "vue";
 import hostname from "../env/hostname";
 import store from ".";
+import { useToast } from "primevue";
 
-export interface ListType{
+interface ListItem{
   id: string,
   title: string,
   episode: number,
@@ -13,6 +14,9 @@ export interface ListType{
 }
 
 export default defineStore("list", ()=>{
+
+  const toast=useToast();
+
   function calculateEpisodesReleased(firstEpisodeTimestamp: number): number {
     
     const tmp = new Date();
@@ -50,7 +54,7 @@ export default defineStore("list", ()=>{
   const offset=ref(0);
   const limit=ref(20);
 
-  const list=ref<ListType[]>([]);
+  const list=ref<ListItem[]>([]);
   async function getList(){
     const {data: response}=await axios.get(`${hostname}/api/list/get`, {
       params: {
@@ -79,7 +83,7 @@ export default defineStore("list", ()=>{
     }
   }
 
-  function onUpudate(data: ListType): boolean{
+  function onUpudate(data: ListItem): boolean{
     if(data.time==0){
       return false;
     }else if(calculateEpisodesReleased(data.time)<data.episode){
@@ -88,14 +92,14 @@ export default defineStore("list", ()=>{
     return false;
   }
 
-  function analyseEpisode(item: ListType){
+  function analyseEpisode(item: ListItem){
     if(item.time==0){
       return item.episode;
     }
     return calculateEpisodesReleased(item.time)>item.episode?item.episode:calculateEpisodesReleased(item.time);
   }
 
-  function calProgress(item: ListType){
+  function calProgress(item: ListItem){
     return item.now / analyseEpisode(item) * 100;
   }
 
@@ -105,7 +109,51 @@ export default defineStore("list", ()=>{
     }
   })
 
+  async function add(item: ListItem){
+    if(item.now>=analyseEpisode(item)){
+      return;
+    }
+    const {data: response}=await axios.post(`${hostname}/api/list/edit`, {
+      data: {
+        ...item,
+        now: item.now+=1
+      }
+    }, {
+      headers: {
+        token: store().token,
+      }
+    })
+    if(response.ok){
+      getList();
+    }else{
+      toast.add({ severity: 'error', summary: '更新失败', detail: response.msg, life: 3000 });
+    }
+  }
+
+  async function minus(item: ListItem){
+    if(item.now<=1){
+      return;
+    }
+    const {data: response}=await axios.post(`${hostname}/api/list/edit`, {
+      data: {
+        ...item,
+        now: item.now-=1
+      }
+    }, {
+      headers: {
+        token: store().token,
+      }
+    })
+    if(response.ok){
+      getList();
+    }else{
+      toast.add({ severity: 'error', summary: '更新失败', detail: response.msg, life: 3000 });
+    }
+  } 
+
   return {
+    add,
+    minus,
     searchKeyWord,
     calProgress,
     analyseEpisode,

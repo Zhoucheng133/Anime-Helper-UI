@@ -27,7 +27,7 @@
         </template>
         
       </Column>
-      <Column header="进度" style="min-width: 270px;">
+      <Column header="进度" style="min-width: 230px;">
         <template #body="slotProps">
           <div class="progress_area">
             <ProgressBar :value="list().calProgress(slotProps.data)" style="height: 5px" :show-value="false" />
@@ -39,8 +39,8 @@
         <template #body="slotProps">
           <ButtonGroup>
             <Button severity="secondary" size="small"><i class="pi pi-pen-to-square" style="font-size: 12px;"/></Button>
-            <Button severity="secondary" size="small"><i class="pi pi-minus" style="font-size: 12px;"/></Button>
-            <Button severity="secondary" size="small"><i class="pi pi-plus" style="font-size: 12px;"/></Button>
+            <Button severity="secondary" size="small" @click="list().minus(slotProps.data)"><i class="pi pi-minus" style="font-size: 12px;"  /></Button>
+            <Button severity="secondary" size="small" @click="list().add(slotProps.data)"><i class="pi pi-plus" style="font-size: 12px;"/></Button>
             <Button severity="secondary" size="small" style="font-size: 12px;">添加到</Button>
             <Button severity="secondary" size="small"><i class="pi pi-trash" style="font-size: 12px;"/></Button>
           </ButtonGroup>
@@ -66,15 +66,6 @@ function paginatorChange(val: number){
   list().getList();
 }
 </script>
-
-<style>
-.p-progressbar-determinate .p-progressbar-value{
-  transition: width .4s ease-in-out !important;
-}
-.p-select-option{
-  height: 35px !important;
-}
-</style>
 
 <style scoped>
 .progress_area{
@@ -105,7 +96,7 @@ function paginatorChange(val: number){
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
+  /* font-weight: bold; */
 }
 .weekday_tag{
   border: 2px solid lightgrey;
@@ -115,10 +106,8 @@ function paginatorChange(val: number){
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
 }
 .item_title{
-  font-size: 15px;
   width: 100%;
   overflow: hidden;
   white-space: nowrap;
