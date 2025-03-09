@@ -30,12 +30,22 @@
       <Column header="进度" style="min-width: 270px;">
         <template #body="slotProps">
           <div class="progress_area">
-          <ProgressBar :value="list().calProgress(slotProps.data)" style="height: 6px" :show-value="false"/>
+          <ProgressBar :value="list().calProgress(slotProps.data)" style="height: 5px" :show-value="false"/>
             <div class="progress_label">{{ slotProps.data.now }} / {{ list().analyseEpisode(slotProps.data) }}</div>
           </div>
         </template>
       </Column>
-      <Column header="操作" style="min-width: 200px;"></Column>
+      <Column header="操作" style="min-width: 200px;">
+        <template #body="slotProps">
+          <ButtonGroup>
+            <Button severity="secondary" size="small"><i class="pi pi-pen-to-square" style="font-size: 12px;"/></Button>
+            <Button severity="secondary" size="small"><i class="pi pi-minus" style="font-size: 12px;"/></Button>
+            <Button severity="secondary" size="small"><i class="pi pi-plus" style="font-size: 12px;"/></Button>
+            <Button severity="secondary" size="small" style="font-size: 12px;">添加到</Button>
+            <Button severity="secondary" size="small"><i class="pi pi-trash" style="font-size: 12px;"/></Button>
+          </ButtonGroup>
+        </template>
+      </Column>
     </DataTable>
     <Paginator :rows="20" :totalRecords="list().length" @update:first="paginatorChange" template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
       currentPageReportTemplate="第 {currentPage} 页 | 共 {totalPages} 页" />
@@ -44,7 +54,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Button, Select, InputText, DataTable, Column, Paginator, ProgressBar } from 'primevue';
+import { Button, Select, InputText, DataTable, Column, Paginator, ProgressBar, ButtonGroup } from 'primevue';
 import list from '../store/list';
 
 document.title="AnimeHelper | 列表";
