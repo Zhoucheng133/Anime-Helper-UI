@@ -4,7 +4,7 @@ import { ref } from "vue";
 import hostname from "../env/hostname";
 import store from ".";
 
-interface ListType{
+export interface ListType{
   id: string,
   title: string,
   episode: number,
@@ -12,9 +12,16 @@ interface ListType{
   time: number,
 }
 
-export default defineStore("list", ()=>{
+export function calculateEpisodesReleased(firstEpisodeTimestamp: number): number {
+  const tmp = new Date();
+  const currentDate = new Date(tmp.getFullYear(), tmp.getMonth(), tmp.getDate());
+  const difference = currentDate.getTime() - firstEpisodeTimestamp;
+  const daysPassed=Math.floor(difference / (1000 * 60 * 60 * 24));
+  const weeksPassed = Math.floor(daysPassed / 7);
+  return Math.max(weeksPassed, 0) + 1;
+}
 
-  // const filters=ref(["所有", "进行中", "更新中", "已完结", "已看完", "搜索", "更新周"]);
+export default defineStore("list", ()=>{
   const filters=ref([
     {name: "所有", code: "none"},
     {name: "进行中", code: "progress"},
@@ -24,7 +31,7 @@ export default defineStore("list", ()=>{
     {name: "搜索", code: "search"},
     {name: "更新周", code: "weekday"},
   ])
-  const selectedFilter=ref(filters.value[1]);
+  const selectedFilter=ref(filters.value[0]);
   const selectedWeekday=ref("星期一");
   const weekdays=ref(["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"])
   const length=ref(0);
@@ -33,7 +40,7 @@ export default defineStore("list", ()=>{
   const limit=ref(20);
 
   const list=ref<ListType[]>([]);
-  const getList=async ()=>{
+  async function getList(){
     const {data: response}=await axios.get(`${hostname}/api/list/get`, {
       params: {
         offset: offset.value,
@@ -50,7 +57,29 @@ export default defineStore("list", ()=>{
     }
   }
 
+  function getWeekday(timestamp: number): string{
+    if(timestamp==0){
+      return "/"
+    }else{
+      const date: Date = new Date(timestamp);
+      const weekDay: string = date.toLocaleString('zh-CN', { weekday: 'long' });
+      return weekDay
+    }
+  }
+
+  function onUpudate(data: ListType): boolean{
+    if(data.time==0){
+      return false;
+    }else if(calculateEpisodesReleased(data.time)<data.episode){
+      return true;
+    }
+    return false;
+  }
+
   return {
+    offset,
+    getWeekday,
+    onUpudate,
     selectedFilter,
     filters,
     selectedWeekday,
