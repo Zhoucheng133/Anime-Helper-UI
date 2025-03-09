@@ -1,11 +1,11 @@
 <template>
   <div class="page">
     <div class="tool_bar">
-      <Button label="添加" />
-      <Select v-model="list().selectedFilter" :options="list().filters" scroll-height="20rem" optionLabel="name" @change="list().getList()" />
-      <InputText style="width: 100%" v-if="list().selectedFilter.name=='搜索'" v-model="list().searchKeyWord" @change="list().getList()" />
+      <Button label="添加" size="small" />
+      <Select size="small" v-model="list().selectedFilter" :options="list().filters" scroll-height="20rem" optionLabel="name" @change="list().getList()" />
+      <InputText size="small" style="width: 100%" v-if="list().selectedFilter.name=='搜索'" v-model="list().searchKeyWord" @change="list().getList()" />
       <div v-if="list().selectedFilter.name=='更新周'">
-        <Select v-model="list().selectedWeekday" :options="list().weekdays" scroll-height="20rem" style="width: 120px;" optionLabel="name"/>
+        <Select size="small" v-model="list().selectedWeekday" :options="list().weekdays" scroll-height="20rem" style="width: 120px;" optionLabel="name" @change="list().getList()"/>
       </div>
       <div v-else></div>
     </div>
@@ -70,6 +70,9 @@ function paginatorChange(val: number){
 <style>
 .p-progressbar-determinate .p-progressbar-value{
   transition: width .4s ease-in-out !important;
+}
+.p-select-option{
+  height: 35px;
 }
 </style>
 
