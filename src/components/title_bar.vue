@@ -121,10 +121,10 @@ onMounted(()=>{
   align-items: center;
   border-bottom: 2px solid #f0f0f0;
   z-index: 10;
-  position: sticky;
   justify-content: space-between;
   user-select: none;
   height: 60px;
+  background-color: white;
 }
 .head_img{
   margin-left: 30px;

@@ -1,5 +1,5 @@
 <template>
-  <TitleBar />
+  <TitleBar style="position: sticky; top: 0" />
   <Toast />
   <ConfirmPopup />
   <router-view v-if="!loading"></router-view>
