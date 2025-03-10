@@ -4,6 +4,7 @@ import { ref, watch } from "vue";
 import hostname from "../env/hostname";
 import store from ".";
 import { useToast } from "primevue";
+import { nanoid } from "nanoid";
 
 interface ListItem{
   id: string,
@@ -16,6 +17,20 @@ interface ListItem{
 export default defineStore("list", ()=>{
 
   const toast=useToast();
+
+  function resetToMidnight(date: Date): Date {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  }
+
+  function getTimestampOfFirstEpisode(todayTimestamp: number, releaseDay: number, episodesReleased: number): number {
+    const today = resetToMidnight(new Date(todayTimestamp));
+    const daysPassed = (episodesReleased - 1) * 7;
+    const currentDay = today.getDay();
+    const offset = (currentDay - releaseDay + 7) % 7;
+    const daysSinceFirstEpisode = daysPassed + offset;
+    const firstEpisodeDate = new Date(today.getTime() - daysSinceFirstEpisode * 24 * 60 * 60 * 1000);
+    return firstEpisodeDate.getTime();
+  }
 
   function calculateEpisodesReleased(firstEpisodeTimestamp: number): number {
     
@@ -149,9 +164,34 @@ export default defineStore("list", ()=>{
     }else{
       toast.add({ severity: 'error', summary: '更新失败', detail: response.msg, life: 3000 });
     }
-  } 
+  }
+
+  async function addItem(title: string, update: boolean, episode: number, watchTo: number, updateTo: number, updateWeekday: number){
+    const todayTimestamp = Date.now();
+    const jsonItem={
+      id: nanoid(),
+      title: title,
+      episode: episode,
+      now: watchTo,
+      time: update ? getTimestampOfFirstEpisode(todayTimestamp, updateWeekday, updateTo) : 0
+    }
+    const {data: response}=await axios.post(`${hostname}/api/list/add`, {
+      data: jsonItem
+    }, {
+      headers: {
+        token: store().token,
+      }
+    })
+    if(response.ok){
+      getList()
+    }else{
+      toast.add({ severity: 'error', summary: '更新失败', detail: response.msg, life: 3000 });
+    }
+  }
 
   return {
+    addItem,
+    getTimestampOfFirstEpisode,
     add,
     minus,
     searchKeyWord,

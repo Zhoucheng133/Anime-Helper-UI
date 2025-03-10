@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <div class="tool_bar">
-      <Button label="添加" size="small" />
+      <Button label="添加" size="small" @click="addRef.showAddHandler()" />
       <Select size="small" v-model="list().selectedFilter" :options="list().filters" scroll-height="20rem" optionLabel="name" @change="list().getList()" />
       <InputText size="small" style="width: 100%" v-if="list().selectedFilter.name=='搜索'" v-model="list().searchKeyWord" @change="list().getList()" />
       <div v-if="list().selectedFilter.name=='更新周'">
@@ -49,17 +49,22 @@
     </DataTable>
     <Paginator :rows="20" :totalRecords="list().length" @update:first="paginatorChange" template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
       currentPageReportTemplate="第 {currentPage} 页 | 共 {totalPages} 页" />
-    <div style="height: 50px;"></div>    
+    <div style="height: 50px;"></div>
+    <AddListDialog ref="addRef" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { Button, Select, InputText, DataTable, Column, Paginator, ProgressBar, ButtonGroup } from 'primevue';
+import AddListDialog from '../components/add_list_dialog.vue';
 import list from '../store/list';
+import { ref } from 'vue';
 
 document.title="AnimeHelper | 列表";
 
 list().getList();
+
+const addRef=ref();
 
 function paginatorChange(val: number){
   list().offset=val;
