@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 import { ref, watch } from "vue";
 import hostname from "../env/hostname";
 import store from ".";
-import { useToast } from "primevue";
+import { useConfirm, useToast } from "primevue";
 import { nanoid } from "nanoid";
 
 export interface ListItem{
@@ -17,6 +17,7 @@ export interface ListItem{
 export default defineStore("list", ()=>{
 
   const toast=useToast();
+  const confirm = useConfirm();
 
   function resetToMidnight(date: Date): Date {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -212,7 +213,40 @@ export default defineStore("list", ()=>{
     }
   }
 
+  function deleteItem(event: any, item: ListItem){
+    confirm.require({
+      target: event.currentTarget,
+      position: "bottomleft",
+      message: '你确定要删除这项吗',
+      rejectProps: {
+        label: '取消',
+        severity: 'secondary',
+        outlined: true,
+        size: "small"
+      },
+      acceptProps: {
+        label: '删除',
+        severity: "danger",
+        size: "small"
+      },
+      accept: async () => {
+        const {data: response}=await axios.delete(`${hostname}/api/list/del/${item.id}`, {
+          headers: {
+            token: store().token,
+          }
+        })
+        if(!response.ok){
+          toast.add({ severity: 'error', summary: '删除失败', detail: response.msg, life: 3000 });
+        }else{
+          getList();
+        }
+      },
+      reject: () => {}
+    });
+  }
+
   return {
+    deleteItem,
     editItem,
     addItem,
     getTimestampOfFirstEpisode,

@@ -42,7 +42,7 @@
             <Button severity="secondary" size="small" @click="list().minus(slotProps.data)"><i class="pi pi-minus" style="font-size: 12px;"  /></Button>
             <Button severity="secondary" size="small" @click="list().add(slotProps.data)"><i class="pi pi-plus" style="font-size: 12px;"/></Button>
             <Button severity="secondary" size="small" style="font-size: 12px;">添加到</Button>
-            <Button severity="secondary" size="small"><i class="pi pi-trash" style="font-size: 12px;"/></Button>
+            <Button severity="secondary" size="small" @click="list().deleteItem($event, slotProps.data)"><i class="pi pi-trash" style="font-size: 12px;"/></Button>
           </ButtonGroup>
         </template>
       </Column>
