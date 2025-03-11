@@ -38,7 +38,7 @@
       <Column header="操作" style="min-width: 230px;">
         <template #body="slotProps">
           <ButtonGroup>
-            <Button severity="secondary" size="small"><i class="pi pi-pen-to-square" style="font-size: 12px;"/></Button>
+            <Button severity="secondary" size="small" @click="editRef.showEditHandler(slotProps.data)"><i class="pi pi-pen-to-square" style="font-size: 12px;" /></Button>
             <Button severity="secondary" size="small" @click="list().minus(slotProps.data)"><i class="pi pi-minus" style="font-size: 12px;"  /></Button>
             <Button severity="secondary" size="small" @click="list().add(slotProps.data)"><i class="pi pi-plus" style="font-size: 12px;"/></Button>
             <Button severity="secondary" size="small" style="font-size: 12px;">添加到</Button>
@@ -50,14 +50,16 @@
     <Paginator :rows="20" :totalRecords="list().length" @update:first="paginatorChange" template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
       currentPageReportTemplate="第 {currentPage} 页 | 共 {totalPages} 页" />
     <div style="height: 50px;"></div>
-    <AddListDialog ref="addRef" />
+    <Add ref="addRef" />
+    <Edit ref="editRef"/>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { Button, Select, InputText, DataTable, Column, Paginator, ProgressBar, ButtonGroup } from 'primevue';
-import AddListDialog from '../components/add_list_dialog.vue';
 import list from '../store/list';
+import Add from '../components/list/add.vue';
+import Edit from "../components/list/edit.vue";
 import { ref } from 'vue';
 
 document.title="AnimeHelper | 列表";
@@ -65,6 +67,7 @@ document.title="AnimeHelper | 列表";
 list().getList();
 
 const addRef=ref();
+const editRef=ref();
 
 function paginatorChange(val: number){
   list().offset=val;

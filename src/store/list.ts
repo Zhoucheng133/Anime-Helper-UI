@@ -6,7 +6,7 @@ import store from ".";
 import { useToast } from "primevue";
 import { nanoid } from "nanoid";
 
-interface ListItem{
+export interface ListItem{
   id: string,
   title: string,
   episode: number,
@@ -185,11 +185,35 @@ export default defineStore("list", ()=>{
     if(response.ok){
       getList()
     }else{
+      toast.add({ severity: 'error', summary: '添加失败', detail: response.msg, life: 3000 });
+    }
+  }
+
+  async function editItem(id: string, title: string, update: boolean, episode: number, watchTo: number, updateTo: number, updateWeekday: number){
+    const todayTimestamp = Date.now();
+    const jsonItem={
+      id: id,
+      title: title,
+      episode: episode,
+      now: watchTo,
+      time: update ? getTimestampOfFirstEpisode(todayTimestamp, updateWeekday, updateTo) : 0
+    }
+    const {data: response}=await axios.post(`${hostname}/api/list/edit`, {
+      data: jsonItem
+    }, {
+      headers: {
+        token: store().token,
+      }
+    })
+    if(response.ok){
+      getList()
+    }else{
       toast.add({ severity: 'error', summary: '更新失败', detail: response.msg, life: 3000 });
     }
   }
 
   return {
+    editItem,
     addItem,
     getTimestampOfFirstEpisode,
     add,

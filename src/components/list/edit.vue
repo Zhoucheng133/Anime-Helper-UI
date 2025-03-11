@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model:visible="showAdd" modal header="添加到列表..." :style="{ width: '25rem' }" :draggable="false" class="select-none">
+  <Dialog v-model:visible="showEdit" modal header="编辑列表项..." :style="{ width: '25rem' }" :draggable="false" class="select-none">
     <div class="flex items-center gap-2 mb-4">
       <Checkbox v-model="update" inputId="update" binary/>
       <label for="update"> 当前在更新 </label>
@@ -25,21 +25,20 @@
        <Select size="small" id="updateWeek" v-model="updateWeekday" :options="list().weekdays" scroll-height="20rem" optionLabel="name" />
     </div>
     <div class="flex justify-end gap-2">
-      <Button type="button" label="取消" severity="secondary" @click="showAdd = false" size="small"></Button>
-      <Button type="button" label="添加" @click="addHandler" size="small"></Button>
+      <Button type="button" label="取消" severity="secondary" @click="showEdit = false" size="small"></Button>
+      <Button type="button" label="完成" @click="eidtHandler" size="small"></Button>
     </div>
   </Dialog>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref } from 'vue';
-import { Dialog, InputText, Button, Checkbox, Select } from 'primevue';
-import list from '../store/list';
-import { useToast } from 'primevue';
-
-const showAdd=ref(false);
-
+import type { ListItem } from '../../store/list';
+import list from '../../store/list';
+import { Dialog, Button, InputText, Checkbox, Select, useToast } from 'primevue';
 const toast=useToast();
+
+const id=ref("");
 
 const title=ref("");
 const update=ref(false);
@@ -49,7 +48,28 @@ const updateTo=ref("");
 
 const updateWeekday=ref(list().weekdays[0]);
 
-const addHandler=async ()=>{
+const showEdit=ref(false);
+
+const toWeekday=(time: number)=>{
+  if(time==0){
+    return list().weekdays[0];
+  }
+  const wd = new Date(time).getDay();
+  return list().weekdays[wd==0 ? 6 : wd-1];
+}
+
+const showEditHandler=(item: ListItem)=>{
+  id.value=item.id;
+  showEdit.value=true;
+  title.value=item.title;
+  watchTo.value=item.now.toString();
+  update.value=list().calculateEpisodesReleased(item.time)<item.episode;
+  updateTo.value=list().analyseEpisode(item).toString();
+  episode.value=item.episode.toString();
+  updateWeekday.value=toWeekday(item.time);
+}
+
+const eidtHandler=async ()=>{
   if(title.value.length==0){
     toast.add({ severity: 'error', summary: '添加失败', detail: '标题不能为空', life: 3000 });
     return;
@@ -64,15 +84,11 @@ const addHandler=async ()=>{
     return;
   }
 
-  await list().addItem(title.value, update.value,parseInt(episode.value), parseInt(watchTo.value), parseInt(updateTo.value), updateWeekday.value.code);
+  await list().editItem(id.value, title.value, update.value,parseInt(episode.value), parseInt(watchTo.value), parseInt(updateTo.value), updateWeekday.value.code);
 
-  showAdd.value=false;
+  showEdit.value=false;
 }
 
-const showAddHandler=()=>{
-  showAdd.value=true;
-}
-
-defineExpose({showAddHandler, })
+defineExpose({showEditHandler})
 
 </script>
