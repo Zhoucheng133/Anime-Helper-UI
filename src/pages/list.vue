@@ -30,7 +30,7 @@
       <Column header="进度" style="min-width: 230px;">
         <template #body="slotProps">
           <div class="progress_area">
-            <ProgressBar :value="list().calProgress(slotProps.data)" style="height: 5px" :show-value="false" />
+            <ProgressBar :class="list().calProgress(slotProps.data)==100 ? 'finished':''" :value="list().calProgress(slotProps.data)" style="height: 5px" :show-value="false" />
             <div class="progress_label">{{ slotProps.data.now }} / {{ list().analyseEpisode(slotProps.data) }}</div>
           </div>
         </template>
@@ -74,6 +74,12 @@ function paginatorChange(val: number){
   list().getList();
 }
 </script>
+
+<style>
+.finished > .p-progressbar-value{
+  background-color: hsl(145.96000000000004 79.46% 43.92% / 1);
+}
+</style>
 
 <style scoped>
 .progress_area{

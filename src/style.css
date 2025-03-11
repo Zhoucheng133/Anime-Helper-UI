@@ -19,7 +19,7 @@ td{
   padding: 10px !important;
 }
 .p-progressbar-determinate .p-progressbar-value{
-  transition: width .4s ease-in-out !important;
+  transition: all .4s ease-in-out !important;
 }
 .p-select-option{
   height: 35px !important;
