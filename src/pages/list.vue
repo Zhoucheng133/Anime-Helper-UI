@@ -134,15 +134,4 @@ function paginatorChange(val: number){
   grid-template-columns: 60px 120px auto;
   gap: 10px;
 }
-.page{
-  width: 1000px;
-  margin: auto;
-  /* background-color: red; */
-}
-
-@media screen and (max-width: 1040px) {
-  .page{
-    width: calc(100% - 40px);
-  }
-}
 </style>
