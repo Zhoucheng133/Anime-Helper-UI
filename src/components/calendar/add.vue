@@ -29,25 +29,54 @@
       <Button type="button" label="添加" @click="addHandler" size="small"></Button>
     </div>
   </Dialog>
+  <Loading ref="loadingRef" />
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
+import { useToast, Dialog, InputText, Button, Checkbox, Select } from 'primevue';
 import { ref } from 'vue';
-import { Dialog, InputText, Button, Checkbox, Select } from 'primevue';
 import list from '../../store/list';
-import { useToast } from 'primevue';
+import Loading from './loading.vue';
+import type { CalendarItem } from '../../store/calendar';
+import axios from 'axios';
+import hostname from '../../env/hostname';
+import store from '../../store';
+import calendar from '../../store/calendar';
+
+const loadingRef=ref();
 
 const showAdd=ref(false);
+const updateWeekday=ref(list().weekdays[0]);
 
 const toast=useToast();
 
 const title=ref("");
-const update=ref(false);
+const update=ref(true);
 const episode=ref("");
 const watchTo=ref("0");
 const updateTo=ref("");
 
-const updateWeekday=ref(list().weekdays[0]);
+const id=ref("");
+
+const showAddHandler=async (item: CalendarItem, weekday: number)=>{
+  loadingRef.value.loadingHandler(true);
+  id.value=item.id;
+  showAdd.value=true;
+  title.value=item.title;
+  updateWeekday.value=list().weekdays[weekday==0 ? 6 : weekday-1];
+  const {data: response}=await axios.get(`${hostname}/api/calendar/info/${item.id}`, {
+    headers: {
+      token: store().token,
+    }
+  });
+  if(response.ok){
+    episode.value=response.msg.eps;
+    updateTo.value=response.msg.updates;
+  }else{
+    toast.add({ severity: 'error', summary: '获取信息失败', detail: response.msg, life: 3000 });
+  }
+  loadingRef.value.loadingHandler(false);
+}
 
 const addHandler=async ()=>{
   if(title.value.length==0){
@@ -64,15 +93,11 @@ const addHandler=async ()=>{
     return;
   }
 
-  await list().addItem(title.value, update.value,parseInt(episode.value), parseInt(watchTo.value), parseInt(updateTo.value), updateWeekday.value.code);
-
+  list().addItem(title.value, update.value,parseInt(episode.value), parseInt(watchTo.value), parseInt(updateTo.value), updateWeekday.value.code);
+  calendar().getList();
   showAdd.value=false;
 }
 
-const showAddHandler=()=>{
-  showAdd.value=true;
-}
-
-defineExpose({showAddHandler, })
+defineExpose({showAddHandler})
 
 </script>

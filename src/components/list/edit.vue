@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model:visible="showEdit" modal header="编辑列表项..." :style="{ width: '25rem' }" :draggable="false" class="select-none">
+  <Dialog v-model:visible="showEdit" modal header="编辑列表项..." :style="{ width: '25rem' }" :draggable="false" class="select-none" :closable="false">
     <div class="flex items-center gap-2 mb-4">
       <Checkbox v-model="update" inputId="update" binary/>
       <label for="update"> 当前在更新 </label>

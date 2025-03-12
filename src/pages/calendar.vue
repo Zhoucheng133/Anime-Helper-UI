@@ -1,40 +1,34 @@
 <template>
   <div class="page">
     <Accordion :multiple="true" :value="[0, 1, 2, 3, 4, 5, 6]">
-      <AccordionPanel v-for="(values, index) in calendarList" :key="index" :value="index">
+      <AccordionPanel v-for="(values, index) in calendar().list" :key="index" :value="index">
         <AccordionHeader>{{ list().weekdays[index==0 ? 6 : index-1].name }}</AccordionHeader>
         <AccordionContent>
-          <Tag rounded v-for="(item, index) in values" :key="index" :value="item.title" :class="item.added ? 'select-none m-1' : 'select-none m-1 cursor-pointer'" :severity="item.added ? 'warn' : 'secondary'" />
+          <Tag rounded v-for="(item, _) in values" :key="item.id" :value="item.title" :class="item.added ? 'select-none m-1' : 'select-none m-1 cursor-pointer'" :severity="item.added ? 'warn' : 'secondary'" @click="showAdd(item, index)" />
         </AccordionContent>
       </AccordionPanel>
     </Accordion>
+    <Add ref="addRef" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import axios from 'axios';
 import { Accordion, AccordionPanel, AccordionHeader, AccordionContent, Tag } from 'primevue';
 import { onMounted, ref } from 'vue';
-import hostname from '../env/hostname';
-import store from '../store';
 import list from '../store/list';
+import Add from '../components/calendar/add.vue';
+import type { CalendarItem } from '../store/calendar';
+import calendar from '../store/calendar';
 
-interface CalendarItem{
-  title: string,
-  id: string,
-  added: boolean,
+const addRef=ref();
+
+const showAdd=(item: CalendarItem, weekday: number)=>{
+  if(!item.added){
+    addRef.value.showAddHandler(item, weekday);
+  }
 }
 
-const calendarList=ref<[CalendarItem[]]>();
-
 onMounted(async ()=>{
-  const {data: response}=await axios.get(`${hostname}/api/calendar/get`, {
-    headers: {
-      token: store().token
-    }
-  })
-  if(response.ok){
-    calendarList.value=response.msg;
-  }
+  calendar().getList();
 })
 </script>
