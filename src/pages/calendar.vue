@@ -9,6 +9,7 @@
       </AccordionPanel>
     </Accordion>
     <Add ref="addRef" />
+    <Loading ref="loadingRef" />
   </div>
 </template>
 
@@ -19,8 +20,10 @@ import list from '../store/list';
 import Add from '../components/calendar/add.vue';
 import type { CalendarItem } from '../store/calendar';
 import calendar from '../store/calendar';
+import Loading from '../components/loading.vue';
 
 const addRef=ref();
+const loadingRef=ref();
 
 const showAdd=(item: CalendarItem, weekday: number)=>{
   if(!item.added){
@@ -29,6 +32,8 @@ const showAdd=(item: CalendarItem, weekday: number)=>{
 }
 
 onMounted(async ()=>{
-  calendar().getList();
+  loadingRef.value.loadingHandler(true, "获取每日放送列表");
+  await calendar().getList();
+  loadingRef.value.loadingHandler(false, "获取每日放送列表");
 })
 </script>

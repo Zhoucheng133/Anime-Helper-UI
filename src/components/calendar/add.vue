@@ -36,7 +36,7 @@
 import { useToast, Dialog, InputText, Button, Checkbox, Select } from 'primevue';
 import { ref } from 'vue';
 import list from '../../store/list';
-import Loading from './loading.vue';
+import Loading from '../loading.vue';
 import type { CalendarItem } from '../../store/calendar';
 import axios from 'axios';
 import hostname from '../../env/hostname';
@@ -59,7 +59,7 @@ const updateTo=ref("");
 const id=ref("");
 
 const showAddHandler=async (item: CalendarItem, weekday: number)=>{
-  loadingRef.value.loadingHandler(true);
+  loadingRef.value.loadingHandler(true, "加载番剧信息");
   id.value=item.id;
   showAdd.value=true;
   title.value=item.title;
@@ -75,7 +75,7 @@ const showAddHandler=async (item: CalendarItem, weekday: number)=>{
   }else{
     toast.add({ severity: 'error', summary: '获取信息失败', detail: response.msg, life: 3000 });
   }
-  loadingRef.value.loadingHandler(false);
+  loadingRef.value.loadingHandler(false, "加载番剧信息");
 }
 
 const addHandler=async ()=>{
