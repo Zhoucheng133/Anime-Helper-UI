@@ -10,15 +10,15 @@
     </div>
     <div class="flex items-center gap-2 mb-4">
       <label for="episode" class="font-semibold w-20">集数</label>
-      <InputText type="number" size="small" id="episode" class="flex-auto" autocomplete="off" v-model="episode" />
+      <InputText type="number" size="small" id="episode" class="flex-auto" autocomplete="off" v-model="episode" min="1" />
     </div>
     <div class="flex items-center gap-2 mb-4">
       <label for="watchTo" class="font-semibold w-20">观看至</label>
-      <InputText type="number" size="small" id="watchTo" class="flex-auto" autocomplete="off" v-model="watchTo" />
+      <InputText type="number" size="small" id="watchTo" class="flex-auto" autocomplete="off" v-model="watchTo" min="0" :max="update ? updateTo : episode" />
     </div>
     <div class="flex items-center gap-2 mb-4" v-if="update">
       <label for="updateTo" class="font-semibold w-20">更新至</label>
-      <InputText type="number" size="small" id="updateTo" class="flex-auto" autocomplete="off" v-model="updateTo" />
+      <InputText type="number" size="small" id="updateTo" class="flex-auto" autocomplete="off" v-model="updateTo" min="1" :max="episode" />
     </div>
     <div class="flex items-center gap-2 mb-4" v-if="update">
       <label for="updateWeek" class="font-semibold w-20">更新周</label>
