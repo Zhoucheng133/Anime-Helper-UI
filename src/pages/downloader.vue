@@ -4,13 +4,13 @@
       <div class="label">运行状态</div>
       <div class="flex items-center gap-5">
         <Tag :value="downloader().running ? '运行中' : '等待中'" :severity="downloader().running ? 'success' : 'warn'" />
-        <ToggleSwitch v-model="downloader().running" />
+        <ToggleSwitch v-model="downloader().running" @value-change="downloader().toggleRun" />
       </div>
     </div>
     <div class="flex items-center m-5">
       <div class="label">系统操作</div>
       <ButtonGroup>
-        <Button label="显示日志" size="small" severity="secondary" />
+        <Button label="显示日志" size="small" severity="secondary" @click="showLog" />
         <Button label="保存表单" size="small" severity="secondary" @click="downloader().save()" />
       </ButtonGroup>
     </div>
@@ -66,6 +66,7 @@
     </Accordion>
     <AddList ref="addListRef" />
     <AddExclude ref="addExcludeRef" />
+    <Log ref="logRef" />
   </div>
 </template>
 
@@ -75,15 +76,21 @@ import downloader from '../store/downloader';
 import { onMounted, ref } from 'vue';
 import AddList from '../components/downloader/add_list.vue';
 import AddExclude from '../components/downloader/add_exclude.vue';
+import Log from '../components/downloader/log.vue';
 const confirm = useConfirm();
 const addListRef=ref();
 const addExcludeRef=ref();
+const logRef=ref();
 
 document.title="AnimeHelper | 下载器";
 
 onMounted(()=>{
   downloader().getList();
 })
+
+const showLog=()=>{
+  logRef.value.showLogHandler();
+}
 
 const addExclude=()=>{
   addExcludeRef.value.showAddHandler();

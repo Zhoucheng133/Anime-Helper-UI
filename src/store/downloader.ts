@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { nextTick, ref } from "vue";
 import hostname from "../env/hostname";
 import axios from "axios";
 import store from ".";
@@ -71,7 +71,7 @@ export default defineStore("downloader", ()=>{
     }
   }
 
-  const save=async ()=>{
+  const save=async (disableToast: boolean=false)=>{
     const {data: response}=await axios.post(`${hostname}/api/downloader/save`, {
       data:{
         link: link.value,
@@ -84,6 +84,9 @@ export default defineStore("downloader", ()=>{
         token: store().token,
       }
     })
+    if(disableToast){
+      return;
+    }
     if(response.ok){
       toast.add({ severity: 'success', summary: '更新成功', detail: "已更新到数据库", life: 3000 });
     }else{
@@ -158,7 +161,52 @@ export default defineStore("downloader", ()=>{
     }
   }
 
+  const toggleRun=async (toggle: boolean)=>{
+    if(toggle){
+      if(link.value.length==0){
+        toast.add({ severity: 'error', summary: '运行失败', detail: "没有配置Aria地址", life: 3000 });
+        nextTick(() => {
+          running.value = false;
+        });
+        return;
+      }else if(secret.value.length==0){
+        toast.add({ severity: 'error', summary: '运行失败', detail: "没有配置Aria密钥", life: 3000 });
+        nextTick(() => {
+          running.value = false;
+        });
+        return;
+      }
+      await save(true);
+      const {data: response}=await axios.post(`${hostname}/api/download/run`, {}, {
+        headers: {
+          token: store().token
+        }
+      });
+      if(!response.ok){
+        toast.add({ severity: 'error', summary: '运行失败', detail: response.msg, life: 3000 });
+        nextTick(() => {
+          running.value = false;
+        });
+        return;
+      }
+    }else{
+      const {data: response}=await axios.post(`${hostname}/api/download/stop`, {}, {
+        headers: {
+          token: store().token
+        }
+      });
+      if(!response.ok){
+        toast.add({ severity: 'error', summary: '运行失败', detail: response.msg, life: 3000 });
+        nextTick(() => {
+          running.value = true;
+        });
+        return;
+      }
+    }
+  }
+
   return {
+    toggleRun,
     delFromExclude,
     addToExclude,
     delFromList,
