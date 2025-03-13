@@ -3,6 +3,7 @@ import { ref } from "vue";
 import hostname from "../env/hostname";
 import axios from "axios";
 import store from ".";
+import { useToast } from "primevue";
 
 interface RssType{
   id: string,
@@ -31,6 +32,9 @@ interface DownloaderDataType{
 }
 
 export default defineStore("downloader", ()=>{
+
+  const toast=useToast();
+
   const running=ref(false);
 
   const rssTypes=ref<RssType[]>([
@@ -47,13 +51,13 @@ export default defineStore("downloader", ()=>{
   const exclude=ref<DownloaderExcludeType[]>([]);
 
   const getList=async ()=>{
-    const {data: resposne}=await axios.get(`${hostname}/api/downloader/get`, {
+    const {data: response}=await axios.get(`${hostname}/api/downloader/get`, {
       headers: {
         token: store().token,
       }
     })
-    if(resposne.ok){
-      const data=resposne.msg as DownloaderDataType;
+    if(response.ok){
+      const data=response.msg as DownloaderDataType;
       running.value=data.running;
       rssSelected.value=data.type=='mikan' ? rssTypes.value[0] : rssTypes.value[1];
       freq.value=data.freq.toString();
@@ -61,6 +65,8 @@ export default defineStore("downloader", ()=>{
       secret.value=data.secret;
       list.value=data.list;
       exclude.value=data.exclude;
+    }else{
+      toast.add({ severity: 'error', summary: '更新失败', detail: response.msg, life: 3000 });
     }
   }
 
