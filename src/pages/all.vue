@@ -11,7 +11,7 @@
       <Column header="操作" style="min-width: 150px;">
         <template #body="slotProps">
           <ButtonGroup>
-            <Button severity="secondary" label="添加至" size="small" style="font-size: 12px;" />
+            <Button severity="secondary" label="添加至" size="small" style="font-size: 12px;" @click="addRef.showAddHandler(slotProps.data.title)" />
             <Button severity="secondary" size="small" @click="downloadHandler($event, slotProps.data.url)" ><i class="pi pi-download" style="font-size: 12px;"></i></Button>
           </ButtonGroup>
         </template>
@@ -19,6 +19,7 @@
     </DataTable>
   </div>
   <Loading ref="loadingRef" />
+  <Add ref="addRef"/>
 </template>
 
 <script lang="ts" setup >
@@ -26,8 +27,10 @@ import { DataTable, Column, Button, ButtonGroup, useConfirm } from 'primevue';
 import all from '../store/all';
 import { onMounted, ref } from 'vue';
 import Loading from '../components/loading.vue';
+import Add from '../components/all/add.vue';
 const loadingRef=ref();
 const confirm=useConfirm();
+const addRef=ref();
 
 document.title="AnimeHelper | 所有";
 
