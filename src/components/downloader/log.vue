@@ -1,7 +1,7 @@
 <template>
   <Dialog v-model:visible="showLog" modal header="日志" :style="{ width: '40rem' }" :draggable="false" class="select-none" :closable="true">
     <div class="mb-5">
-      <div class="item" v-for="(item, index) in logs" :key="index">
+      <div class="item" v-for="(item, index) in logs" :key="index" v-tooltip.bottom="item.msg">
         <div class="item_tag">
           <div class="tag tag_success" v-if="item.ok">OK</div>
           <div class="tag tag_err" v-else>ERR</div>
@@ -10,9 +10,6 @@
         <div class="item_time">{{ convertTime(item.time) }}</div>
       </div>
     </div>
-    <!-- <div class="flex justify-end gap-2">
-      <Button type="button" label="完成" @click="showLog = false" size="small"></Button>
-    </div> -->
   </Dialog>
 </template>
 
@@ -57,6 +54,10 @@ defineExpose({showLogHandler})
 </script>
 
 <style scoped>
+.item_tag{
+  display: flex;
+  align-items: center;
+}
 .tag{
   width: 40px;
   display: flex;

@@ -6,7 +6,7 @@ import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
 import { createPinia } from 'pinia';
 import router from './router';
-import { ConfirmationService, ToastService } from 'primevue';
+import { ConfirmationService, ToastService, Tooltip } from 'primevue';
 import 'primeicons/primeicons.css';
 
 const color="sky";
@@ -41,5 +41,6 @@ app.use(PrimeVue, {
 });
 app.use(ToastService);
 app.use(ConfirmationService)
+app.directive('tooltip', Tooltip)
 
 app.mount('#app')
