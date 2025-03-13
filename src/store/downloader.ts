@@ -4,6 +4,7 @@ import hostname from "../env/hostname";
 import axios from "axios";
 import store from ".";
 import { useToast } from "primevue";
+import { nanoid } from "nanoid";
 
 interface RssType{
   id: string,
@@ -90,7 +91,27 @@ export default defineStore("downloader", ()=>{
     }
   }
 
+  const addToList=async (title: string, ass: string)=>{
+    const {data: response}=await axios.post(`${hostname}/api/downloader/list/add`, {
+      data:{
+        id: nanoid(),
+        title,
+        ass,
+      }
+    }, {
+      headers: {
+        token: store().token,
+      }
+    })
+    if(response.ok){
+      toast.add({ severity: 'success', summary: '添加成功', detail: "", life: 3000 });
+    }else{
+      toast.add({ severity: 'error', summary: '添加失败', detail: response.msg, life: 3000 });
+    }
+  }
+
   return {
+    addToList,
     save,
     getList,
     exclude,

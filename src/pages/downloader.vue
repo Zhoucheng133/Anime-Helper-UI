@@ -37,7 +37,7 @@
       <AccordionPanel :value="0">
         <AccordionHeader>番剧列表</AccordionHeader>
         <AccordionContent>
-          <Button size="small">添加</Button>
+          <Button size="small" @click="showAddList">添加</Button>
         </AccordionContent>
       </AccordionPanel>
       <AccordionPanel :value="1">
@@ -47,17 +47,26 @@
         </AccordionContent>
       </AccordionPanel>
     </Accordion>
+    <AddList ref="addListRef" />
+    
   </div>
 </template>
 
 <script setup lang="ts">
 import { ToggleSwitch, Tag, ButtonGroup, Button, Select, InputText, Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'primevue';
 import downloader from '../store/downloader';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
+import AddList from '../components/downloader/add_list.vue';
 
 onMounted(()=>{
   downloader().getList();
 })
+
+const addListRef=ref();
+
+const showAddList=()=>{
+  addListRef.value.showAddHandler();
+}
 
 </script>
 
