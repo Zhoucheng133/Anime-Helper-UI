@@ -106,7 +106,7 @@ const delFromExcludeHandler=(event: any, id: string)=>{
       label: '删除',
       severity: "danger"
     },
-    // accept: () => downloader().delFromExclude(id),
+    accept: () => downloader().delFromExclude(id),
   });
 }
 
