@@ -21,7 +21,7 @@
     <div class="flex items-center m-5">
       <div class="label">更新频率</div>
       <div class="flex items-center gap-3">
-        <InputText size="small" v-model="downloader().req" style="width: 100px;" type="number" min="10" max="1440"/>
+        <InputText size="small" v-model="downloader().freq" style="width: 100px;" type="number" min="10" max="1440"/>
         <div>分钟</div>
       </div>
     </div>
@@ -53,6 +53,11 @@
 <script setup lang="ts">
 import { ToggleSwitch, Tag, ButtonGroup, Button, Select, InputText, Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'primevue';
 import downloader from '../store/downloader';
+import { onMounted } from 'vue';
+
+onMounted(()=>{
+  downloader().getList();
+})
 
 </script>
 
