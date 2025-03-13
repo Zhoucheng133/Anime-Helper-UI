@@ -182,6 +182,12 @@ export default defineStore("downloader", ()=>{
           running.value = false;
         });
         return;
+      }else if(list.value.length==0){
+        toast.add({ severity: 'error', summary: '运行失败', detail: "番剧列表不能为空", life: 3000 });
+        nextTick(() => {
+          running.value = false;
+        });
+        return;
       }
       await save(true);
       const {data: response}=await axios.post(`${hostname}/api/download/run`, {}, {
