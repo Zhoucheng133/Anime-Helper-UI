@@ -78,9 +78,6 @@ export default defineStore("downloader", ()=>{
     }else if(secret.value.length==0){
       toast.add({ severity: 'error', summary: '更新失败', detail: "Aria 密钥不能为空", life: 3000 });
       return;
-    }else if(list.value.length==0){
-      toast.add({ severity: 'error', summary: '更新失败', detail: "你没有添加任何番剧列表", life: 3000 });
-      return;
     }
     const {data: response}=await axios.post(`${hostname}/api/downloader/save`, {
       data:{
