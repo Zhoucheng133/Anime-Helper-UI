@@ -70,7 +70,28 @@ export default defineStore("downloader", ()=>{
     }
   }
 
+  const save=async ()=>{
+    const {data: response}=await axios.post(`${hostname}/api/downloader/save`, {
+      data:{
+        link: link.value,
+        secret: secret.value,
+        freq: parseInt(freq.value),
+        type: rssSelected.value.id
+      }
+    }, {
+      headers: {
+        token: store().token,
+      }
+    })
+    if(response.ok){
+      toast.add({ severity: 'success', summary: '更新成功', detail: "", life: 3000 });
+    }else{
+      toast.add({ severity: 'error', summary: '更新失败', detail: response.msg, life: 3000 });
+    }
+  }
+
   return {
+    save,
     getList,
     exclude,
     list,

@@ -10,8 +10,8 @@
     <div class="flex items-center m-5">
       <div class="label">系统操作</div>
       <ButtonGroup>
-        <Button label="显示日志" size="small" severity="secondary"/>
-        <Button label="保存表单" size="small" severity="secondary"/>
+        <Button label="显示日志" size="small" severity="secondary" />
+        <Button label="保存表单" size="small" severity="secondary" @click="downloader().save()" />
       </ButtonGroup>
     </div>
     <div class="flex items-center m-5">
