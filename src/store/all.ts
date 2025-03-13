@@ -28,7 +28,23 @@ export default defineStore("all", ()=>{
     }
   }
 
+  const download=async (url: string)=>{
+    const {data: response}=await axios.post(`${hostname}/api/all/download`, {
+      link: url,
+    },  {
+      headers: {
+        token: store().token,
+      }
+    })
+    if(response.ok){
+      toast.add({ severity: 'success', summary: '下载成功', detail: "已添加到Aria下载队列", life: 3000 });
+    }else{
+      toast.add({ severity: 'error', summary: '下载失败', detail: response.msg, life: 3000 });
+    }
+  }
+
   return {
+    download,
     list,
     getList,
   }

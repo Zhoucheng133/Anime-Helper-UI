@@ -12,7 +12,7 @@
         <template #body="slotProps">
           <ButtonGroup>
             <Button severity="secondary" label="添加至" size="small" style="font-size: 12px;" />
-            <Button severity="secondary" size="small" ><i class="pi pi-download" style="font-size: 12px;"></i></Button>
+            <Button severity="secondary" size="small" @click="downloadHandler($event, slotProps.data.url)" ><i class="pi pi-download" style="font-size: 12px;"></i></Button>
           </ButtonGroup>
         </template>
       </Column>
@@ -22,11 +22,12 @@
 </template>
 
 <script lang="ts" setup >
-import { DataTable, Column, Button, ButtonGroup } from 'primevue';
+import { DataTable, Column, Button, ButtonGroup, useConfirm } from 'primevue';
 import all from '../store/all';
 import { onMounted, ref } from 'vue';
 import Loading from '../components/loading.vue';
 const loadingRef=ref();
+const confirm=useConfirm();
 
 document.title="AnimeHelper | 所有";
 
@@ -35,6 +36,24 @@ onMounted(async ()=>{
   await all().getList();
   loadingRef.value.loadingHandler(false, "获取所有列表");
 })
+
+const downloadHandler=(event: any, url: string)=>{
+  confirm.require({
+    target: event.currentTarget,
+    message: '你确定要下载它吗',
+    rejectProps: {
+      label: '取消',
+      severity: 'secondary',
+      outlined: true,
+      size: "small"
+    },
+    acceptProps: {
+      size: "small",
+      label: '下载',
+    },
+    accept: () => all().download(url),
+  });
+}
 
 </script>
 
