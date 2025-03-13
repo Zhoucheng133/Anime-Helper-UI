@@ -38,6 +38,15 @@
         <AccordionHeader>番剧列表</AccordionHeader>
         <AccordionContent>
           <Button size="small" @click="showAddList">添加</Button>
+          <DataTable :value="downloader().list">
+            <Column field="title" header="标题"></Column>
+            <Column field="ass" header="字幕组"></Column>
+            <Column header="操作">
+              <template #body="slotProps">
+                <Button size="small" label="删除" severity="danger" variant="text" @click="delFromListHandler($event, slotProps.data.id)" />
+              </template>
+            </Column>
+          </DataTable>
         </AccordionContent>
       </AccordionPanel>
       <AccordionPanel :value="1">
@@ -53,10 +62,11 @@
 </template>
 
 <script setup lang="ts">
-import { ToggleSwitch, Tag, ButtonGroup, Button, Select, InputText, Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'primevue';
+import { ToggleSwitch, Tag, ButtonGroup, Button, Select, InputText, Accordion, AccordionPanel, AccordionHeader, AccordionContent, DataTable, Column, useConfirm } from 'primevue';
 import downloader from '../store/downloader';
 import { onMounted, ref } from 'vue';
 import AddList from '../components/downloader/add_list.vue';
+const confirm = useConfirm();
 
 onMounted(()=>{
   downloader().getList();
@@ -66,6 +76,25 @@ const addListRef=ref();
 
 const showAddList=()=>{
   addListRef.value.showAddHandler();
+}
+
+const delFromListHandler=(event: any, id: string)=>{
+  confirm.require({
+    target: event.currentTarget,
+    message: '你确定要删除这个它吗',
+    rejectProps: {
+      label: '取消',
+      severity: 'secondary',
+      outlined: true,
+      size: "small"
+    },
+    acceptProps: {
+      size: "small",
+      label: '删除',
+      severity: "danger"
+    },
+    accept: () => downloader().delFromList(id),
+  });
 }
 
 </script>
