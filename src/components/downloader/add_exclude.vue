@@ -28,6 +28,7 @@ const addHandler=async ()=>{
   }
   await downloader().addToExclude(key.value);
   showAdd.value=false;
+  key.value="";
 }
 
 const showAddHandler=()=>{

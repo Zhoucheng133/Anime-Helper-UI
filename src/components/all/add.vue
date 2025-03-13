@@ -38,6 +38,8 @@ const addHandler=async ()=>{
     return;
   }
   await downloader().addToList(title.value, ass.value);
+  title.value="";
+  ass.value="";
   showAdd.value=false;
 }
 

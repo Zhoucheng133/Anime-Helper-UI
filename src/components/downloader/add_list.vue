@@ -36,6 +36,8 @@ const addHandler=async ()=>{
   }
   await downloader().addToList(title.value, ass.value);
   showAdd.value=false;
+  title.value="";
+  ass.value="";
 }
 
 const showAddHandler=()=>{

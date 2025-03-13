@@ -67,6 +67,12 @@ const addHandler=async ()=>{
   await list().addItem(title.value, update.value,parseInt(episode.value), parseInt(watchTo.value), parseInt(updateTo.value), updateWeekday.value.code);
 
   showAdd.value=false;
+  title.value="";
+  update.value=false;
+  episode.value="";
+  watchTo.value="";
+  updateTo.value="";
+  updateWeekday.value=list().weekdays[0];
 }
 
 const showAddHandler=()=>{
