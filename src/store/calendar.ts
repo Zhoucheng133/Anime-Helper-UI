@@ -25,7 +25,7 @@ export default defineStore("calendar", ()=>{
     if(response.ok){
       list.value=response.msg;
     }else{
-      toast.add({ severity: 'error', summary: '更新失败', detail: response.msg, life: 3000 });
+      toast.add({ severity: 'error', summary: '请求失败', detail: response.msg, life: 3000 });
     }
   }
 
