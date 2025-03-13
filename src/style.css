@@ -33,6 +33,7 @@ thead{
 .page{
   width: 1000px;
   margin: auto;
+  padding-bottom: 50px;
   /* background-color: red; */
 }
 
