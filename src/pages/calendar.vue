@@ -22,6 +22,8 @@ import type { CalendarItem } from '../store/calendar';
 import calendar from '../store/calendar';
 import Loading from '../components/loading.vue';
 
+document.title="AnimeHelper | 每日放送";
+
 const addRef=ref();
 const loadingRef=ref();
 

@@ -79,6 +79,8 @@ const confirm = useConfirm();
 const addListRef=ref();
 const addExcludeRef=ref();
 
+document.title="AnimeHelper | 下载器";
+
 onMounted(()=>{
   downloader().getList();
 })
