@@ -41,7 +41,7 @@
             <Button severity="secondary" size="small" @click="editRef.showEditHandler(slotProps.data)"><i class="pi pi-pen-to-square" style="font-size: 12px;" /></Button>
             <Button severity="secondary" size="small" @click="list().minus(slotProps.data)"><i class="pi pi-minus" style="font-size: 12px;"  /></Button>
             <Button severity="secondary" size="small" @click="list().add(slotProps.data)"><i class="pi pi-plus" style="font-size: 12px;"/></Button>
-            <Button severity="secondary" size="small" style="font-size: 12px;">添加到</Button>
+            <Button severity="secondary" size="small" style="font-size: 12px;" @click="downloaderRef.showAddHandler(slotProps.data.title)">添加到</Button>
             <Button severity="secondary" size="small" @click="list().deleteItem($event, slotProps.data)"><i class="pi pi-trash" style="font-size: 12px;"/></Button>
           </ButtonGroup>
         </template>
@@ -51,6 +51,7 @@
       currentPageReportTemplate="第 {currentPage} 页 | 共 {totalPages} 页" />
     <Add ref="addRef" />
     <Edit ref="editRef"/>
+    <AddDownloader ref="downloaderRef"/>
   </div>
 </template>
 
@@ -59,6 +60,7 @@ import { Button, Select, InputText, DataTable, Column, Paginator, ProgressBar, B
 import list from '../store/list';
 import Add from '../components/list/add.vue';
 import Edit from "../components/list/edit.vue";
+import AddDownloader from '../components/list/add_downloader.vue';
 import { ref } from 'vue';
 
 document.title="AnimeHelper | 列表";
@@ -67,6 +69,7 @@ list().getList();
 
 const addRef=ref();
 const editRef=ref();
+const downloaderRef=ref();
 
 function paginatorChange(val: number){
   list().offset=val;
