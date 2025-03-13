@@ -85,7 +85,7 @@ export default defineStore("downloader", ()=>{
       }
     })
     if(response.ok){
-      toast.add({ severity: 'success', summary: '更新成功', detail: "更新表单...", life: 3000 });
+      toast.add({ severity: 'success', summary: '更新成功', detail: "已更新到数据库", life: 3000 });
     }else{
       toast.add({ severity: 'error', summary: '更新失败', detail: response.msg, life: 3000 });
     }
@@ -105,7 +105,7 @@ export default defineStore("downloader", ()=>{
     })
     if(response.ok){
       getList();
-      toast.add({ severity: 'success', summary: '添加成功', detail: "更新表单...", life: 3000 });
+      toast.add({ severity: 'success', summary: '添加成功', detail: "已更新到数据库", life: 3000 });
     }else{
       toast.add({ severity: 'error', summary: '添加失败', detail: response.msg, life: 3000 });
     }
@@ -119,7 +119,7 @@ export default defineStore("downloader", ()=>{
     })
     if(response.ok){
       getList();
-      toast.add({ severity: 'success', summary: '删除成功', detail: "更新表单...", life: 3000 });
+      toast.add({ severity: 'success', summary: '删除成功', detail: "已更新到数据库", life: 3000 });
     }else{
       toast.add({ severity: 'error', summary: '删除失败', detail: response.msg, life: 3000 });
     }
@@ -138,7 +138,7 @@ export default defineStore("downloader", ()=>{
     })
     if(response.ok){
       getList();
-      toast.add({ severity: 'success', summary: '添加成功', detail: "更新表单...", life: 3000 });
+      toast.add({ severity: 'success', summary: '添加成功', detail: "已更新到数据库", life: 3000 });
     }else{
       toast.add({ severity: 'error', summary: '添加失败', detail: response.msg, life: 3000 });
     }
@@ -152,7 +152,7 @@ export default defineStore("downloader", ()=>{
     })
     if(response.ok){
       getList();
-      toast.add({ severity: 'success', summary: '删除成功', detail: "更新表单...", life: 3000 });
+      toast.add({ severity: 'success', summary: '删除成功', detail: "已更新到数据库", life: 3000 });
     }else{
       toast.add({ severity: 'error', summary: '删除失败', detail: response.msg, life: 3000 });
     }
