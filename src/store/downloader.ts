@@ -125,7 +125,27 @@ export default defineStore("downloader", ()=>{
     }
   }
 
+  const addToExclude=async (key: string)=>{
+    const {data: response}=await axios.post(`${hostname}/api/downloader/exclude/add`, {
+      data:{
+        id: nanoid(),
+        key
+      }
+    }, {
+      headers: {
+        token: store().token,
+      }
+    })
+    if(response.ok){
+      getList();
+      toast.add({ severity: 'success', summary: '添加成功', detail: "更新表单...", life: 3000 });
+    }else{
+      toast.add({ severity: 'error', summary: '添加失败', detail: response.msg, life: 3000 });
+    }
+  }
+
   return {
+    addToExclude,
     delFromList,
     addToList,
     save,

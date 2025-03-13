@@ -52,12 +52,20 @@
       <AccordionPanel :value="1">
         <AccordionHeader>排除关键字</AccordionHeader>
         <AccordionContent>
-          <Button size="small">添加</Button>
+          <Button size="small" @click="addExclude">添加</Button>
+          <DataTable :value="downloader().exclude">
+            <Column field="key" header="关键字"></Column>
+            <Column header="操作">
+              <template #body="slotProps">
+                <Button size="small" label="删除" severity="danger" variant="text" @click="delFromExcludeHandler($event, slotProps.data.id)" />
+              </template>
+            </Column>
+          </DataTable>
         </AccordionContent>
       </AccordionPanel>
     </Accordion>
     <AddList ref="addListRef" />
-    
+    <AddExclude ref="addExcludeRef" />
   </div>
 </template>
 
@@ -66,16 +74,40 @@ import { ToggleSwitch, Tag, ButtonGroup, Button, Select, InputText, Accordion, A
 import downloader from '../store/downloader';
 import { onMounted, ref } from 'vue';
 import AddList from '../components/downloader/add_list.vue';
+import AddExclude from '../components/downloader/add_exclude.vue';
 const confirm = useConfirm();
+const addListRef=ref();
+const addExcludeRef=ref();
 
 onMounted(()=>{
   downloader().getList();
 })
 
-const addListRef=ref();
+const addExclude=()=>{
+  addExcludeRef.value.showAddHandler();
+}
 
 const showAddList=()=>{
   addListRef.value.showAddHandler();
+}
+
+const delFromExcludeHandler=(event: any, id: string)=>{
+  confirm.require({
+    target: event.currentTarget,
+    message: '你确定要删除这个它吗',
+    rejectProps: {
+      label: '取消',
+      severity: 'secondary',
+      outlined: true,
+      size: "small"
+    },
+    acceptProps: {
+      size: "small",
+      label: '删除',
+      severity: "danger"
+    },
+    // accept: () => downloader().delFromExclude(id),
+  });
 }
 
 const delFromListHandler=(event: any, id: string)=>{
