@@ -61,7 +61,9 @@ export default defineStore("list", ()=>{
     {name: "星期六", code: 6},
     {name: "星期日", code: 0},
   ])
-  const selectedWeekday=ref(weekdays.value[0]);
+  const today = new Date().getDay();
+  const selectedWeekday=ref(weekdays.value.find(day => day.code === (today || 0))??weekdays.value[0]);
+  
 
   const length=ref(0);
 
