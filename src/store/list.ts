@@ -149,7 +149,7 @@ export default defineStore("list", ()=>{
   }
 
   async function minus(item: ListItem){
-    if(item.now<=1){
+    if(item.now<=0){
       return;
     }
     const {data: response}=await axios.post(`${hostname}/api/list/edit`, {
