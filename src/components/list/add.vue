@@ -62,6 +62,9 @@ const addHandler=async ()=>{
   }else if(updateTo.value.length==0 && update.value){
     toast.add({ severity: 'error', summary: '添加失败', detail: '观看集数不能为空', life: 3000 });
     return;
+  }else if(update.value && parseInt(updateTo.value)==0){
+    toast.add({ severity: 'error', summary: '添加失败', detail: '更新集数不能为0', life: 3000 });
+    return;
   }
 
   await list().addItem(title.value, update.value,parseInt(episode.value), parseInt(watchTo.value), parseInt(updateTo.value), updateWeekday.value.code);
