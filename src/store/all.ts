@@ -7,7 +7,9 @@ import { useToast } from "primevue";
 
 interface AllItem{
   title: string,
-  url: string
+  url: string,
+  time: number,
+  length: number,
 }
 
 export default defineStore("all", ()=>{
