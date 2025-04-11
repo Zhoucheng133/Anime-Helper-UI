@@ -3,8 +3,18 @@
     <DataTable :value="all().list">
       <Column field="title" header="标题">
         <template #body="slotProps">
-          <div class="title">
-            {{ slotProps.data.title }}
+          <div class="title_area">
+            <div class="title">
+              {{ slotProps.data.title }}
+            </div>
+            <div class="flex">
+              <div class="select-none text-gray-400 text-xs">
+                {{ dayjs(slotProps.data.time).format("YYYY-MM-DD HH:mm") }}
+              </div>
+              <div class="select-none text-gray-400 text-xs ml-8">
+                {{ formatBytes(slotProps.data.length) }}
+              </div>
+            </div>
           </div>
         </template>
       </Column>
@@ -28,11 +38,23 @@ import all from '../store/all';
 import { onMounted, ref } from 'vue';
 import Loading from '../components/loading.vue';
 import Add from '../components/all/add.vue';
+import dayjs from 'dayjs';
 const loadingRef=ref();
 const confirm=useConfirm();
 const addRef=ref();
 
 document.title="AnimeHelper | 所有";
+
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return '0 B';
+
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  const value = bytes / Math.pow(1024, i);
+  const formatted = parseFloat(value.toFixed(2)).toString();
+
+  return `${formatted} ${sizes[i]}`;
+}
 
 onMounted(async ()=>{
   loadingRef.value.loadingHandler(true, "获取所有列表");
