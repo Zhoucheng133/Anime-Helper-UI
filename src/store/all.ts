@@ -5,7 +5,7 @@ import axios from "axios";
 import store from ".";
 import { useToast } from "primevue";
 
-interface AllItem{
+export interface AllItem{
   title: string,
   url: string,
   time: number,

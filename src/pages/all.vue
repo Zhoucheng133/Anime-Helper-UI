@@ -21,6 +21,7 @@
       <Column header="操作" style="min-width: 150px;">
         <template #body="slotProps">
           <ButtonGroup>
+            <Button severity="secondary" icon="pi pi-clipboard" size="small" style="font-size: 12px;" @click="copyLink(slotProps.data as AllItem)" />
             <Button severity="secondary" label="添加至" size="small" style="font-size: 12px;" @click="addRef.showAddHandler(slotProps.data.title)" />
             <Button severity="secondary" size="small" @click="downloadHandler($event, slotProps.data.url)" ><i class="pi pi-download" style="font-size: 12px;"></i></Button>
           </ButtonGroup>
@@ -34,11 +35,13 @@
 
 <script lang="ts" setup >
 import { DataTable, Column, Button, ButtonGroup, useConfirm } from 'primevue';
-import all from '../store/all';
+import all, { type AllItem } from '../store/all';
 import { onMounted, ref } from 'vue';
 import Loading from '../components/loading.vue';
 import Add from '../components/all/add.vue';
 import dayjs from 'dayjs';
+import useClipboard from 'vue-clipboard3';
+const { toClipboard } = useClipboard();
 const loadingRef=ref();
 const confirm=useConfirm();
 const addRef=ref();
@@ -61,6 +64,10 @@ onMounted(async ()=>{
   await all().getList();
   loadingRef.value.loadingHandler(false, "获取所有列表");
 })
+
+const copyLink=(item: AllItem)=>{
+  toClipboard(item.url);
+}
 
 const downloadHandler=(event: any, url: string)=>{
   confirm.require({
