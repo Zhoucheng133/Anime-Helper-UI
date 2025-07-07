@@ -12,7 +12,6 @@
       <ButtonGroup>
         <Button label="下载器配置" size="small" severity="secondary" @click="showConfig" />
         <Button label="显示日志" size="small" severity="secondary" @click="showLog" />
-        <Button label="保存表单" size="small" severity="secondary" @click="downloader().save()" />
       </ButtonGroup>
     </div>
     <!-- <div class="flex items-center m-5">
