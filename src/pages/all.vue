@@ -40,8 +40,6 @@ import { onMounted, ref } from 'vue';
 import Loading from '../components/loading.vue';
 import Add from '../components/all/add.vue';
 import dayjs from 'dayjs';
-import useClipboard from 'vue-clipboard3';
-const { toClipboard } = useClipboard();
 const loadingRef=ref();
 const confirm=useConfirm();
 const addRef=ref();
@@ -66,7 +64,8 @@ onMounted(async ()=>{
 })
 
 const copyLink=(item: AllItem)=>{
-  toClipboard(item.url);
+  // toClipboard(item.url);
+  all().copy(item.url);
 }
 
 const downloadHandler=(event: any, url: string)=>{

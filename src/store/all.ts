@@ -4,6 +4,8 @@ import hostname from "../env/hostname";
 import axios from "axios";
 import store from ".";
 import { useToast } from "primevue";
+import useClipboard from 'vue-clipboard3';
+const { toClipboard } = useClipboard();
 
 export interface AllItem{
   title: string,
@@ -45,9 +47,15 @@ export default defineStore("all", ()=>{
     }
   }
 
+  const copy=(url: string)=>{
+    toClipboard(url);
+    toast.add({ severity: 'success', summary: '复制成功', detail: "已复制链接到剪贴板", life: 3000 });
+  }
+
   return {
     download,
     list,
     getList,
+    copy
   }
 })
