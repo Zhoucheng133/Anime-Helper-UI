@@ -28,6 +28,8 @@ interface DownloaderDataType{
   freq: number,
   type: string,
   running: boolean,
+  username: string,
+  client: string,
   list: DownloaderListType[],
   exclude: DownloaderExcludeType[]
 }
@@ -43,6 +45,14 @@ export default defineStore("downloader", ()=>{
     {id: "acgrip", text: "Acgrip"},
   ])
   const rssSelected=ref(rssTypes.value[0]);
+
+  const clientType=ref([
+    {id: "aria", text: "Aria"},
+    {id: "qbit", text: "qBittorrent"},
+  ])
+  const clientTypeSelected=ref(clientType.value[0]);
+
+  const username=ref("");
 
   const freq=ref("15");
   const link=ref("");
@@ -66,6 +76,8 @@ export default defineStore("downloader", ()=>{
       secret.value=data.secret;
       list.value=data.list;
       exclude.value=data.exclude;
+      clientTypeSelected.value=data.client=='qbit' ? clientType.value[1] : clientType.value[0];
+      username.value=data.username;
     }else{
       toast.add({ severity: 'error', summary: '请求失败', detail: response.msg, life: 3000 });
     }
@@ -80,11 +92,14 @@ export default defineStore("downloader", ()=>{
       return;
     }
     const {data: response}=await axios.post(`${hostname}/api/downloader/save`, {
+      // link, secret, freq, type, client, username
       data:{
         link: link.value,
         secret: secret.value,
         freq: parseInt(freq.value),
-        type: rssSelected.value.id
+        type: rssSelected.value.id,
+        client: clientTypeSelected.value.id,
+        username: username.value
       }
     }, {
       headers: {
@@ -234,5 +249,8 @@ export default defineStore("downloader", ()=>{
     rssTypes,
     rssSelected,
     running,
+    clientType,
+    clientTypeSelected,
+    username
   }
 })

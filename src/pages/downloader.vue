@@ -10,11 +10,12 @@
     <div class="flex items-center m-5">
       <div class="label">系统操作</div>
       <ButtonGroup>
+        <Button label="下载器配置" size="small" severity="secondary" @click="showConfig" />
         <Button label="显示日志" size="small" severity="secondary" @click="showLog" />
         <Button label="保存表单" size="small" severity="secondary" @click="downloader().save()" />
       </ButtonGroup>
     </div>
-    <div class="flex items-center m-5">
+    <!-- <div class="flex items-center m-5">
       <div class="label">RSS来源</div>
       <Select size="small" :options="downloader().rssTypes" v-model="downloader().rssSelected" optionLabel="text"  style="width: 120px;" />
     </div>
@@ -32,7 +33,7 @@
     <div class="flex items-center m-5">
       <div class="label">Aria2 密钥</div>
       <InputText size="small" :fluid="true" v-model="downloader().secret" type="password" />
-    </div>
+    </div> -->
     <Accordion :multiple="true" :value="[0, 1]">
       <AccordionPanel :value="0">
         <AccordionHeader>番剧列表</AccordionHeader>
@@ -67,6 +68,7 @@
     <AddList ref="addListRef" />
     <AddExclude ref="addExcludeRef" />
     <Log ref="logRef" />
+    <Config ref="configRef" />
   </div>
 </template>
 
@@ -76,17 +78,23 @@ import downloader from '../store/downloader';
 import { onMounted, ref } from 'vue';
 import AddList from '../components/downloader/add_list.vue';
 import AddExclude from '../components/downloader/add_exclude.vue';
+import Config from '../components/downloader/config.vue';
 import Log from '../components/downloader/log.vue';
 const confirm = useConfirm();
 const addListRef=ref();
 const addExcludeRef=ref();
 const logRef=ref();
+const configRef=ref();
 
 document.title="AnimeHelper | 下载器";
 
 onMounted(()=>{
   downloader().getList();
 })
+
+const showConfig=()=>{
+  configRef.value.showConfigHandler();
+}
 
 const showLog=()=>{
   logRef.value.showLogHandler();

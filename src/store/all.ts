@@ -39,7 +39,7 @@ export default defineStore("all", ()=>{
       }
     })
     if(response.ok){
-      toast.add({ severity: 'success', summary: '下载成功', detail: "已添加到Aria下载队列", life: 3000 });
+      toast.add({ severity: 'success', summary: '下载成功', detail: "已添加到下载队列", life: 3000 });
     }else{
       toast.add({ severity: 'error', summary: '下载失败', detail: response.msg, life: 3000 });
     }
