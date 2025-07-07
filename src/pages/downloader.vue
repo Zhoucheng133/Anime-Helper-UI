@@ -73,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { ToggleSwitch, Tag, ButtonGroup, Button, Select, InputText, Accordion, AccordionPanel, AccordionHeader, AccordionContent, DataTable, Column, useConfirm } from 'primevue';
+import { ToggleSwitch, Tag, ButtonGroup, Button, Accordion, AccordionPanel, AccordionHeader, AccordionContent, DataTable, Column, useConfirm } from 'primevue';
 import downloader from '../store/downloader';
 import { onMounted, ref } from 'vue';
 import AddList from '../components/downloader/add_list.vue';
