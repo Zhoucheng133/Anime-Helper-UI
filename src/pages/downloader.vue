@@ -10,8 +10,8 @@
     <div class="flex items-center m-5">
       <div class="label">系统操作</div>
       <ButtonGroup>
-        <Button label="下载器配置" size="small" severity="secondary" @click="showConfig" />
         <Button label="显示日志" size="small" severity="secondary" @click="showLog" />
+        <Button label="下载器配置" size="small" severity="secondary" @click="showConfig" />
       </ButtonGroup>
     </div>
     <!-- <div class="flex items-center m-5">
