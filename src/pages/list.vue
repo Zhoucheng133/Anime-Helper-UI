@@ -21,6 +21,13 @@
            <div class="done_tag tag" v-else>已完结</div>
         </template>
       </Column>
+      <Column header="集数" style="min-width: 50px;">
+        <template #body="slotProps">
+          <div class="ep">
+            {{ slotProps.data.episode }}
+          </div>
+        </template>
+      </Column>
       <Column header="更新周" style="min-width: 90px;">
         <template #body="slotProps">
           <div class="weekday_tag tag">{{ list().getWeekday(slotProps.data.time) }}</div>
@@ -30,11 +37,13 @@
         <template #body="slotProps">
           <div class="progress_area">
             <ProgressBar :class="percent(slotProps)==100 ? 'finished':'progress'" :value="list().calProgress(slotProps.data)" style="height: 18px" :showValue="false"/>
-              <div class="progress_label">{{ slotProps.data.now }} / {{ list().analyseEpisode(slotProps.data) }}</div>
+              <div class="progress_label">
+                <div>{{ slotProps.data.now }} / {{ list().analyseEpisode(slotProps.data) }}</div>
+              </div>
               <div class="progress_label white_label" :style="{
                 'clip-path': `polygon(0 0, ${percent(slotProps)}% 0, ${percent(slotProps)}% 100%, 0% 100%)`
               }">
-                {{ slotProps.data.now }} / {{ list().analyseEpisode(slotProps.data) }}
+                <div>{{ slotProps.data.now }} / {{ list().analyseEpisode(slotProps.data) }}</div>
               </div>
           </div>
         </template>
@@ -92,6 +101,9 @@ function paginatorChange(val: number){
 </style>
 
 <style scoped>
+.ep{
+  padding-left: 6px;
+}
 .white_label{
   color: white;
   transition: all .4s ease-in-out;
@@ -107,6 +119,7 @@ function paginatorChange(val: number){
   width: 100%;
   display: flex;
   justify-content: center;
+  user-select: none;
 }
 .done_tag{
   color: #475569;
@@ -125,7 +138,6 @@ function paginatorChange(val: number){
   display: flex;
   align-items: center;
   justify-content: center;
-  /* font-weight: bold; */
 }
 .weekday_tag{
   border: 2px solid lightgrey;
