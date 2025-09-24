@@ -26,7 +26,7 @@
           <div class="weekday_tag tag">{{ list().getWeekday(slotProps.data.time) }}</div>
         </template>
       </Column>
-      <Column header="进度" style="min-width: 230px;">
+      <Column header="进度" style="min-width: 200px;">
         <template #body="slotProps">
           <div class="progress_area">
             <ProgressBar :class="percent(slotProps)==100 ? 'finished':'progress'" :value="list().calProgress(slotProps.data)" style="height: 18px" :showValue="false"/>
