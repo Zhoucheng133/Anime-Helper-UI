@@ -25,13 +25,17 @@
         <template #body="slotProps">
           <div class="weekday_tag tag">{{ list().getWeekday(slotProps.data.time) }}</div>
         </template>
-        
       </Column>
       <Column header="进度" style="min-width: 230px;">
         <template #body="slotProps">
           <div class="progress_area">
-            <ProgressBar :class="list().calProgress(slotProps.data)==100 ? 'finished':''" :value="list().calProgress(slotProps.data)" style="height: 5px" :show-value="false" />
-            <div class="progress_label">{{ slotProps.data.now }} / {{ list().analyseEpisode(slotProps.data) }}</div>
+            <ProgressBar :class="percent(slotProps)==100 ? 'finished':'progress'" :value="list().calProgress(slotProps.data)" style="height: 18px" :showValue="false"/>
+              <div class="progress_label">{{ slotProps.data.now }} / {{ list().analyseEpisode(slotProps.data) }}</div>
+              <div class="progress_label white_label" :style="{
+                'clip-path': `polygon(0 0, ${percent(slotProps)}% 0, ${percent(slotProps)}% 100%, 0% 100%)`
+              }">
+                {{ slotProps.data.now }} / {{ list().analyseEpisode(slotProps.data) }}
+              </div>
           </div>
         </template>
       </Column>
@@ -65,6 +69,10 @@ import { ref } from 'vue';
 
 document.title="AnimeHelper | 列表";
 
+const percent=(slotProps: any)=>{
+  return list().calProgress(slotProps.data);
+}
+
 list().getList();
 
 const addRef=ref();
@@ -84,16 +92,21 @@ function paginatorChange(val: number){
 </style>
 
 <style scoped>
+.white_label{
+  color: white;
+  transition: all .4s ease-in-out;
+}
 .progress_area{
   display: grid;
-  grid-template-columns: auto 90px;
+  grid-template-columns: auto;
   align-items: center;
+  position: relative;
 }
 .progress_label{
-  font-size: 14px;
-  user-select: none;
-  margin-left: 10px;
-  text-align: right;
+  position: absolute;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 .done_tag{
   color: #475569;
