@@ -21,7 +21,7 @@
            <div class="done_tag tag" v-else>已完结</div>
         </template>
       </Column>
-      <Column header="集数" style="min-width: 50px;">
+      <Column header="集数" style="min-width: 60px;">
         <template #body="slotProps">
           <div class="ep">
             {{ slotProps.data.episode }}
