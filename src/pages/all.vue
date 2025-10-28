@@ -21,7 +21,7 @@
       <Column header="操作" style="min-width: 150px;">
         <template #body="slotProps">
           <ButtonGroup>
-            <Button severity="secondary" icon="pi pi-clipboard" size="small" style="font-size: 12px;" @click="copyLink(slotProps.data as AllItem)" />
+            <Button severity="secondary" icon="pi pi-link" size="small" style="font-size: 12px;" @click="copyHandler(slotProps.data as AllItem)" />
             <Button severity="secondary" label="添加至" size="small" style="font-size: 12px;" @click="addRef.showAddHandler(slotProps.data.title)" />
             <Button severity="secondary" size="small" @click="downloadHandler($event, slotProps.data.url)" ><i class="pi pi-download" style="font-size: 12px;"></i></Button>
           </ButtonGroup>
@@ -31,6 +31,7 @@
   </div>
   <Loading ref="loadingRef" />
   <Add ref="addRef"/>
+  <Copy ref="copyRef"/>
 </template>
 
 <script lang="ts" setup >
@@ -39,12 +40,20 @@ import all, { type AllItem } from '../store/all';
 import { onMounted, ref } from 'vue';
 import Loading from '../components/loading.vue';
 import Add from '../components/all/add.vue';
+import Copy from '../components/all/copy.vue';
 import dayjs from 'dayjs';
 const loadingRef=ref();
 const confirm=useConfirm();
 const addRef=ref();
 
 document.title="AnimeHelper | 所有";
+
+const copyRef=ref();
+const copyHandler=(val: AllItem)=>{
+  copyRef.value.visible=true;
+  copyRef.value.url=val.url;
+  copyRef.value.magnet=val.magnet;
+}
 
 function formatBytes(bytes: number): string {
   if (bytes === 0) return '0 B';
@@ -62,11 +71,6 @@ onMounted(async ()=>{
   await all().getList();
   loadingRef.value.loadingHandler(false, "获取所有列表");
 })
-
-const copyLink=(item: AllItem)=>{
-  // toClipboard(item.url);
-  all().copy(item.url);
-}
 
 const downloadHandler=(event: any, url: string)=>{
   confirm.require({

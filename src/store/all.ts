@@ -8,10 +8,11 @@ import useClipboard from 'vue-clipboard3';
 const { toClipboard } = useClipboard();
 
 export interface AllItem{
+  time: number,
   title: string,
   url: string,
-  time: number,
   length: number,
+  magnet: string
 }
 
 export default defineStore("all", ()=>{
