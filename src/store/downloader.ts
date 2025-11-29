@@ -43,6 +43,7 @@ export default defineStore("downloader", ()=>{
   const rssTypes=ref<RssType[]>([
     {id: "mikan", text: "Mikan"},
     {id: "acgrip", text: "Acgrip"},
+    {id: "kisssub", text: "Kisssub"}
   ])
   const rssSelected=ref(rssTypes.value[0]);
 
