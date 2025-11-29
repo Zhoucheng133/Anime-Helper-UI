@@ -55,7 +55,7 @@ document.title="AnimeHelper | 所有";
 
 const type=ref("kisssub");
 const typeOptions=[
-  {name: "kisssub", code: "kisssub"},
+  {name: "Kisssub", code: "kisssub"},
   {name: "Mikan", code: "mikan"}
 ]
 
