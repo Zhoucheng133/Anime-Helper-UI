@@ -1,6 +1,10 @@
 <template>
   <div class="page">
-    <DataTable :value="all().list">
+    <div class="topbar">
+      <Select size="small" :options="typeOptions" v-model="type" optionLabel="name" option-value="code" :fluid="false" @change="load"/>
+      <InputText size="small" v-model="searchKey"/>
+    </div>
+    <DataTable :value="searchAll">
       <Column field="title" header="标题">
         <template #body="slotProps">
           <div class="title_area">
@@ -11,7 +15,7 @@
               <div class="select-none text-gray-400 text-xs">
                 {{ dayjs(slotProps.data.time).format("YYYY-MM-DD HH:mm") }}
               </div>
-              <div class="select-none text-gray-400 text-xs ml-8">
+              <div class="select-none text-gray-400 text-xs ml-8" v-if="type!='kisssub'" >
                 {{ formatBytes(slotProps.data.length) }}
               </div>
             </div>
@@ -35,9 +39,9 @@
 </template>
 
 <script lang="ts" setup >
-import { DataTable, Column, Button, ButtonGroup, useConfirm } from 'primevue';
+import { DataTable, Column, Button, ButtonGroup, useConfirm, InputText, Select } from 'primevue';
 import all, { type AllItem } from '../store/all';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import Loading from '../components/loading.vue';
 import Add from '../components/all/add.vue';
 import Copy from '../components/all/copy.vue';
@@ -45,8 +49,30 @@ import dayjs from 'dayjs';
 const loadingRef=ref();
 const confirm=useConfirm();
 const addRef=ref();
+const searchKey=ref("");
 
 document.title="AnimeHelper | 所有";
+
+const type=ref("kisssub");
+const typeOptions=[
+  {name: "kisssub", code: "kisssub"},
+  {name: "Mikan", code: "mikan"}
+]
+
+const searchAll=computed(()=>{
+  if(searchKey.value==""){
+    return all().list;
+  }
+  return all().list.filter((item: AllItem)=>{
+    return item.title.includes(searchKey.value);
+  });
+});
+
+async function load(){
+  loadingRef.value.loadingHandler(true, "获取所有列表");
+  await all().getList(type.value);
+  loadingRef.value.loadingHandler(false, "获取所有列表");
+}
 
 const copyRef=ref();
 const copyHandler=(val: AllItem)=>{
@@ -67,9 +93,7 @@ function formatBytes(bytes: number): string {
 }
 
 onMounted(async ()=>{
-  loadingRef.value.loadingHandler(true, "获取所有列表");
-  await all().getList();
-  loadingRef.value.loadingHandler(false, "获取所有列表");
+  load();
 })
 
 const downloadHandler=(event: any, url: string)=>{
@@ -93,6 +117,12 @@ const downloadHandler=(event: any, url: string)=>{
 </script>
 
 <style scoped>
+.topbar{
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 150px auto;
+  gap: 10px;
+}
 .title{
   width: 800px;
   overflow: hidden;

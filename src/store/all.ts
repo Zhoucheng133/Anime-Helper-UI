@@ -19,10 +19,13 @@ export default defineStore("all", ()=>{
   const toast=useToast();
   const list=ref<AllItem[]>([]);
 
-  const getList=async ()=>{
+  const getList=async (type: string)=>{
     const {data: response}=await axios.get(`${hostname}/api/all/get`, {
       headers: {
         token: store().token,
+      },
+      params: {
+        type: type,
       }
     })
     if(response.ok){
