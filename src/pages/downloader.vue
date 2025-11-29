@@ -14,25 +14,6 @@
         <Button label="下载器配置" size="small" severity="secondary" @click="showConfig" />
       </ButtonGroup>
     </div>
-    <!-- <div class="flex items-center m-5">
-      <div class="label">RSS来源</div>
-      <Select size="small" :options="downloader().rssTypes" v-model="downloader().rssSelected" optionLabel="text"  style="width: 120px;" />
-    </div>
-    <div class="flex items-center m-5">
-      <div class="label">更新频率</div>
-      <div class="flex items-center gap-3">
-        <InputText size="small" v-model="downloader().freq" style="width: 100px;" type="number" min="10" max="1440"/>
-        <div>分钟</div>
-      </div>
-    </div>
-    <div class="flex items-center m-5">
-      <div class="label">Aria2 地址</div>
-      <InputText size="small" placeholder="http(s)://" :fluid="true" v-model="downloader().link" />
-    </div>
-    <div class="flex items-center m-5">
-      <div class="label">Aria2 密钥</div>
-      <InputText size="small" :fluid="true" v-model="downloader().secret" type="password" />
-    </div> -->
     <Accordion :multiple="true" :value="[0, 1]">
       <AccordionPanel :value="0">
         <AccordionHeader>番剧列表</AccordionHeader>
