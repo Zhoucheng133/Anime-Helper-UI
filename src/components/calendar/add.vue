@@ -58,7 +58,7 @@ const updateTo=ref("");
 
 const id=ref("");
 
-const showAddHandler=async (item: CalendarItem, weekday: number)=>{
+const showAddHandler=async (item: CalendarItem, weekday: number, retry = false)=>{
   loadingRef.value.loadingHandler(true, "加载番剧信息");
   id.value=item.id;
   showAdd.value=true;
@@ -72,6 +72,11 @@ const showAddHandler=async (item: CalendarItem, weekday: number)=>{
   if(response.ok){
     episode.value=response.msg.eps;
     updateTo.value=response.msg.updates;
+  }else if(response.msg=="令牌已过期"){
+    if(!retry && await store().refreshToken()){
+      showAddHandler(item, weekday, true);
+      return;
+    }
   }else{
     toast.add({ severity: 'error', summary: '获取信息失败', detail: response.msg, life: 3000 });
   }

@@ -35,7 +35,7 @@ interface Log{
 }
 const logs=ref<Log[]>([]);
 
-const showLogHandler=async ()=>{
+const showLogHandler=async (retry = false)=>{
   showLog.value=true;
   const {data: response}=await axios.get(`${hostname}/api/download/log`, {
     headers: {
@@ -44,6 +44,11 @@ const showLogHandler=async ()=>{
   })
   if(response.ok){
     logs.value=response.msg.reverse() as Log[];
+  }else if(response.msg=="令牌已过期"){
+    if(!retry && await store().refreshToken()){
+      showLogHandler(true);
+      return;
+    }
   }else{
     toast.add({ severity: 'error', summary: '获取日志失败', detail: response.msg, life: 3000 });
   }

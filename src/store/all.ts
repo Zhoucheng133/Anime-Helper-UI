@@ -19,7 +19,7 @@ export default defineStore("all", ()=>{
   const toast=useToast();
   const list=ref<AllItem[]>([]);
 
-  const getList=async (type: string)=>{
+  const getList=async (type: string, retry=false)=>{
     const {data: response}=await axios.get(`${hostname}/api/all/get`, {
       headers: {
         token: store().token,
@@ -31,12 +31,17 @@ export default defineStore("all", ()=>{
     if(response.ok){
       const data=response.msg as AllItem[];
       list.value=data;
+    }else if(response.msg=="令牌已过期"){
+      if(!retry && await store().refreshToken()){
+        getList(type, true);
+        return;
+      }
     }else{
       toast.add({ severity: 'error', summary: '请求失败', detail: response.msg, life: 3000 });
     }
   }
 
-  const download=async (url: string)=>{
+  const download=async (url: string, retry=false)=>{
     const {data: response}=await axios.post(`${hostname}/api/all/download`, {
       link: url,
     },  {
@@ -46,6 +51,11 @@ export default defineStore("all", ()=>{
     })
     if(response.ok){
       toast.add({ severity: 'success', summary: '下载成功', detail: "已添加到下载队列", life: 3000 });
+    }else if(response.msg=="令牌已过期"){
+      if(!retry && await store().refreshToken()){
+        download(url, true);
+        return;
+      }
     }else{
       toast.add({ severity: 'error', summary: '下载失败', detail: response.msg, life: 3000 });
     }

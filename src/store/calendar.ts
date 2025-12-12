@@ -16,7 +16,7 @@ export default defineStore("calendar", ()=>{
   const list=ref<[CalendarItem[]]>();
   const toast=useToast();
 
-  const getList=async ()=>{
+  const getList=async (retry=false)=>{
     const {data: response}=await axios.get(`${hostname}/api/calendar/get`, {
       headers: {
         token: store().token
@@ -24,6 +24,11 @@ export default defineStore("calendar", ()=>{
     })
     if(response.ok){
       list.value=response.msg;
+    }else if(response.msg=="令牌已过期"){
+      if(!retry && await store().refreshToken()){
+        getList(true);
+        return;
+      }
     }else{
       toast.add({ severity: 'error', summary: '请求失败', detail: response.msg, life: 3000 });
     }

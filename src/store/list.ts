@@ -73,7 +73,8 @@ export default defineStore("list", ()=>{
   const limit=ref(20);
 
   const list=ref<ListItem[]>([]);
-  async function getList(){
+
+  async function getList(retry: boolean=false){
     const {data: response}=await axios.get(`${hostname}/api/list/get`, {
       params: {
         offset: offset.value,
@@ -88,6 +89,11 @@ export default defineStore("list", ()=>{
     if(response.ok){
       list.value=response.msg.data;
       length.value=response.msg.length;
+    }else if(response.msg=="令牌已过期"){
+      if(!retry && await store().refreshToken()){
+        getList(true);
+        return;
+      }
     }
   }
 
@@ -127,7 +133,7 @@ export default defineStore("list", ()=>{
     }
   })
 
-  async function add(item: ListItem){
+  async function add(item: ListItem, retry=false){
     if(item.now>=analyseEpisode(item)){
       return;
     }
@@ -143,12 +149,17 @@ export default defineStore("list", ()=>{
     })
     if(response.ok){
       getList();
+    }else if(response.msg=="令牌已过期"){
+      if(!retry && await store().refreshToken()){
+        add(item, true);
+        return;
+      }
     }else{
       toast.add({ severity: 'error', summary: '更新失败', detail: response.msg, life: 3000 });
     }
   }
 
-  async function minus(item: ListItem){
+  async function minus(item: ListItem, retry=false){
     if(item.now<=0){
       return;
     }
@@ -164,12 +175,17 @@ export default defineStore("list", ()=>{
     })
     if(response.ok){
       getList();
+    }else if(response.msg=="令牌已过期"){
+      if(!retry && await store().refreshToken()){
+        minus(item, true);
+        return;
+      }
     }else{
       toast.add({ severity: 'error', summary: '更新失败', detail: response.msg, life: 3000 });
     }
   }
 
-  async function addItem(title: string, update: boolean, episode: number, watchTo: number, updateTo: number, updateWeekday: number){
+  async function addItem(title: string, update: boolean, episode: number, watchTo: number, updateTo: number, updateWeekday: number, retry=false){
     const todayTimestamp = Date.now();
     const jsonItem={
       id: nanoid(),
@@ -187,12 +203,17 @@ export default defineStore("list", ()=>{
     })
     if(response.ok){
       getList()
+    }else if(response.msg=="令牌已过期"){
+      if(!retry && await store().refreshToken()){
+        addItem(title, update, episode, watchTo, updateTo, updateWeekday, true);
+        return;
+      }
     }else{
       toast.add({ severity: 'error', summary: '添加失败', detail: response.msg, life: 3000 });
     }
   }
 
-  async function editItem(id: string, title: string, update: boolean, episode: number, watchTo: number, updateTo: number, updateWeekday: number){
+  async function editItem(id: string, title: string, update: boolean, episode: number, watchTo: number, updateTo: number, updateWeekday: number, retry=false){
     const todayTimestamp = Date.now();
     const jsonItem={
       id: id,
@@ -210,12 +231,17 @@ export default defineStore("list", ()=>{
     })
     if(response.ok){
       getList()
+    }else if(response.msg=="令牌已过期"){
+      if(!retry && await store().refreshToken()){
+        editItem(id, title, update, episode, watchTo, updateTo, updateWeekday, true);
+        return;
+      }
     }else{
       toast.add({ severity: 'error', summary: '更新失败', detail: response.msg, life: 3000 });
     }
   }
 
-  function deleteItem(event: any, item: ListItem){
+  function deleteItem(event: any, item: ListItem, retry=false){
     confirm.require({
       target: event.currentTarget,
       position: "bottomleft",
@@ -239,6 +265,11 @@ export default defineStore("list", ()=>{
         })
         if(!response.ok){
           toast.add({ severity: 'error', summary: '删除失败', detail: response.msg, life: 3000 });
+        }else if(response.msg=="令牌已过期"){
+          if(!retry && await store().refreshToken()){
+            deleteItem(event, item, true);
+            return;
+          }
         }else{
           getList();
         }

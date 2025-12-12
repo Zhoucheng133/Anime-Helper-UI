@@ -62,7 +62,7 @@ export default defineStore("downloader", ()=>{
   const list=ref<DownloaderListType[]>([]);
   const exclude=ref<DownloaderExcludeType[]>([]);
 
-  const getList=async ()=>{
+  const getList=async (retry=false)=>{
     const {data: response}=await axios.get(`${hostname}/api/downloader/get`, {
       headers: {
         token: store().token,
@@ -79,12 +79,18 @@ export default defineStore("downloader", ()=>{
       exclude.value=data.exclude;
       clientTypeSelected.value=data.client=='qbit' ? clientType.value[1] : clientType.value[0];
       username.value=data.username;
+    }else if(response.msg=="令牌已过期"){
+      
+      if(!retry && await store().refreshToken()){
+        getList(true);
+        return;
+      }
     }else{
       toast.add({ severity: 'error', summary: '请求失败', detail: response.msg, life: 3000 });
     }
   }
 
-  const save=async (disableToast: boolean=false)=>{
+  const save=async (disableToast: boolean=false, retry=false)=>{
     if(link.value.length==0){
       toast.add({ severity: 'error', summary: '更新失败', detail: "Aria 链接不能为空", life: 3000 });
       return;
@@ -112,12 +118,17 @@ export default defineStore("downloader", ()=>{
     }
     if(response.ok){
       toast.add({ severity: 'success', summary: '更新成功', detail: "已更新到数据库", life: 3000 });
+    }else if(response.msg=="令牌已过期"){
+      if(!retry && await store().refreshToken()){
+        save(disableToast, true);
+        return;
+      }
     }else{
       toast.add({ severity: 'error', summary: '更新失败', detail: response.msg, life: 3000 });
     }
   }
 
-  const addToList=async (title: string, ass: string)=>{
+  const addToList=async (title: string, ass: string, retry=false)=>{
     const {data: response}=await axios.post(`${hostname}/api/downloader/list/add`, {
       data:{
         id: nanoid(),
@@ -132,12 +143,17 @@ export default defineStore("downloader", ()=>{
     if(response.ok){
       getList();
       toast.add({ severity: 'success', summary: '添加成功', detail: "已更新到数据库", life: 3000 });
+    }else if(response.msg=="令牌已过期"){
+      if(!retry && await store().refreshToken()){
+        addToList(title, ass, true);
+        return;
+      }
     }else{
       toast.add({ severity: 'error', summary: '添加失败', detail: response.msg, life: 3000 });
     }
   }
 
-  const delFromList=async (id: string)=>{
+  const delFromList=async (id: string, retry=false)=>{
     const {data: response}=await axios.delete(`${hostname}/api/downloader/list/del/${id}`, {
       headers: {
         token: store().token,
@@ -146,12 +162,17 @@ export default defineStore("downloader", ()=>{
     if(response.ok){
       getList();
       toast.add({ severity: 'success', summary: '删除成功', detail: "已更新到数据库", life: 3000 });
+    }else if(response.msg=="令牌已过期"){
+      if(!retry && await store().refreshToken()){
+        delFromList(id, true);
+        return;
+      }
     }else{
       toast.add({ severity: 'error', summary: '删除失败', detail: response.msg, life: 3000 });
     }
   }
 
-  const addToExclude=async (key: string)=>{
+  const addToExclude=async (key: string, retry=false)=>{
     const {data: response}=await axios.post(`${hostname}/api/downloader/exclude/add`, {
       data:{
         id: nanoid(),
@@ -165,12 +186,17 @@ export default defineStore("downloader", ()=>{
     if(response.ok){
       getList();
       toast.add({ severity: 'success', summary: '添加成功', detail: "已更新到数据库", life: 3000 });
+    }else if(response.msg=="令牌已过期"){
+      if(!retry && await store().refreshToken()){
+        addToExclude(key, true);
+        return;
+      }
     }else{
       toast.add({ severity: 'error', summary: '添加失败', detail: response.msg, life: 3000 });
     }
   }
 
-  const delFromExclude=async (id: string)=>{
+  const delFromExclude=async (id: string, retry=false)=>{
     const {data: response}=await axios.delete(`${hostname}/api/downloader/exclude/del/${id}`, {
       headers: {
         token: store().token,
@@ -179,12 +205,17 @@ export default defineStore("downloader", ()=>{
     if(response.ok){
       getList();
       toast.add({ severity: 'success', summary: '删除成功', detail: "已更新到数据库", life: 3000 });
+    }else if(response.msg=="令牌已过期"){
+      if(!retry && await store().refreshToken()){
+        delFromExclude(id, true);
+        return;
+      }
     }else{
       toast.add({ severity: 'error', summary: '删除失败', detail: response.msg, life: 3000 });
     }
   }
 
-  const toggleRun=async (toggle: boolean)=>{
+  const toggleRun=async (toggle: boolean, retry=false)=>{
     if(toggle){
       if(link.value.length==0){
         toast.add({ severity: 'error', summary: '运行失败', detail: "没有配置Aria地址", life: 3000 });
@@ -217,6 +248,11 @@ export default defineStore("downloader", ()=>{
           running.value = false;
         });
         return;
+      }else if(response.msg=="令牌已过期"){
+        if(!retry && await store().refreshToken()){
+          toggleRun(toggle, true);
+          return;
+        }
       }
     }else{
       const {data: response}=await axios.post(`${hostname}/api/download/stop`, {}, {
@@ -230,6 +266,11 @@ export default defineStore("downloader", ()=>{
           running.value = true;
         });
         return;
+      }else if(response.msg=="令牌已过期"){
+        if(!retry && await store().refreshToken()){
+          toggleRun(toggle, true);
+          return;
+        }
       }
     }
   }

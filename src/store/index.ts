@@ -45,7 +45,6 @@ export default defineStore("main", ()=>{
     
     if(authData.ok){
       token.value=localToken;
-      console.log(token.value)
     }else if (authData.msg === "令牌已过期") {
       if(await refreshToken()){
         return Pages.other;
