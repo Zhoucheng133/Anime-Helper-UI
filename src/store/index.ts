@@ -29,7 +29,6 @@ export default defineStore("main", ()=>{
   }
 
   async function authHandler(): Promise<Pages>{
-
     const { data: initData } = await axios.get(`${hostname}/api/init`);
     if(initData.msg){
       return Pages.register;
@@ -45,7 +44,8 @@ export default defineStore("main", ()=>{
     });
     
     if(authData.ok){
-      token.value=authData.msg;
+      token.value=localToken;
+      console.log(token.value)
     }else if (authData.msg === "令牌已过期") {
       if(await refreshToken()){
         return Pages.other;
