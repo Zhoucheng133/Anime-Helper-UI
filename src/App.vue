@@ -20,29 +20,48 @@ const router=useRouter();
 const toast=useToast();
 
 onMounted(async ()=>{
-  const {data: response}=await axios.get(`${hostname}/api/init`);
-  if(response.msg){
-    loading.value=false;
-    router.replace("/register")
-  }else{
-    const token=localStorage.getItem("token");
-    if(token==null){
-      loading.value=false;
-      router.replace("/login")
-    }else{
-      const {data: response}=await axios.get(`${hostname}/api/auth`, {
-        headers: {
-          token,
-        }
-      });
-      loading.value=false;
-      if(response.ok){
-        store().token=token;
-      }else{
-        toast.add({ severity: 'error', summary: '身份验证失败', detail: '令牌过期或无效', life: 3000 });
-        router.replace("/login")
-      }
+  loading.value = true;
+  try {
+    // 检查是否要注册
+    const { data: initData } = await axios.get(`${hostname}/api/init`);
+    if (initData.msg) {
+      router.replace("/register");
+      return;
     }
+
+    // 获取本地 token
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.replace("/login");
+      return;
+    }
+
+    // 验证 token
+    let authData;
+    try {
+      const { data } = await axios.get(`${hostname}/api/auth`, {
+        headers: { access_token: token }
+      });
+      authData = data;
+    } catch (err: any) {
+      toast.add({ severity: 'error', summary: '身份验证失败', detail: err.message || '请求失败', life: 3000 });
+      router.replace("/login");
+      return;
+    }
+    
+    if (authData.ok) {
+      store().token = token;
+    } else if (authData.msg === "令牌已过期") {
+      await store().refreshToken();
+    } else {
+      toast.add({ severity: 'error', summary: '身份验证失败', detail: '令牌过期或无效', life: 3000 });
+      router.replace("/login");
+    }
+  } catch (err: any) {
+    toast.add({ severity: 'error', summary: '初始化失败', detail: err.message || '请求失败', life: 3000 });
+    router.replace("/login");
+  } finally {
+    loading.value = false;
   }
 })
 
