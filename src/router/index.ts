@@ -1,4 +1,5 @@
 import {createRouter, createWebHistory} from "vue-router";
+import store, { Pages } from "../store";
 
 const router=createRouter({
   history: createWebHistory(),
@@ -33,6 +34,23 @@ const router=createRouter({
       component: ()=>import("../pages/downloader.vue")
     }
   ]
+})
+
+router.beforeEach(async (to, __, next)=>{
+  let nextPage: Pages=await store().authHandler();
+  switch (nextPage) {
+    case Pages.login:
+      if (to.path !== "/login") next("/login");
+      else next();
+      break;
+    case Pages.register:
+      if (to.path !== "/register") next("/register");
+      else next();
+      break;
+    default:
+      next();
+      break;
+  }
 })
 
 export default router;
