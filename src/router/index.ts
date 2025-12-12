@@ -37,15 +37,16 @@ const router=createRouter({
 })
 
 router.beforeEach(async (to, __, next)=>{
+  if(to.path=="/login" || to.path=="/register"){
+    next();
+  }
   let nextPage: Pages=await store().authHandler();
   switch (nextPage) {
     case Pages.login:
-      if (to.path !== "/login") next("/login");
-      else next();
+      next("/login");
       break;
     case Pages.register:
-      if (to.path !== "/register") next("/register");
-      else next();
+      next("/register");
       break;
     default:
       next();
