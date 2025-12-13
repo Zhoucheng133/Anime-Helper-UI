@@ -8,6 +8,7 @@
       <Button label="列表" variant="text" severity="secondary" @click="toRoute('/list')" :disabled="route.path=='/list'" icon="pi pi-list"/>
       <Button label="每日放送" variant="text"severity="secondary" @click="toRoute('/calendar')" :disabled="route.path=='/calendar'" icon="pi pi-calendar"/>
       <Button label="最近更新" variant="text" severity="secondary" @click="toRoute('/recent')" :disabled="route.path=='/recent'" icon="pi pi-server"/>
+      <Button label="搜索" variant="text" severity="secondary" @click="toRoute('/search')" :disabled="route.path=='/search'" icon="pi pi-search"/>
       <Button label="下载器" variant="text" severity="secondary" @click="toRoute('/downloader')" :disabled="route.path=='/downloader'" icon="pi pi-download"/>
     </div>
     <div class="signout_area">
@@ -42,9 +43,14 @@ const menuItems=ref([
         command: ()=>toRoute('/calendar')
       },
       {
-        label: '所有',
+        label: '最近更新',
         icon: 'pi pi-server',
         command: ()=>toRoute('/recent')
+      },
+      {
+        label: '搜索',
+        icon: 'pi pi-search',
+        command: ()=>toRoute('/search')
       },
       {
         label: '下载器',

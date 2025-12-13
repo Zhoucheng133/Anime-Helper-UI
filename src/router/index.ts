@@ -32,7 +32,11 @@ const router=createRouter({
     {
       path: "/downloader",
       component: ()=>import("../pages/downloader.vue")
-    }
+    },
+    {
+      path: "/search",
+      component: ()=>import("../pages/search.vue")
+    },
   ]
 })
 
