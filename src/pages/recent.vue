@@ -4,7 +4,7 @@
       <Select size="small" :options="typeOptions" v-model="type" optionLabel="name" option-value="code" :fluid="false" @change="load"/>
       <InputText size="small" v-model="searchKey"/>
     </div>
-    <DataTable :value="searchAll">
+    <DataTable :value="searchRecnt">
       <Column field="title" header="标题">
         <template #body="slotProps">
           <div class="title_area">
@@ -25,7 +25,7 @@
       <Column header="操作" style="min-width: 150px;">
         <template #body="slotProps">
           <ButtonGroup>
-            <Button severity="secondary" icon="pi pi-link" size="small" style="font-size: 12px;" @click="copyHandler(slotProps.data as AllItem)" />
+            <Button severity="secondary" icon="pi pi-link" size="small" style="font-size: 12px;" @click="copyHandler(slotProps.data as DownloadItem)" />
             <Button severity="secondary" label="添加至" size="small" style="font-size: 12px;" @click="addRef.showAddHandler(slotProps.data.title)" />
             <Button severity="secondary" size="small" @click="downloadHandler($event, slotProps.data.url)" ><i class="pi pi-download" style="font-size: 12px;"></i></Button>
           </ButtonGroup>
@@ -40,11 +40,11 @@
 
 <script lang="ts" setup >
 import { DataTable, Column, Button, ButtonGroup, useConfirm, InputText, Select } from 'primevue';
-import all, { type AllItem } from '../store/all';
+import recent, { type DownloadItem } from '../store/recent';
 import { computed, onMounted, ref } from 'vue';
 import Loading from '../components/loading.vue';
-import Add from '../components/all/add.vue';
-import Copy from '../components/all/copy.vue';
+import Add from '../components/recent/add.vue';
+import Copy from '../components/recent/copy.vue';
 import dayjs from 'dayjs';
 const loadingRef=ref();
 const confirm=useConfirm();
@@ -53,29 +53,29 @@ const searchKey=ref("");
 
 document.title="AnimeHelper | 所有";
 
-const type=ref("mikan");
+const type=ref("kisssub");
 const typeOptions=[
   {name: "Kisssub", code: "kisssub"},
   {name: "Mikan", code: "mikan"}
 ]
 
-const searchAll=computed(()=>{
+const searchRecnt=computed(()=>{
   if(searchKey.value==""){
-    return all().list;
+    return recent().list;
   }
-  return all().list.filter((item: AllItem)=>{
+  return recent().list.filter((item: DownloadItem)=>{
     return item.title.includes(searchKey.value);
   });
 });
 
 async function load(){
   loadingRef.value.loadingHandler(true, "获取所有列表");
-  await all().getList(type.value);
+  await recent().getList(type.value);
   loadingRef.value.loadingHandler(false, "获取所有列表");
 }
 
 const copyRef=ref();
-const copyHandler=(val: AllItem)=>{
+const copyHandler=(val: DownloadItem)=>{
   copyRef.value.visible=true;
   copyRef.value.url=val.url;
   copyRef.value.magnet=val.magnet;
@@ -110,7 +110,7 @@ const downloadHandler=(event: any, url: string)=>{
       size: "small",
       label: '下载',
     },
-    accept: () => all().download(url),
+    accept: () => recent().download(url),
   });
 }
 

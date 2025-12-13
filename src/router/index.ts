@@ -26,8 +26,8 @@ const router=createRouter({
       component: ()=>import("../pages/calendar.vue")
     },
     {
-      path: "/all",
-      component: ()=>import("../pages/all.vue")
+      path: "/recent",
+      component: ()=>import("../pages/recent.vue")
     },
     {
       path: "/downloader",

@@ -7,7 +7,7 @@
     <div class="menus" v-if="!(store().token.length==0) && !mobile">
       <Button label="列表" variant="text" severity="secondary" @click="toRoute('/list')" :disabled="route.path=='/list'" icon="pi pi-list"/>
       <Button label="每日放送" variant="text"severity="secondary" @click="toRoute('/calendar')" :disabled="route.path=='/calendar'" icon="pi pi-calendar"/>
-      <Button label="所有" variant="text" severity="secondary" @click="toRoute('/all')" :disabled="route.path=='/all'" icon="pi pi-server"/>
+      <Button label="最近更新" variant="text" severity="secondary" @click="toRoute('/recent')" :disabled="route.path=='/recent'" icon="pi pi-server"/>
       <Button label="下载器" variant="text" severity="secondary" @click="toRoute('/downloader')" :disabled="route.path=='/downloader'" icon="pi pi-download"/>
     </div>
     <div class="signout_area">
@@ -44,7 +44,7 @@ const menuItems=ref([
       {
         label: '所有',
         icon: 'pi pi-server',
-        command: ()=>toRoute('/all')
+        command: ()=>toRoute('/recent')
       },
       {
         label: '下载器',

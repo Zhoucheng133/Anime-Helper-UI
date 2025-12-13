@@ -20,7 +20,7 @@
 import { Dialog, InputText, Button, InputGroup } from 'primevue';
 
 import { ref } from 'vue';
-import all from '../../store/all';
+import recent from '../../store/recent';
 
 const visible=ref(false);
 
@@ -35,6 +35,6 @@ defineExpose({
 
 
 const copyLink=(url: string)=>{
-  all().copy(url);
+  recent().copy(url);
 }
 </script>

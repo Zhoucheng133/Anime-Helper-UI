@@ -7,7 +7,7 @@ import { useToast } from "primevue";
 import useClipboard from 'vue-clipboard3';
 const { toClipboard } = useClipboard();
 
-export interface AllItem{
+export interface DownloadItem{
   time: number,
   title: string,
   url: string,
@@ -15,12 +15,12 @@ export interface AllItem{
   magnet: string
 }
 
-export default defineStore("all", ()=>{
+export default defineStore("recent", ()=>{
   const toast=useToast();
-  const list=ref<AllItem[]>([]);
+  const list=ref<DownloadItem[]>([]);
 
   const getList=async (type: string, retry=false)=>{
-    const {data: response}=await axios.get(`${hostname}/api/all/get`, {
+    const {data: response}=await axios.get(`${hostname}/api/recent/get`, {
       headers: {
         token: store().token,
       },
@@ -29,7 +29,7 @@ export default defineStore("all", ()=>{
       }
     })
     if(response.ok){
-      const data=response.msg as AllItem[];
+      const data=response.msg as DownloadItem[];
       list.value=data;
     }else if(response.msg=="令牌已过期"){
       if(!retry && await store().refreshToken()){
@@ -42,7 +42,7 @@ export default defineStore("all", ()=>{
   }
 
   const download=async (url: string, retry=false)=>{
-    const {data: response}=await axios.post(`${hostname}/api/all/download`, {
+    const {data: response}=await axios.post(`${hostname}/api/recent/download`, {
       link: url,
     },  {
       headers: {
