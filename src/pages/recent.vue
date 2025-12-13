@@ -51,7 +51,7 @@ const confirm=useConfirm();
 const addRef=ref();
 const searchKey=ref("");
 
-document.title="AnimeHelper | 所有";
+document.title="AnimeHelper | 最近更新";
 
 const type=ref("kisssub");
 const typeOptions=[
@@ -69,9 +69,9 @@ const searchRecnt=computed(()=>{
 });
 
 async function load(){
-  loadingRef.value.loadingHandler(true, "获取所有列表");
+  loadingRef.value.loadingHandler(true, "获取最近更新列表");
   await recent().getList(type.value);
-  loadingRef.value.loadingHandler(false, "获取所有列表");
+  loadingRef.value.loadingHandler(false, "获取最近更新列表");
 }
 
 const copyRef=ref();
