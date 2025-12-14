@@ -19,7 +19,7 @@
         <AccordionHeader>番剧列表</AccordionHeader>
         <AccordionContent>
           <Button size="small" @click="showAddList">添加</Button>
-          <DataTable :value="downloader().list">
+          <DataTable :value="downloader().list" v-if="downloader().list.length!=0">
             <Column field="title" header="标题"></Column>
             <Column field="ass" header="字幕组"></Column>
             <Column header="操作">
@@ -28,13 +28,18 @@
               </template>
             </Column>
           </DataTable>
+          <div class="add_tip" v-else>
+            <div>没有添加任何需要下载的番剧，你需要</div>
+            <Tag>添加</Tag>
+            <div>才能执行下载器</div>
+          </div>
         </AccordionContent>
       </AccordionPanel>
       <AccordionPanel :value="1">
         <AccordionHeader>排除关键字</AccordionHeader>
         <AccordionContent>
           <Button size="small" @click="addExclude">添加</Button>
-          <DataTable :value="downloader().exclude">
+          <DataTable :value="downloader().exclude" v-if="downloader().exclude.length!=0">
             <Column field="key" header="关键字"></Column>
             <Column header="操作">
               <template #body="slotProps">
@@ -42,6 +47,11 @@
               </template>
             </Column>
           </DataTable>
+          <div class="add_tip" v-else>
+            <div>没有添加任何排除关键字，你可以</div>
+            <Tag>添加</Tag>
+            <div>确保不下载带有此关键字的资源</div>
+          </div>
         </AccordionContent>
       </AccordionPanel>
     </Accordion>
@@ -144,5 +154,10 @@ const delFromListHandler=(event: any, id: string)=>{
   .d_page{
     width: calc(100% - 40px);
   }
+}
+.add_tip{
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
 }
 </style>
