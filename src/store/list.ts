@@ -140,7 +140,7 @@ export default defineStore("list", ()=>{
     const {data: response}=await axios.post(`${hostname}/api/list/edit`, {
       data: {
         ...item,
-        now: item.now+=1
+        now: item.now+1
       }
     }, {
       headers: {
@@ -166,7 +166,7 @@ export default defineStore("list", ()=>{
     const {data: response}=await axios.post(`${hostname}/api/list/edit`, {
       data: {
         ...item,
-        now: item.now-=1
+        now: item.now-1
       }
     }, {
       headers: {
