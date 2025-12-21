@@ -221,13 +221,19 @@ export default defineStore("downloader", ()=>{
   const toggleRun=async (toggle: boolean, retry=false)=>{
     if(toggle){
       if(link.value.length==0){
-        toast.add({ severity: 'error', summary: '运行失败', detail: "没有配置Aria地址", life: 3000 });
+        toast.add({ severity: 'error', summary: '运行失败', detail: "没有配置下载器地址", life: 3000 });
         nextTick(() => {
           running.value = false;
         });
         return;
-      }else if(secret.value.length==0){
-        toast.add({ severity: 'error', summary: '运行失败', detail: "没有配置Aria密钥", life: 3000 });
+      }else if(secret.value.length==0 && clientTypeSelected.value.id=="qbit"){
+        toast.add({ severity: 'error', summary: '运行失败', detail: "没有配置下载器密钥", life: 3000 });
+        nextTick(() => {
+          running.value = false;
+        });
+        return;
+      }else if(username.value.length==0 && clientTypeSelected.value.id=="qbit"){
+        toast.add({ severity: 'error', summary: '运行失败', detail: "没有配置下载器用户名", life: 3000 });
         nextTick(() => {
           running.value = false;
         });
