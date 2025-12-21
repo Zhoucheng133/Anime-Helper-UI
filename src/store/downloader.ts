@@ -92,10 +92,13 @@ export default defineStore("downloader", ()=>{
 
   const save=async (disableToast: boolean=false, retry=false)=>{
     if(link.value.length==0){
-      toast.add({ severity: 'error', summary: '更新失败', detail: "Aria 链接不能为空", life: 3000 });
+      toast.add({ severity: 'error', summary: '更新失败', detail: "链接不能为空", life: 3000 });
       return;
-    }else if(secret.value.length==0){
-      toast.add({ severity: 'error', summary: '更新失败', detail: "Aria 密钥不能为空", life: 3000 });
+    }else if(secret.value.length==0 && clientTypeSelected.value.id=="qbit"){
+      toast.add({ severity: 'error', summary: '更新失败', detail: "密钥不能为空", life: 3000 });
+      return;
+    }else if(username.value.length==0 && clientTypeSelected.value.id=="qbit"){
+      toast.add({ severity: 'error', summary: '更新失败', detail: "用户名不能为空", life: 3000 });
       return;
     }
     const {data: response}=await axios.post(`${hostname}/api/downloader/save`, {
