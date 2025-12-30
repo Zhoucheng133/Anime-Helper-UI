@@ -123,7 +123,7 @@ const downloadHandler=(event: any, url: string)=>{
 </script>
 
 <style scoped>
-  .empty{
+.empty{
   height: 100%;
   width: 100%;
   display: flex;

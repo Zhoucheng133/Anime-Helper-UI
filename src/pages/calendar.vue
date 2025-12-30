@@ -1,6 +1,12 @@
 <template>
   <div class="page">
-    <Accordion :multiple="true" :value="[0, 1, 2, 3, 4, 5, 6]">
+    <div v-if="loading" class="empty">
+      <div class="add_tip">
+        <i class="pi pi-spin pi-spinner" style="font-size: 20px"></i> 
+        <div style="margin-left: 10px;">正在加载中...</div>
+      </div>
+    </div>
+    <Accordion :multiple="true" :value="[0, 1, 2, 3, 4, 5, 6]" v-else>
       <AccordionPanel v-for="(values, index) in calendar().list" :key="index" :value="index">
         <AccordionHeader>{{ list().weekdays[index==0 ? 6 : index-1].name }}</AccordionHeader>
         <AccordionContent>
@@ -21,6 +27,7 @@ import type { CalendarItem } from '../store/calendar';
 import calendar from '../store/calendar';
 
 document.title="AnimeHelper | 每日放送";
+const loading=ref(true);
 
 const addRef=ref();
 
@@ -32,5 +39,23 @@ const showAdd=(item: CalendarItem, weekday: number)=>{
 
 onMounted(async ()=>{
   await calendar().getList();
+  loading.value=false;
 })
-</script>
+</script >
+
+<style scoped>
+.empty{
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: calc(100vh - 60px - 50px);
+}
+.add_tip{
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+</style>
