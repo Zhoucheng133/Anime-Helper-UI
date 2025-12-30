@@ -4,7 +4,7 @@
       <AccordionPanel v-for="(values, index) in calendar().list" :key="index" :value="index">
         <AccordionHeader>{{ list().weekdays[index==0 ? 6 : index-1].name }}</AccordionHeader>
         <AccordionContent>
-          <Tag rounded v-for="(item, _) in values" :key="item.id" :value="item.title" :class="item.added ? 'select-none m-1' : 'select-none m-1 cursor-pointer'" :severity="item.added ? 'warn' : 'secondary'" @click="showAdd(item, index)" />
+          <Tag rounded v-for="(item, _) in values" :key="item.id" :value="item.title" :class="item.added ? 'select-none m-1' : 'select-none m-1 cursor-pointer'" :severity="calendar().added(item.title) ? 'warn' : 'secondary'" @click="showAdd(item, index)" />
         </AccordionContent>
       </AccordionPanel>
     </Accordion>
@@ -32,5 +32,8 @@ const showAdd=(item: CalendarItem, weekday: number)=>{
 
 onMounted(async ()=>{
   await calendar().getList();
+  if(list().list.length==0){
+    await list().getList();
+  }
 })
 </script>

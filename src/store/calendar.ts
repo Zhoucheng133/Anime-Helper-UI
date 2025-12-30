@@ -4,6 +4,7 @@ import hostname from "../env/hostname";
 import store from ".";
 import { ref } from "vue";
 import { useToast } from "primevue";
+import listStore from "./list";
 
 export interface CalendarItem{
   title: string,
@@ -15,6 +16,10 @@ export default defineStore("calendar", ()=>{
 
   const list=ref<[CalendarItem[]]>();
   const toast=useToast();
+
+  const added=(title: string): boolean=>{
+    return listStore().list.some(item=>item.title==title);
+  }
 
   const getList=async (retry=false)=>{
     const {data: response}=await axios.get(`${hostname}/api/calendar/get`, {
@@ -36,6 +41,7 @@ export default defineStore("calendar", ()=>{
 
   return {
     list,
-    getList
+    getList,
+    added
   }
 })
