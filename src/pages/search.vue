@@ -6,7 +6,13 @@
         <Button @click="()=>searchHandler()">搜索</Button>
       </InputGroup>
     </div>
-    <div v-if="result.length!=0">
+    <div v-if="loading" class="empty">
+      <div class="add_tip">
+        <i class="pi pi-spin pi-spinner" style="font-size: 20px"></i> 
+        <div style="margin-left: 10px;">正在搜索中...</div>
+      </div>
+    </div>
+    <div v-else-if="result.length!=0">
       <DataTable :value="result">
         <Column field="title" header="标题">
           <template #body="slotProps">
@@ -40,7 +46,7 @@
         <div>按钮</div>
       </div>
     </div>
-    <Loading ref="loadingRef" />
+    <!-- <Loading ref="loadingRef" /> -->
     <Add ref="addRef"/>
     <Copy ref="copyRef"/>
   </div>
@@ -57,20 +63,21 @@ import axios from 'axios';
 import store from '../store';
 import Add from '../components/recent/add.vue';
 import Copy from '../components/recent/copy.vue';
-import Loading from '../components/loading.vue';
-const loadingRef=ref();
+// import Loading from '../components/loading.vue';
 const confirm=useConfirm();
 const addRef=ref();
 const toast=useToast();
 
 document.title="AnimeHelper | 搜索";
 
+const loading=ref(false);
+
 const searchKey = ref("");
 
 const result = ref<DownloadItem[]>([]);
 
 const searchHandler=async (retry=false)=>{
-  loadingRef.value.loadingHandler(true, "搜索关键词...");
+  loading.value=true;
   const {data: response}=await axios.get(`${hostname}/api/search/${searchKey.value}`, {
     headers: {
       token: store().token,
@@ -86,7 +93,7 @@ const searchHandler=async (retry=false)=>{
   }else{
     toast.add({ severity: 'error', summary: '搜索失败', detail: response.msg, life: 3000 });
   }
-  loadingRef.value.loadingHandler(false, "获取最近更新列表");
+  loading.value=false;
 }
 
 const downloadHandler=(event: any, url: string)=>{

@@ -4,7 +4,13 @@
       <Select size="small" :options="typeOptions" v-model="type" optionLabel="name" option-value="code" :fluid="false" @change="load"/>
       <InputText size="small" v-model="searchKey"/>
     </div>
-    <DataTable :value="searchRecnt">
+    <div v-if="loading" class="empty">
+      <div class="add_tip">
+        <i class="pi pi-spin pi-spinner" style="font-size: 20px"></i> 
+        <div style="margin-left: 10px;">正在加载中...</div>
+      </div>
+    </div>
+    <DataTable :value="searchRecnt" v-else>
       <Column field="title" header="标题">
         <template #body="slotProps">
           <div class="title_area">
@@ -33,7 +39,6 @@
       </Column>
     </DataTable>
   </div>
-  <Loading ref="loadingRef" />
   <Add ref="addRef"/>
   <Copy ref="copyRef"/>
 </template>
@@ -42,14 +47,13 @@
 import { DataTable, Column, Button, ButtonGroup, useConfirm, InputText, Select } from 'primevue';
 import recent, { type DownloadItem } from '../store/recent';
 import { computed, onMounted, ref } from 'vue';
-import Loading from '../components/loading.vue';
 import Add from '../components/recent/add.vue';
 import Copy from '../components/recent/copy.vue';
 import dayjs from 'dayjs';
-const loadingRef=ref();
 const confirm=useConfirm();
 const addRef=ref();
 const searchKey=ref("");
+const loading=ref(false);
 
 document.title="AnimeHelper | 最近更新";
 
@@ -69,9 +73,11 @@ const searchRecnt=computed(()=>{
 });
 
 async function load(){
-  loadingRef.value.loadingHandler(true, "获取最近更新列表");
+  // loadingRef.value.loadingHandler(true, "获取最近更新列表");
+  loading.value=true;
   await recent().getList(type.value);
-  loadingRef.value.loadingHandler(false, "获取最近更新列表");
+  loading.value=false;
+  // loadingRef.value.loadingHandler(false, "获取最近更新列表");
 }
 
 const copyRef=ref();
@@ -117,6 +123,20 @@ const downloadHandler=(event: any, url: string)=>{
 </script>
 
 <style scoped>
+  .empty{
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: calc(100vh - 60px - 45px - 50px);
+}
+.add_tip{
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
 .topbar{
   margin-top: 10px;
   display: grid;
