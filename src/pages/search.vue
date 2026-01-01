@@ -137,6 +137,7 @@ const copyHandler=(val: DownloadItem)=>{
   justify-content: center;
   flex-direction: column;
   position: absolute;
+  z-index: -10;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
