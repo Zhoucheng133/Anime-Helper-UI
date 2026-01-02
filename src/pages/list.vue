@@ -9,7 +9,7 @@
       </div>
       <div v-else></div>
     </div>
-    <div class="table" v-if="list().list.length!=0 && loading==false">
+    <div class="card" v-if="list().list.length!=0 && loading==false">
       <DataTable :value="list().list">
         <Column field="title" header="标题" style="min-width: 270px;">
           <template #body="slotProps">
