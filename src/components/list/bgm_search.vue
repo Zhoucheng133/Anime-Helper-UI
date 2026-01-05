@@ -107,3 +107,15 @@ defineExpose({showDialogHandler})
   }
 }
 </style>
+
+<style scoped>
+.item_title{
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.ep{
+  padding-left: 6px;
+}
+</style>
