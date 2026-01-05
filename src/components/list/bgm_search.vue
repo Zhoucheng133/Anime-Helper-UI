@@ -1,8 +1,8 @@
 <template>
   <Dialog v-model:visible="showDialog" modal header="从Bangumi中添加..." :draggable="false" class="select-none bgm_search_dialog_content" :closable="true">
     <div class="flex items-center gap-2 mb-4">
-      <InputText size="small" id="title" class="flex-auto" autocomplete="off" v-model="title" />
-      <Button size="small" @click="searchBangumi(title)">搜索</Button>
+      <InputText size="small" id="title" class="flex-auto" autocomplete="off" v-model="title" placeholder="搜索标题" @keyup.enter="searchBangumi(title)" />
+      <Button size="small" @click="searchBangumi(title)" :disabled="loaading">搜索</Button>
     </div>
     <div>
       <DataTable :value="ls" v-if="ls.length!=0" class="mb-5">
@@ -20,7 +20,7 @@
         </Column>
         <Column header="操作" style="min-width: 70px;">
           <template #body="slotProps">
-            <Button severity="secondary" size="small" @click="addHandler(slotProps.data.id)">添加</Button>
+            <Button severity="secondary" size="small" @click="addHandler(slotProps.data)" :disabled="loaading">添加</Button>
           </template>
         </Column>
       </DataTable>
@@ -35,8 +35,11 @@ import { ref } from 'vue';
 import hostname from '../../env/hostname';
 import { useToast } from "primevue/usetoast";
 import store from '../../store';
+import list from '../../store/list';
 
 const toast = useToast();
+
+const loaading=ref(false);
 
 interface BangumiItem{
   id: number,
@@ -44,7 +47,6 @@ interface BangumiItem{
   episode: number,
 }
 
-const selectedItem=ref<BangumiItem>();
 const ls=ref<BangumiItem[]>([]);
 
 const showDialog=ref(false);
@@ -67,14 +69,27 @@ async function searchBangumi(keyword: string, retry=false){
   }
 }
 
-const addHandler=(id: number)=>{
-  console.log(id);
-  
-  // TODO ?
+const addHandler=async (item: BangumiItem, retry=false)=>{
+  let rlt=await axios.get(`${hostname}/api/list/bgm/updates/${item.id.toString()}`, {
+    headers: {
+      token: store().token,
+    }
+  });
+  if(rlt.data.ok){
+    await list().addItem(item.title, item.episode>rlt.data.msg.updates, item.episode, 0, rlt.data.msg.updates, rlt.data.msg.day)
+    showDialog.value=false;
+  }else if(rlt.data.msg=="令牌已过期"){
+    if(!retry && await store().refreshToken()){
+      return addHandler(item, true);
+    }
+  }else{
+    toast.add({ severity: 'error', summary: '搜索失败', detail: rlt.data.msg, life: 3000 });
+  }
 }
 
 const showDialogHandler=()=>{
   ls.value=[];
+  title.value='';
   showDialog.value=true;
 }
 
