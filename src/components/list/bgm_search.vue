@@ -20,7 +20,7 @@
         </Column>
         <Column header="操作" style="min-width: 70px;">
           <template #body="slotProps">
-            <Button severity="secondary" size="small" @click="addHandler(slotProps.data)" :disabled="loaading">添加</Button>
+            <Button severity="secondary" size="small" @click="addHandler(slotProps.data)" :disabled="loaading || slotProps.data.episode==0">添加</Button>
           </template>
         </Column>
       </DataTable>
