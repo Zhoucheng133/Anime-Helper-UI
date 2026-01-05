@@ -1,7 +1,9 @@
 <template>
   <div class="page">
     <div class="tool_bar">
-      <Button label="添加" size="small" @click="addRef.showAddHandler()" />
+      <!-- <Button label="添加" size="small" @click="addRef.showAddHandler()" /> -->
+      <Button label="添加" size="small" @click="toggleMenu" />
+      <Menu ref="addmenuRef" id="overlay_menu" :model="addMenu" :popup="true" />
       <Select size="small" v-model="list().selectedFilter" :options="list().filters" scroll-height="20rem" optionLabel="name" @change="list().getList()" />
       <InputText size="small" style="width: 100%" v-if="list().selectedFilter.name=='搜索'" v-model="list().searchKeyWord" @change="list().getList()" />
       <div v-if="list().selectedFilter.name=='更新周'">
@@ -80,20 +82,50 @@
     <Add ref="addRef" />
     <Edit ref="editRef"/>
     <AddDownloader ref="downloaderRef"/>
+    <BgmSearch ref="bgmSearchRef"/>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { Button, Select, InputText, DataTable, Column, Paginator, ProgressBar, ButtonGroup, Tag } from 'primevue';
+import { Button, Menu, Select, InputText, DataTable, Column, Paginator, ProgressBar, ButtonGroup, Tag } from 'primevue';
 import list from '../store/list';
 import Add from '../components/list/add.vue';
 import Edit from "../components/list/edit.vue";
 import AddDownloader from '../components/list/add_downloader.vue';
+import BgmSearch from '../components/list/bgm_search.vue';
 import { onMounted, ref } from 'vue';
 
 document.title="AnimeHelper | 列表";
 
 const loading=ref(true);
+const addmenuRef=ref();
+const bgmSearchRef=ref();
+
+const toggleMenu=(event: any)=>{
+  addmenuRef.value.toggle(event);
+}
+
+const addMenu=ref([
+  {
+    label: '添加',
+    items: [
+      {
+        label: '手动添加',
+        icon: 'pi pi-plus',
+        command: ()=>{
+          addRef.value.showAddHandler();
+        }
+      },
+      {
+        label: '从Bangumi添加',
+        icon: 'pi pi-globe',
+        command: ()=>{
+          bgmSearchRef.value.showDialogHandler();
+        }
+      }
+    ]
+  }
+]);
 
 const percent=(slotProps: any)=>{
   return list().calProgress(slotProps.data);
