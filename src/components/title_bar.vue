@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <div class="head_img">
+    <div class="head_img" @click="showAbout">
       <img src="/icon.svg" alt="" width="40px" draggable="false">
       <div class="head_label">AnimeHelper</div>
     </div>
@@ -16,6 +16,7 @@
       <Button icon="pi pi-bars" class="signout" variant="text" v-if="!(store().token.length==0) && mobile" @click="menuHandler" />
       <Menu ref="menu" id="overlay_menu" :model="menuItems" :popup="true" />
     </div>
+    <About ref="aboutRef" />
   </div>
 </template>
 
@@ -24,9 +25,16 @@ import store from '../store';
 import { Button, Menu, useConfirm } from 'primevue';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import About from './about.vue';
 
 const route=useRoute();
 const router=useRouter();
+
+const aboutRef=ref();
+
+const showAbout=()=>{
+  aboutRef.value.showAboutHandler();
+}
 
 const menuItems=ref([
   {
@@ -159,5 +167,6 @@ onMounted(()=>{
   width: 180px;
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 </style>
