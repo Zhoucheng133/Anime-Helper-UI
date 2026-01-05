@@ -251,17 +251,19 @@ export default defineStore("downloader", ()=>{
           token: store().token
         }
       });
-      if(!response.ok){
+      if (!response.ok) {
+        if (response.msg === "令牌已过期" && !retry) {
+          const isRefreshed = await store().refreshToken();
+          if (isRefreshed) {
+            toggleRun(toggle, true);
+            return; 
+          }
+        }
         toast.add({ severity: 'error', summary: '运行失败', detail: response.msg, life: 3000 });
         nextTick(() => {
           running.value = false;
         });
         return;
-      }else if(response.msg=="令牌已过期"){
-        if(!retry && await store().refreshToken()){
-          toggleRun(toggle, true);
-          return;
-        }
       }
     }else{
       const {data: response}=await axios.post(`${hostname}/api/download/stop`, {}, {
@@ -269,17 +271,19 @@ export default defineStore("downloader", ()=>{
           token: store().token
         }
       });
-      if(!response.ok){
-        toast.add({ severity: 'error', summary: '运行失败', detail: response.msg, life: 3000 });
+      if (!response.ok) {
+        if (response.msg === "令牌已过期" && !retry) {
+          const isRefreshed = await store().refreshToken();
+          if (isRefreshed) {
+            toggleRun(toggle, true);
+            return; 
+          }
+        }
+        toast.add({ severity: 'error', summary: '停止失败', detail: response.msg, life: 3000 });
         nextTick(() => {
           running.value = true;
         });
         return;
-      }else if(response.msg=="令牌已过期"){
-        if(!retry && await store().refreshToken()){
-          toggleRun(toggle, true);
-          return;
-        }
       }
     }
   }

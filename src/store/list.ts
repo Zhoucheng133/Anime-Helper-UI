@@ -241,7 +241,25 @@ export default defineStore("list", ()=>{
     }
   }
 
-  function deleteItem(event: any, item: ListItem, retry=false){
+  async function deleteItemHandler(item: ListItem, retry=false){
+    const {data: response}=await axios.delete(`${hostname}/api/list/del/${item.id}`, {
+      headers: {
+        token: store().token,
+      }
+    })
+    if(response.ok){
+      getList();
+    }else if(response.msg=="令牌已过期"){
+      if(!retry && await store().refreshToken()){
+        deleteItemHandler(item, true);
+        return;
+      }
+    }else{
+      toast.add({ severity: 'error', summary: '删除失败', detail: response.msg, life: 3000 });
+    }
+  }
+
+  function deleteItem(event: any, item: ListItem){
     confirm.require({
       target: event.currentTarget,
       position: "bottomleft",
@@ -257,23 +275,7 @@ export default defineStore("list", ()=>{
         severity: "danger",
         size: "small"
       },
-      accept: async () => {
-        const {data: response}=await axios.delete(`${hostname}/api/list/del/${item.id}`, {
-          headers: {
-            token: store().token,
-          }
-        })
-        if(!response.ok){
-          toast.add({ severity: 'error', summary: '删除失败', detail: response.msg, life: 3000 });
-        }else if(response.msg=="令牌已过期"){
-          if(!retry && await store().refreshToken()){
-            deleteItem(event, item, true);
-            return;
-          }
-        }else{
-          getList();
-        }
-      },
+      accept: () => deleteItemHandler(item),
       reject: () => {}
     });
   }
