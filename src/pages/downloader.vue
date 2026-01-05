@@ -159,5 +159,7 @@ const delFromListHandler=(event: any, id: string)=>{
   margin-top: 20px;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 </style>

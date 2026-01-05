@@ -234,5 +234,7 @@ function paginatorChange(val: number){
   display: flex;
   align-items: center;
   margin-top: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 </style>

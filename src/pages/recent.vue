@@ -140,6 +140,8 @@ const downloadHandler=(event: any, url: string)=>{
   display: flex;
   align-items: center;
   margin-top: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 .topbar{
   margin-top: 10px;
