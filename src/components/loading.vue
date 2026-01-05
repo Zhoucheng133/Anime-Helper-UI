@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model:visible="showLoading" modal :header="title" :style="{ width: '25rem' }" :draggable="false" class="select-none" :closable="false"s>
+  <Dialog v-model:visible="showLoading" modal :header="title" :style="{ width: '25rem' }" :draggable="false" class="select-none" :closable="false">
     <div>正在加载中...</div>
   </Dialog>
 </template>
