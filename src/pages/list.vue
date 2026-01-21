@@ -5,7 +5,7 @@
       <Button label="添加" size="small" @click="toggleMenu" />
       <Menu ref="addmenuRef" id="overlay_menu" :model="addMenu" :popup="true" />
       <Select size="small" v-model="list().selectedFilter" :options="list().filters" scroll-height="20rem" optionLabel="name" @change="list().getList()" />
-      <InputText size="small" style="width: 100%" v-if="list().selectedFilter.name=='搜索'" v-model="list().searchKeyWord" @change="list().getList()" />
+      <InputText size="small" style="width: 100%" v-if="list().selectedFilter.name=='搜索'" v-model="list().searchKeyWord" @change="list().getList()" @keyup.enter="searchHandler" />
       <div v-if="list().selectedFilter.name=='更新周'">
         <Select size="small" v-model="list().selectedWeekday" :options="list().weekdays" scroll-height="20rem" style="width: 120px;" optionLabel="name" @change="list().getList()"/>
       </div>
@@ -100,6 +100,11 @@ document.title="AnimeHelper | 列表";
 const loading=ref(true);
 const addmenuRef=ref();
 const bgmSearchRef=ref();
+
+function searchHandler(){
+  document.activeElement instanceof HTMLElement &&
+  document.activeElement.blur();
+}
 
 const toggleMenu=(event: any)=>{
   addmenuRef.value.toggle(event);

@@ -77,6 +77,8 @@ const searchKey = ref("");
 const result = ref<DownloadItem[]>([]);
 
 const searchHandler=async (retry=false)=>{
+  document.activeElement instanceof HTMLElement &&
+  document.activeElement.blur();
   loading.value=true;
   const {data: response}=await axios.get(`${hostname}/api/search/${searchKey.value}`, {
     headers: {
