@@ -2,7 +2,7 @@
   <Dialog v-model:visible="showDialog" modal header="从Bangumi中添加..." :draggable="false" class="select-none bgm_search_dialog_content" :closable="true">
     <div class="flex items-center gap-2 mb-4">
       <InputText size="small" id="title" class="flex-auto" autocomplete="off" v-model="title" placeholder="搜索标题" @keyup.enter="searchBangumi(title)" />
-      <Button size="small" @click="searchBangumi(title)" :disabled="loaading">搜索</Button>
+      <Button size="small" @click="searchBangumi(title)" :disabled="loading">搜索</Button>
     </div>
     <div>
       <DataTable :value="ls" v-if="ls.length!=0" class="mb-5">
@@ -20,10 +20,13 @@
         </Column>
         <Column header="操作" style="min-width: 70px;">
           <template #body="slotProps">
-            <Button severity="secondary" size="small" @click="addHandler(slotProps.data)" :disabled="loaading || slotProps.data.episode==0">添加</Button>
+            <Button severity="secondary" size="small" @click="addHandler(slotProps.data)" :disabled="loading || slotProps.data.episode==0">添加</Button>
           </template>
         </Column>
       </DataTable>
+      <div v-else-if="loading" class="loading">
+        <i class="pi pi-spin pi-spinner" style="font-size: 20px"></i> 
+      </div>
     </div>
   </Dialog>
 </template>
@@ -39,7 +42,7 @@ import list from '../../store/list';
 
 const toast = useToast();
 
-const loaading=ref(false);
+const loading=ref(false);
 
 interface BangumiItem{
   id: number,
@@ -53,7 +56,11 @@ const showDialog=ref(false);
 const title=ref('');
 
 async function searchBangumi(keyword: string, retry=false){
+  loading.value=true;
 
+  document.activeElement instanceof HTMLElement &&
+  document.activeElement.blur();
+  
   if(keyword.length==0){
     toast.add({ severity: 'error', summary: '搜索失败', detail: '关键字不能为空', life: 3000 });
     return;
@@ -73,6 +80,7 @@ async function searchBangumi(keyword: string, retry=false){
   }else{
     toast.add({ severity: 'error', summary: '搜索失败', detail: rlt.data.msg, life: 3000 });
   }
+  loading.value=false;
 }
 
 const addHandler=async (item: BangumiItem, retry=false)=>{
@@ -115,6 +123,14 @@ defineExpose({showDialogHandler})
 </style>
 
 <style scoped>
+.loading{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
 .item_title{
   width: 100%;
   overflow: hidden;
