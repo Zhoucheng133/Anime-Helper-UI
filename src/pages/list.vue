@@ -76,7 +76,12 @@
         <Tag>添加</Tag>
         <div>或者在</div>
         <Tag>每日放送</Tag>
-        <div>页面中添加正在连载的动画</div>
+        <div>页面中点击正在连载的动画</div>
+      </div>
+      <div class="add_tip">
+        <div>你也可以在</div>
+        <Tag>添加</Tag>
+        <div>旁的下拉菜单中修改筛选方式</div>
       </div>
     </div>
     <Add ref="addRef" />
