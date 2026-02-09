@@ -38,6 +38,10 @@ const router=createRouter({
       component: ()=>import("../pages/search.vue")
     },
     {
+      path: "/change-password",
+      component: ()=>import("../pages/change_password.vue")
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: () => import('../pages/not_found.vue')

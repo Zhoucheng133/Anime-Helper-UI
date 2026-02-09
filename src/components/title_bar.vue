@@ -12,9 +12,10 @@
       <Button label="下载器" variant="text" severity="secondary" @click="toRoute('/downloader')" :disabled="route.path=='/downloader'" icon="pi pi-download"/>
     </div>
     <div class="signout_area">
-      <Button icon="pi pi-sign-out" class="signout" variant="text" severity="danger" v-if="!(store().token.length==0) && !mobile" @click="logoutHandler($event)" />
+      <Button icon="pi pi-user" class="signout" variant="text" v-if="!(store().token.length==0) && !mobile" @click="userHandler" />
       <Button icon="pi pi-bars" class="signout" variant="text" v-if="!(store().token.length==0) && mobile" @click="menuHandler" />
       <Menu ref="menu" id="overlay_menu" :model="menuItems" :popup="true" />
+      <Menu ref="desktopMenu" :model="desktopMenuItems" :popup="true"></Menu>
     </div>
     <About ref="aboutRef" />
   </div>
@@ -22,7 +23,7 @@
 
 <script lang="ts" setup>
 import store from '../store';
-import { Button, Menu, useConfirm } from 'primevue';
+import { Button, Menu } from 'primevue';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import About from './about.vue';
@@ -35,6 +36,31 @@ const aboutRef=ref();
 const showAbout=()=>{
   aboutRef.value.showAboutHandler();
 }
+
+function userHandler(event: any){
+  desktopMenu.value.toggle(event);
+}
+
+const desktopMenuItems=ref([
+  {
+    label: '用户',
+    items: [
+      {
+        label: '修改密码',
+        icon: 'pi pi-key',
+        command: ()=>toRoute('/change-password')
+      },
+      {
+        label: '注销',
+        icon: 'pi pi-sign-out',
+        command: ()=>{
+          localStorage.clear();
+          window.location.href="/";
+        }
+      }
+    ]
+  }
+])
 
 const menuItems=ref([
   {
@@ -70,6 +96,11 @@ const menuItems=ref([
   {
     items: [
       {
+        label: '修改密码',
+        icon: 'pi pi-key',
+        command: ()=>toRoute('/change-password')
+      },
+      {
         label: '注销',
         icon: 'pi pi-sign-out',
         command: ()=>{
@@ -88,36 +119,14 @@ const toRoute=(path: string)=>{
 }
 
 const menu = ref();
+const desktopMenu = ref();
+
 function menuHandler(event: any){
   menu.value.toggle(event);
 }
-const confirm = useConfirm();
-
-function logoutHandler(event: any){
-  confirm.require({
-    target: event.currentTarget,
-    message: '你确定要注销吗?',
-    rejectProps: {
-      label: '取消',
-      severity: 'secondary',
-      outlined: true,
-      size: "small"
-    },
-    acceptProps: {
-      label: '注销',
-      size: "small",
-      severity: 'danger',
-    },
-    accept: () => {
-      localStorage.clear();
-      window.location.href="/";
-    },
-    reject: () => {}
-  });
-}
 
 function calWidth(){
-  if(window.innerWidth<800){
+  if(window.innerWidth<900){
     mobile.value=true;
   }else{
     mobile.value=false;
