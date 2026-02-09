@@ -2,7 +2,7 @@
   <div class="body">
     <div class="panel">
       <div class="title">注册</div>
-      <div class="sub">Hi, 从这里开始吧👋</div>
+      <div class="sub">Hi, 从这里开始吧 👋</div>
       <div class="item">
         <div className="label">用户名</div>
         <InputText type="text" v-model="username" style="width: 100%;" @keyup.enter="registerHandler" />
