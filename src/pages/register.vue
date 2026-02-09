@@ -9,11 +9,11 @@
       </div>
       <div class="item">
         <div className="label">密码</div>
-        <InputText type="password" v-model="password" style="width: 100%;" @keyup.enter="registerHandler" />
+        <Password type="password" v-model="password" style="width: 100%;" @keyup.enter="registerHandler" fluid toggleMask :feedback="false"  />
       </div>
       <div class="item">
         <div className="label">重复密码</div>
-        <InputText type="password" v-model="rePassword" style="width: 100%;" @keyup.enter="registerHandler" />
+        <Password type="password" v-model="rePassword" style="width: 100%;" @keyup.enter="registerHandler" fluid toggleMask :feedback="false"  />
       </div>
       <Button style="margin-top: 30px; width: 100%; margin-bottom: 120px;" @click="registerHandler">注册</Button>
     </div>
@@ -22,7 +22,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { InputText, Button } from 'primevue';
+import { InputText, Button, Password } from 'primevue';
 import { useToast } from 'primevue/usetoast';
 import axios from 'axios';
 import { useRouter } from 'vue-router';

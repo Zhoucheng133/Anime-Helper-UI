@@ -2,14 +2,14 @@
   <div class="body">
     <div class="panel">
       <div class="title">登录</div>
-      <div class="sub">Hi, 欢迎回来👋</div>
+      <div class="sub">Hi, 欢迎回来 👋</div>
       <div class="item">
         <div className="label">用户名</div>
         <InputText type="text" v-model="username" style="width: 100%;" @keyup.enter="loginHandler" />
       </div>
       <div class="item">
         <div className="label">密码</div>
-        <InputText type="password" v-model="password" style="width: 100%;" @keyup.enter="loginHandler" />
+        <Password type="password" v-model="password" style="width: 100%;" @keyup.enter="loginHandler" fluid toggleMask :feedback="false" />
       </div>
       <Button style="margin-top: 30px; width: 100%; margin-bottom: 120px;" @click="loginHandler">登录</Button>
     </div>
@@ -18,7 +18,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { InputText, Button } from 'primevue';
+import { InputText, Button, Password } from 'primevue';
 import { useToast } from 'primevue/usetoast';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
