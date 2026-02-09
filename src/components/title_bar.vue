@@ -55,7 +55,7 @@ const desktopMenuItems=ref([
         icon: 'pi pi-sign-out',
         command: ()=>{
           localStorage.clear();
-          window.location.href="/";
+          window.location.href="/login";
         }
       }
     ]
@@ -105,7 +105,7 @@ const menuItems=ref([
         icon: 'pi pi-sign-out',
         command: ()=>{
           localStorage.clear();
-          window.location.href="/";
+          window.location.href="/login";
         }
       }
     ]
