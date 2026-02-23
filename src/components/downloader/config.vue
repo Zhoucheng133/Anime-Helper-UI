@@ -18,9 +18,9 @@
       </div>
       <div class="flex items-center m-3">
         <div class="label">{{ downloader().clientTypeSelected.id=='aria' ? "Aria2 地址" : "服务器地址" }}</div>
-        <InputText size="small" placeholder="http(s)://" :fluid="true" v-model="downloader().link" />
+        <InputText size="small" :placeholder=placeholder :fluid="true" v-model="downloader().link" />
       </div>
-      <div class="flex items-center m-3" v-if="downloader().clientTypeSelected.id=='qbit'">
+      <div class="flex items-center m-3" v-if="downloader().clientTypeSelected.id!='aria'">
         <div class="label">用户名</div>
         <InputText size="small" :fluid="true" v-model="downloader().username"/>
       </div>
@@ -37,11 +37,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { Dialog, Button, InputText, Select, Password} from 'primevue';
 import downloader from '../../store/downloader';
+const showConfig=ref(false);
 
-const showConfig=ref(false)
+const placeholder=computed(()=>{
+  if(downloader().clientTypeSelected.id=='aria'){
+    return "http(s)://.../jsonrpc";
+  }else if(downloader().clientTypeSelected.id=='qbit'){
+    return "http(s)://";
+  }else if(downloader().clientTypeSelected.id=='transmission'){
+    return "http(s)://.../transmission/rpc";
+  }
+})
 
 const configHandler=()=>{
   downloader().save();

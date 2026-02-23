@@ -50,6 +50,7 @@ export default defineStore("downloader", ()=>{
   const clientType=ref([
     {id: "aria", text: "Aria"},
     {id: "qbit", text: "qBittorrent"},
+    {id: "transmission", text: "Transmission"}
   ])
   const clientTypeSelected=ref(clientType.value[0]);
 
@@ -77,7 +78,7 @@ export default defineStore("downloader", ()=>{
       secret.value=data.secret;
       list.value=data.list;
       exclude.value=data.exclude;
-      clientTypeSelected.value=data.client=='qbit' ? clientType.value[1] : clientType.value[0];
+      clientTypeSelected.value=(data.client=='qbit' ? clientType.value[1] : data.client=='transmission' ? clientType.value[2] : clientType.value[0]);
       username.value=data.username;
     }else if(response.msg=="令牌已过期"){
       
@@ -94,15 +95,14 @@ export default defineStore("downloader", ()=>{
     if(link.value.length==0){
       toast.add({ severity: 'error', summary: '更新失败', detail: "链接不能为空", life: 3000 });
       return;
-    }else if(secret.value.length==0 && clientTypeSelected.value.id=="qbit"){
+    }else if(secret.value.length==0 && (clientTypeSelected.value.id=="qbit" || clientTypeSelected.value.id=="transmission")){
       toast.add({ severity: 'error', summary: '更新失败', detail: "密钥不能为空", life: 3000 });
       return;
-    }else if(username.value.length==0 && clientTypeSelected.value.id=="qbit"){
+    }else if(username.value.length==0 && (clientTypeSelected.value.id=="qbit" || clientTypeSelected.value.id=="transmission")){
       toast.add({ severity: 'error', summary: '更新失败', detail: "用户名不能为空", life: 3000 });
       return;
     }
     const {data: response}=await axios.post(`${hostname}/api/downloader/save`, {
-      // link, secret, freq, type, client, username
       data:{
         link: link.value,
         secret: secret.value,
@@ -226,13 +226,13 @@ export default defineStore("downloader", ()=>{
           running.value = false;
         });
         return;
-      }else if(secret.value.length==0 && clientTypeSelected.value.id=="qbit"){
+      }else if(secret.value.length==0 && (clientTypeSelected.value.id=="qbit" || clientTypeSelected.value.id=="transmission")){
         toast.add({ severity: 'error', summary: '运行失败', detail: "没有配置下载器密钥", life: 3000 });
         nextTick(() => {
           running.value = false;
         });
         return;
-      }else if(username.value.length==0 && clientTypeSelected.value.id=="qbit"){
+      }else if(username.value.length==0 && (clientTypeSelected.value.id=="qbit" || clientTypeSelected.value.id=="transmission")){
         toast.add({ severity: 'error', summary: '运行失败', detail: "没有配置下载器用户名", life: 3000 });
         nextTick(() => {
           running.value = false;
