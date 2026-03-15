@@ -33,7 +33,8 @@
         </Column>
         <Column header="更新周" style="min-width: 90px;">
           <template #body="slotProps">
-            <div class="weekday_tag tag">{{ list().getWeekday(slotProps.data.time) }}</div>
+            <div class="weekday_tag weekday_tag_now" v-if="list().getWeekday(slotProps.data.time) === list().getWeekday(Date.now())" >{{ list().getWeekday(slotProps.data.time) }}</div>
+            <div class="weekday_tag" v-else>{{ list().getWeekday(slotProps.data.time) }}</div>
           </template>
         </Column>
         <Column header="进度" style="min-width: 200px;">
@@ -194,21 +195,29 @@ function paginatorChange(val: number){
 .tag{
   font-size: 12px;
   user-select: none;
-  border-radius: 13px;
-  width: 52px;
-  height: 26px;
+  border-radius: 14px;
+  width: 54px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
 }
 .weekday_tag{
   border: 2px solid lightgrey;
-  border-radius: 13px;
-  width: 52px;
-  height: 26px;
+  border-radius: 14px;
+  width: 54px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+.weekday_tag_now{
+  background-color: var(--p-button-primary-background);
+  border: 2px solid var(--p-button-primary-background);
+  color: white;
 }
 .item_title{
   width: 100%;
