@@ -30,6 +30,7 @@
       </div>
     </div>
     <div class="flex justify-end gap-2">
+      <Button type="button" label="检验" severity="secondary" size="small" style="margin-right: auto;" @click="check"></Button>
       <Button type="button" label="取消" severity="secondary" @click="showConfig = false" size="small"></Button>
       <Button type="button" label="完成" @click="configHandler" size="small"></Button>
     </div>
@@ -51,6 +52,10 @@ const placeholder=computed(()=>{
     return "http(s)://.../transmission/rpc";
   }
 })
+
+const check=async ()=>{
+  await downloader().check();
+}
 
 const configHandler=()=>{
   downloader().save();

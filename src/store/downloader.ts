@@ -288,6 +288,38 @@ export default defineStore("downloader", ()=>{
     }
   }
 
+  async function check(){
+    if(link.value.length==0){
+      toast.add({ severity: 'error', summary: '检验失败', detail: "链接不能为空", life: 3000 });
+      return;
+    }else if(secret.value.length==0 && (clientTypeSelected.value.id=="qbit" || clientTypeSelected.value.id=="transmission")){
+      toast.add({ severity: 'error', summary: '检验失败', detail: "密钥不能为空", life: 3000 });
+      return;
+    }else if(username.value.length==0 && (clientTypeSelected.value.id=="qbit" || clientTypeSelected.value.id=="transmission")){
+      toast.add({ severity: 'error', summary: '检验失败', detail: "用户名不能为空", life: 3000 });
+      return;
+    }
+    const {data: response}=await axios.post(`${hostname}/api/downloader/check`, {
+      data:{
+        link: link.value,
+        secret: secret.value,
+        freq: parseInt(freq.value),
+        type: rssSelected.value.id,
+        client: clientTypeSelected.value.id,
+        username: username.value
+      }
+    }, {
+      headers: {
+        token: store().token,
+      }
+    })
+    if(response.ok){
+      toast.add({ severity: 'success', summary: '下载器合法', detail: "你输入的配置正确", life: 3000 });
+    }else{
+      toast.add({ severity: 'error', summary: '检验失败', detail: "输入的配置有误", life: 3000 });
+    }
+  }
+
   return {
     toggleRun,
     delFromExclude,
@@ -306,6 +338,7 @@ export default defineStore("downloader", ()=>{
     running,
     clientType,
     clientTypeSelected,
-    username
+    username,
+    check
   }
 })
