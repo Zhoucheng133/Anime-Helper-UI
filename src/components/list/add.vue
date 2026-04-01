@@ -35,11 +35,8 @@
 import { ref } from 'vue';
 import { Dialog, InputText, Button, Checkbox, Select } from 'primevue';
 import list from '../../store/list';
-import { useToast } from 'primevue';
 
 const showAdd=ref(false);
-
-const toast=useToast();
 
 const title=ref("");
 const update=ref(false);
@@ -50,20 +47,7 @@ const updateTo=ref("");
 const updateWeekday=ref(list().weekdays[0]);
 
 const addHandler=async ()=>{
-  if(title.value.length==0){
-    toast.add({ severity: 'error', summary: '添加失败', detail: '标题不能为空', life: 3000 });
-    return;
-  }else if(episode.value.length==0){
-    toast.add({ severity: 'error', summary: '添加失败', detail: '集数不能为空', life: 3000 });
-    return;
-  }else if(watchTo.value.length==0){
-    toast.add({ severity: 'error', summary: '添加失败', detail: '观看集数不能为空', life: 3000 });
-    return;
-  }else if(updateTo.value.length==0 && update.value){
-    toast.add({ severity: 'error', summary: '添加失败', detail: '观看集数不能为空', life: 3000 });
-    return;
-  }else if(update.value && parseInt(updateTo.value)==0){
-    toast.add({ severity: 'error', summary: '添加失败', detail: '更新集数不能为0', life: 3000 });
+  if(!list().formChecker(title.value, update.value, episode.value, watchTo.value, updateTo.value)){
     return;
   }
 

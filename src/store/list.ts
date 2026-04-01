@@ -280,6 +280,53 @@ export default defineStore("list", ()=>{
     });
   }
 
+  function showError(detail: string) {
+    toast.add({ severity: 'error', summary: '添加失败', detail, life: 3000 });
+  }
+
+  function formChecker(title: string, update: boolean, episode: string, watchTo: string, updateTo: string): boolean{
+    const t = title.trim();
+    const totalEp = parseInt(episode);
+    const watchedEp = parseInt(watchTo);
+    const updatedEp = parseInt(updateTo);
+
+    if (!t) {
+      showError('标题不能为空');
+      return false;
+    }else if (isNaN(totalEp) || totalEp < 1) {
+      showError('请输入有效的总集数');
+      return false;
+    }else if (isNaN(watchedEp) || watchedEp < 0) {
+      showError('请输入有效的观看集数');
+      return false;
+    }
+
+    if (update) {
+      if (isNaN(updatedEp)) {
+        showError('更新集数不能为空');
+        return false;
+      }
+      if(updatedEp < 1){
+        showError('更新集数不能小于1');
+        return false;
+      }
+      if (updatedEp > totalEp) {
+        showError('更新集数不能大于总集数');
+        return false;
+      }
+      if (watchedEp > updatedEp) {
+        showError('观看集数不能大于更新集数');
+        return false;
+      }
+    } else {
+      if (watchedEp > totalEp) {
+        showError('观看集数不能大于总集数');
+        return false;
+      }
+    }
+    return true;
+  }
+
   return {
     deleteItem,
     editItem,
@@ -301,5 +348,6 @@ export default defineStore("list", ()=>{
     length,
     list,
     getList,
+    formChecker
   };
 })
