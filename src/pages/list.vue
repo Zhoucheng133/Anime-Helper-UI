@@ -56,8 +56,8 @@
           <template #body="slotProps">
             <ButtonGroup>
               <Button severity="secondary" size="small" @click="editRef.showEditHandler(slotProps.data)"><i class="pi pi-pen-to-square" style="font-size: 12px;" /></Button>
-              <Button severity="secondary" size="small" @click="list().minus(slotProps.data)"><i class="pi pi-minus" style="font-size: 12px;"  /></Button>
-              <Button severity="secondary" size="small" @click="list().add(slotProps.data)"><i class="pi pi-plus" style="font-size: 12px;"/></Button>
+              <Button severity="secondary" size="small" @click="list().minus(slotProps.data)" :disabled="slotProps.data.now<=0" ><i class="pi pi-minus" style="font-size: 12px;" /></Button>
+              <Button severity="secondary" size="small" @click="list().add(slotProps.data)" :disabled="slotProps.data.now>=list().analyseEpisode(slotProps.data)"><i class="pi pi-plus" style="font-size: 12px;"/></Button>
               <Button severity="secondary" size="small" style="font-size: 12px;" @click="downloaderRef.showAddHandler(slotProps.data.title)">添加到</Button>
               <Button severity="secondary" size="small" @click="list().deleteItem($event, slotProps.data)"><i class="pi pi-trash" style="font-size: 12px;"/></Button>
             </ButtonGroup>
