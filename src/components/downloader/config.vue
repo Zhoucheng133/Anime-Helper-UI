@@ -57,9 +57,10 @@ const check=async ()=>{
   await downloader().check();
 }
 
-const configHandler=()=>{
-  downloader().save();
-  showConfig.value=false;
+const configHandler=async ()=>{
+  if(await downloader().save()){
+    showConfig.value=false;
+  }
 }
 
 const showConfigHandler=()=>{
