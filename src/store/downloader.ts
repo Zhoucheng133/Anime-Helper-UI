@@ -42,7 +42,6 @@ export default defineStore("downloader", ()=>{
 
   const rssTypes=ref<RssType[]>([
     {id: "mikan", text: "Mikan"},
-    {id: "acgrip", text: "Acgrip"},
     {id: "kisssub", text: "Kisssub"}
   ])
   const rssSelected=ref(rssTypes.value[0]);
@@ -72,7 +71,7 @@ export default defineStore("downloader", ()=>{
     if(response.ok){
       const data=response.msg as DownloaderDataType;
       running.value=data.running;
-      rssSelected.value=data.type=='mikan' ? rssTypes.value[0] : rssSelected.value=data.type=='acgrip' ? rssTypes.value[1] : rssTypes.value[2];
+      rssSelected.value=data.type=='mikan' ? rssTypes.value[0] : rssTypes.value[1];
       freq.value=data.freq.toString();
       link.value=data.link;
       secret.value=data.secret;
