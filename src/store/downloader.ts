@@ -90,16 +90,16 @@ export default defineStore("downloader", ()=>{
     }
   }
 
-  const save=async (disableToast: boolean=false, retry=false)=>{
+  const save=async (disableToast: boolean=false, retry=false): Promise<boolean>=>{
     if(link.value.length==0){
       toast.add({ severity: 'error', summary: '更新失败', detail: "链接不能为空", life: 3000 });
-      return;
+      return false;
     }else if(secret.value.length==0 && (clientTypeSelected.value.id=="qbit" || clientTypeSelected.value.id=="transmission")){
       toast.add({ severity: 'error', summary: '更新失败', detail: "密钥不能为空", life: 3000 });
-      return;
+      return false;
     }else if(username.value.length==0 && (clientTypeSelected.value.id=="qbit" || clientTypeSelected.value.id=="transmission")){
       toast.add({ severity: 'error', summary: '更新失败', detail: "用户名不能为空", life: 3000 });
-      return;
+      return false;
     }
     const {data: response}=await axios.post(`${hostname}/api/downloader/save`, {
       data:{
@@ -116,17 +116,19 @@ export default defineStore("downloader", ()=>{
       }
     })
     if(disableToast){
-      return;
+      return true;
     }
     if(response.ok){
       toast.add({ severity: 'success', summary: '更新成功', detail: "已更新到数据库", life: 3000 });
+      return true;
     }else if(response.msg=="令牌已过期"){
       if(!retry && await store().refreshToken()){
-        save(disableToast, true);
-        return;
+        return await save(disableToast, true);
       }
+      return false;
     }else{
       toast.add({ severity: 'error', summary: '更新失败', detail: response.msg, life: 3000 });
+      return false;
     }
   }
 
