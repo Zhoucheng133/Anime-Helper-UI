@@ -45,7 +45,7 @@
 
 <script lang="ts" setup >
 import { DataTable, Column, Button, ButtonGroup, useConfirm, InputText, Select } from 'primevue';
-import recent, { type DownloadItem } from '../store/recent';
+import recentStore, { type DownloadItem } from '../store/recent';
 import { computed, onMounted, ref } from 'vue';
 import Add from '../components/recent/add.vue';
 import Copy from '../components/recent/copy.vue';
@@ -54,6 +54,7 @@ const confirm=useConfirm();
 const addRef=ref();
 const searchKey=ref("");
 const loading=ref(false);
+const recent=recentStore();
 
 document.title="AnimeHelper | 最近更新";
 
@@ -65,9 +66,9 @@ const typeOptions=[
 
 const searchRecnt=computed(()=>{
   if(searchKey.value==""){
-    return recent().list;
+    return recent..list;
   }
-  return recent().list.filter((item: DownloadItem)=>{
+  return recent..list.filter((item: DownloadItem)=>{
     return item.title.includes(searchKey.value);
   });
 });
@@ -75,7 +76,7 @@ const searchRecnt=computed(()=>{
 async function load(){
   // loadingRef.value.loadingHandler(true, "获取最近更新列表");
   loading.value=true;
-  await recent().getList(type.value);
+  await recent..getList(type.value);
   loading.value=false;
   // loadingRef.value.loadingHandler(false, "获取最近更新列表");
 }
@@ -116,7 +117,7 @@ const downloadHandler=(event: any, url: string)=>{
       size: "small",
       label: '下载',
     },
-    accept: () => recent().download(url),
+    accept: () => recent..download(url),
   });
 }
 

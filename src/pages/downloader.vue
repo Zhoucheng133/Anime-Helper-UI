@@ -3,8 +3,8 @@
     <div class="flex items-center m-5">
       <div class="label">运行状态</div>
       <div class="flex items-center gap-5">
-        <Tag :value="downloader().running ? '运行中' : '等待中'" :severity="downloader().running ? 'success' : 'warn'" />
-        <ToggleSwitch v-model="downloader().running" @value-change="downloader().toggleRun" />
+        <Tag :value="downloader.running ? '运行中' : '等待中'" :severity="downloader.running ? 'success' : 'warn'" />
+        <ToggleSwitch v-model="downloader.running" @value-change="downloader.toggleRun" />
       </div>
     </div>
     <div class="flex items-center m-5">
@@ -19,7 +19,7 @@
         <AccordionHeader>番剧列表</AccordionHeader>
         <AccordionContent>
           <Button size="small" @click="showAddList">添加</Button>
-          <DataTable :value="downloader().list" v-if="downloader().list.length!=0">
+          <DataTable :value="downloader.list" v-if="downloader.list.length!=0">
             <Column field="title" header="标题"></Column>
             <Column field="ass" header="字幕组"></Column>
             <Column header="操作">
@@ -39,7 +39,7 @@
         <AccordionHeader>排除关键字</AccordionHeader>
         <AccordionContent>
           <Button size="small" @click="addExclude">添加</Button>
-          <DataTable :value="downloader().exclude" v-if="downloader().exclude.length!=0">
+          <DataTable :value="downloader.exclude" v-if="downloader.exclude.length!=0">
             <Column field="key" header="关键字"></Column>
             <Column header="操作">
               <template #body="slotProps">
@@ -64,7 +64,7 @@
 
 <script setup lang="ts">
 import { ToggleSwitch, Tag, ButtonGroup, Button, Accordion, AccordionPanel, AccordionHeader, AccordionContent, DataTable, Column, useConfirm } from 'primevue';
-import downloader from '../store/downloader';
+import downloaderStore from '../store/downloader';
 import { onMounted, ref } from 'vue';
 import AddList from '../components/downloader/add_list.vue';
 import AddExclude from '../components/downloader/add_exclude.vue';
@@ -75,11 +75,12 @@ const addListRef=ref();
 const addExcludeRef=ref();
 const logRef=ref();
 const configRef=ref();
+const downloader=downloaderStore();
 
 document.title="AnimeHelper | 下载器";
 
 onMounted(()=>{
-  downloader().getList();
+  downloader.getList();
 })
 
 const showConfig=()=>{
@@ -113,7 +114,7 @@ const delFromExcludeHandler=(event: any, id: string)=>{
       label: '删除',
       severity: "danger"
     },
-    accept: () => downloader().delFromExclude(id),
+    accept: () => downloader.delFromExclude(id),
   });
 }
 
@@ -132,7 +133,7 @@ const delFromListHandler=(event: any, id: string)=>{
       label: '删除',
       severity: "danger"
     },
-    accept: () => downloader().delFromList(id),
+    accept: () => downloader.delFromList(id),
   });
 }
 
