@@ -58,6 +58,8 @@ const toWeekday=(time: number)=>{
   return list.weekdays[wd==0 ? 6 : wd-1];
 }
 
+const bgmId=ref("");
+
 const showEditHandler=(item: ListItem)=>{
   id.value=item.id;
   showEdit.value=true;
@@ -67,6 +69,7 @@ const showEditHandler=(item: ListItem)=>{
   updateTo.value=list.analyseEpisode(item).toString();
   episode.value=item.episode.toString();
   updateWeekday.value=toWeekday(item.time);
+  bgmId.value=item.bgmId;
 }
 
 const eidtHandler=async ()=>{
@@ -74,7 +77,7 @@ const eidtHandler=async ()=>{
     return;
   }
 
-  await list.editItem(id.value, title.value, update.value,parseInt(episode.value), parseInt(watchTo.value), parseInt(updateTo.value), updateWeekday.value.code);
+  await list.editItem(id.value, title.value, update.value,parseInt(episode.value), parseInt(watchTo.value), parseInt(updateTo.value), updateWeekday.value.code, bgmId.value);
 
   showEdit.value=false;
 }

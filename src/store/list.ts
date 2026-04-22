@@ -218,14 +218,15 @@ export default defineStore("list", ()=>{
     }
   }
 
-  async function editItem(id: string, title: string, update: boolean, episode: number, watchTo: number, updateTo: number, updateWeekday: number, retry=false){
+  async function editItem(id: string, title: string, update: boolean, episode: number, watchTo: number, updateTo: number, updateWeekday: number, bgmId: string, retry=false){
     const todayTimestamp = Date.now();
     const jsonItem={
       id: id,
       title: title,
       episode: episode,
       now: watchTo,
-      time: update ? getTimestampOfFirstEpisode(todayTimestamp, updateWeekday, updateTo) : 0
+      time: update ? getTimestampOfFirstEpisode(todayTimestamp, updateWeekday, updateTo) : 0,
+      bgmId: bgmId
     }
     const {data: response}=await axios.post(`${hostname}/api/list/edit`, {
       data: jsonItem
@@ -238,7 +239,7 @@ export default defineStore("list", ()=>{
       getList()
     }else if(response.msg=="令牌已过期"){
       if(!retry && await store.refreshToken()){
-        editItem(id, title, update, episode, watchTo, updateTo, updateWeekday, true);
+        editItem(id, title, update, episode, watchTo, updateTo, updateWeekday, bgmId, true);
         return;
       }
     }else{
