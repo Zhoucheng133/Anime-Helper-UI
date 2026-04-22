@@ -2,7 +2,7 @@ import axios from "axios";
 import { defineStore } from "pinia";
 import { ref, watch } from "vue";
 import hostname from "../env/hostname";
-import store from ".";
+import Store from ".";
 import { useConfirm, useToast } from "primevue";
 import { nanoid } from "nanoid";
 
@@ -18,6 +18,7 @@ export default defineStore("list", ()=>{
 
   const toast=useToast();
   const confirm = useConfirm();
+  const store=Store();
 
   function resetToMidnight(date: Date): Date {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -83,14 +84,14 @@ export default defineStore("list", ()=>{
         param: selectedFilter.value.code=='weekday' ? selectedWeekday.value.code : searchKeyWord.value,
       },
       headers: {
-        token: store().token,
+        token: store.token,
       }
     })
     if(response.ok){
       list.value=response.msg.data;
       length.value=response.msg.length;
     }else if(response.msg=="令牌已过期"){
-      if(!retry && await store().refreshToken()){
+      if(!retry && await store.refreshToken()){
         getList(true);
         return;
       }
@@ -144,13 +145,13 @@ export default defineStore("list", ()=>{
       }
     }, {
       headers: {
-        token: store().token,
+        token: store.token,
       }
     })
     if(response.ok){
       getList();
     }else if(response.msg=="令牌已过期"){
-      if(!retry && await store().refreshToken()){
+      if(!retry && await store.refreshToken()){
         add(item, true);
         return;
       }
@@ -170,13 +171,13 @@ export default defineStore("list", ()=>{
       }
     }, {
       headers: {
-        token: store().token,
+        token: store.token,
       }
     })
     if(response.ok){
       getList();
     }else if(response.msg=="令牌已过期"){
-      if(!retry && await store().refreshToken()){
+      if(!retry && await store.refreshToken()){
         minus(item, true);
         return;
       }
@@ -199,14 +200,14 @@ export default defineStore("list", ()=>{
       data: jsonItem
     }, {
       headers: {
-        token: store().token,
+        token: store.token,
       }
     })
     if(response.ok){
       await getList()
       return true;
     }else if(response.msg=="令牌已过期"){
-      if(!retry && await store().refreshToken()){
+      if(!retry && await store.refreshToken()){
         return addItem(title, update, episode, watchTo, updateTo, updateWeekday, bgmId, true);
       }
       return false;
@@ -229,13 +230,13 @@ export default defineStore("list", ()=>{
       data: jsonItem
     }, {
       headers: {
-        token: store().token,
+        token: store.token,
       }
     })
     if(response.ok){
       getList()
     }else if(response.msg=="令牌已过期"){
-      if(!retry && await store().refreshToken()){
+      if(!retry && await store.refreshToken()){
         editItem(id, title, update, episode, watchTo, updateTo, updateWeekday, true);
         return;
       }
@@ -247,13 +248,13 @@ export default defineStore("list", ()=>{
   async function deleteItemHandler(item: ListItem, retry=false){
     const {data: response}=await axios.delete(`${hostname}/api/list/del/${item.id}`, {
       headers: {
-        token: store().token,
+        token: store.token,
       }
     })
     if(response.ok){
       getList();
     }else if(response.msg=="令牌已过期"){
-      if(!retry && await store().refreshToken()){
+      if(!retry && await store.refreshToken()){
         deleteItemHandler(item, true);
         return;
       }

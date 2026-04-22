@@ -4,7 +4,7 @@
       <img src="/icon.svg" alt="" width="40px" draggable="false">
       <div class="head_label">AnimeHelper</div>
     </div>
-    <div class="menus" v-if="!(store().token.length==0) && !mobile">
+    <div class="menus" v-if="!(store.token.length==0) && !mobile">
       <Button label="列表" variant="text" severity="secondary" @click="toRoute('/list')" :disabled="route.path=='/list'" icon="pi pi-list"/>
       <Button label="每日放送" variant="text"severity="secondary" @click="toRoute('/calendar')" :disabled="route.path=='/calendar'" icon="pi pi-calendar"/>
       <Button label="最近更新" variant="text" severity="secondary" @click="toRoute('/recent')" :disabled="route.path=='/recent'" icon="pi pi-server"/>
@@ -12,8 +12,8 @@
       <Button label="下载器" variant="text" severity="secondary" @click="toRoute('/downloader')" :disabled="route.path=='/downloader'" icon="pi pi-download"/>
     </div>
     <div class="signout_area">
-      <Button icon="pi pi-user" class="signout" variant="text" v-if="!(store().token.length==0) && !mobile" @click="userHandler" />
-      <Button icon="pi pi-bars" class="signout" variant="text" v-if="!(store().token.length==0) && mobile" @click="menuHandler" />
+      <Button icon="pi pi-user" class="signout" variant="text" v-if="!(store.token.length==0) && !mobile" @click="userHandler" />
+      <Button icon="pi pi-bars" class="signout" variant="text" v-if="!(store.token.length==0) && mobile" @click="menuHandler" />
       <Menu ref="menu" id="overlay_menu" :model="menuItems" :popup="true" />
       <Menu ref="desktopMenu" :model="desktopMenuItems" :popup="true"></Menu>
     </div>
@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts" setup>
-import store from '../store';
+import Store from '../store';
 import { Button, Menu } from 'primevue';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -30,6 +30,7 @@ import About from './about.vue';
 
 const route=useRoute();
 const router=useRouter();
+const store=Store();
 
 const aboutRef=ref();
 

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { defineStore } from "pinia";
 import hostname from "../env/hostname";
-import store from ".";
+import Store from ".";
 import { ref } from "vue";
 import { useToast } from "primevue";
 
@@ -15,17 +15,18 @@ export default defineStore("calendar", ()=>{
 
   const list=ref<[CalendarItem[]]>();
   const toast=useToast();
+  const store=Store();
 
   const getList=async (retry=false)=>{
     const {data: response}=await axios.get(`${hostname}/api/calendar/get`, {
       headers: {
-        token: store().token
+        token: store.token
       }
     })
     if(response.ok){
       list.value=response.msg;
     }else if(response.msg=="令牌已过期"){
-      if(!retry && await store().refreshToken()){
+      if(!retry && await store.refreshToken()){
         getList(true);
         return;
       }

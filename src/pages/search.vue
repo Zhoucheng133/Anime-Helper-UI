@@ -60,13 +60,14 @@ import dayjs from 'dayjs';
 import recent from '../store/recent';
 import hostname from '../env/hostname';
 import axios from 'axios';
-import store from '../store';
+import Store from '../store';
 import Add from '../components/recent/add.vue';
 import Copy from '../components/recent/copy.vue';
 // import Loading from '../components/loading.vue';
 const confirm=useConfirm();
 const addRef=ref();
 const toast=useToast();
+const store=Store();
 
 document.title="AnimeHelper | 搜索";
 

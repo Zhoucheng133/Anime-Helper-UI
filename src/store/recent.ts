@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import hostname from "../env/hostname";
 import axios from "axios";
-import store from ".";
+import Store from ".";
 import { useToast } from "primevue";
 import useClipboard from 'vue-clipboard3';
 const { toClipboard } = useClipboard();
@@ -18,11 +18,12 @@ export interface DownloadItem{
 export default defineStore("recent", ()=>{
   const toast=useToast();
   const list=ref<DownloadItem[]>([]);
+  const store=Store();
 
   const getList=async (type: string, retry=false)=>{
     const {data: response}=await axios.get(`${hostname}/api/recent/get`, {
       headers: {
-        token: store().token,
+        token: store.token,
       },
       params: {
         type: type,
@@ -32,7 +33,7 @@ export default defineStore("recent", ()=>{
       const data=response.msg as DownloadItem[];
       list.value=data;
     }else if(response.msg=="令牌已过期"){
-      if(!retry && await store().refreshToken()){
+      if(!retry && await store.refreshToken()){
         getList(type, true);
         return;
       }
@@ -46,13 +47,13 @@ export default defineStore("recent", ()=>{
       link: url,
     },  {
       headers: {
-        token: store().token,
+        token: store.token,
       }
     })
     if(response.ok){
       toast.add({ severity: 'success', summary: '下载成功', detail: "已添加到下载队列", life: 3000 });
     }else if(response.msg=="令牌已过期"){
-      if(!retry && await store().refreshToken()){
+      if(!retry && await store.refreshToken()){
         download(url, true);
         return;
       }

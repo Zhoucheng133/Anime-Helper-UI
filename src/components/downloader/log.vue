@@ -18,11 +18,12 @@ import { ref } from 'vue';
 import { Dialog, useToast } from 'primevue';
 import axios from 'axios';
 import hostname from '../../env/hostname';
-import store from '../../store';
+import Store from '../../store';
 import dayjs from 'dayjs';
 const toast=useToast();
 
 const showLog=ref(false);
+const store=Store();
 
 let convertTime=(time: number)=>{
   return dayjs(time).format("YYYY-MM-DD HH:mm");
@@ -39,13 +40,13 @@ const showLogHandler=async (retry = false)=>{
   showLog.value=true;
   const {data: response}=await axios.get(`${hostname}/api/download/log`, {
     headers: {
-      token: store().token,
+      token: store.token,
     }
   })
   if(response.ok){
     logs.value=response.msg.reverse() as Log[];
   }else if(response.msg=="令牌已过期"){
-    if(!retry && await store().refreshToken()){
+    if(!retry && await store.refreshToken()){
       showLogHandler(true);
       return;
     }

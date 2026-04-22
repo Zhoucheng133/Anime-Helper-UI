@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { nextTick, ref } from "vue";
 import hostname from "../env/hostname";
 import axios from "axios";
-import store from ".";
+import Store from ".";
 import { useToast } from "primevue";
 import { nanoid } from "nanoid";
 
@@ -37,6 +37,7 @@ interface DownloaderDataType{
 export default defineStore("downloader", ()=>{
 
   const toast=useToast();
+  const store=Store();
 
   const running=ref(false);
 
@@ -65,7 +66,7 @@ export default defineStore("downloader", ()=>{
   const getList=async (retry=false)=>{
     const {data: response}=await axios.get(`${hostname}/api/downloader/get`, {
       headers: {
-        token: store().token,
+        token: store.token,
       }
     })
     if(response.ok){
@@ -81,7 +82,7 @@ export default defineStore("downloader", ()=>{
       username.value=data.username;
     }else if(response.msg=="令牌已过期"){
       
-      if(!retry && await store().refreshToken()){
+      if(!retry && await store.refreshToken()){
         getList(true);
         return;
       }
@@ -112,7 +113,7 @@ export default defineStore("downloader", ()=>{
       }
     }, {
       headers: {
-        token: store().token,
+        token: store.token,
       }
     })
     if(disableToast){
@@ -122,7 +123,7 @@ export default defineStore("downloader", ()=>{
       toast.add({ severity: 'success', summary: '更新成功', detail: "已更新到数据库", life: 3000 });
       return true;
     }else if(response.msg=="令牌已过期"){
-      if(!retry && await store().refreshToken()){
+      if(!retry && await store.refreshToken()){
         return await save(disableToast, true);
       }
       return false;
@@ -141,14 +142,14 @@ export default defineStore("downloader", ()=>{
       }
     }, {
       headers: {
-        token: store().token,
+        token: store.token,
       }
     })
     if(response.ok){
       getList();
       toast.add({ severity: 'success', summary: '添加成功', detail: "已更新到数据库", life: 3000 });
     }else if(response.msg=="令牌已过期"){
-      if(!retry && await store().refreshToken()){
+      if(!retry && await store.refreshToken()){
         addToList(title, ass, true);
         return;
       }
@@ -160,14 +161,14 @@ export default defineStore("downloader", ()=>{
   const delFromList=async (id: string, retry=false)=>{
     const {data: response}=await axios.delete(`${hostname}/api/downloader/list/del/${id}`, {
       headers: {
-        token: store().token,
+        token: store.token,
       }
     })
     if(response.ok){
       getList();
       toast.add({ severity: 'success', summary: '删除成功', detail: "已更新到数据库", life: 3000 });
     }else if(response.msg=="令牌已过期"){
-      if(!retry && await store().refreshToken()){
+      if(!retry && await store.refreshToken()){
         delFromList(id, true);
         return;
       }
@@ -184,14 +185,14 @@ export default defineStore("downloader", ()=>{
       }
     }, {
       headers: {
-        token: store().token,
+        token: store.token,
       }
     })
     if(response.ok){
       getList();
       toast.add({ severity: 'success', summary: '添加成功', detail: "已更新到数据库", life: 3000 });
     }else if(response.msg=="令牌已过期"){
-      if(!retry && await store().refreshToken()){
+      if(!retry && await store.refreshToken()){
         addToExclude(key, true);
         return;
       }
@@ -203,14 +204,14 @@ export default defineStore("downloader", ()=>{
   const delFromExclude=async (id: string, retry=false)=>{
     const {data: response}=await axios.delete(`${hostname}/api/downloader/exclude/del/${id}`, {
       headers: {
-        token: store().token,
+        token: store.token,
       }
     })
     if(response.ok){
       getList();
       toast.add({ severity: 'success', summary: '删除成功', detail: "已更新到数据库", life: 3000 });
     }else if(response.msg=="令牌已过期"){
-      if(!retry && await store().refreshToken()){
+      if(!retry && await store.refreshToken()){
         delFromExclude(id, true);
         return;
       }
@@ -249,12 +250,12 @@ export default defineStore("downloader", ()=>{
       await save(true);
       const {data: response}=await axios.post(`${hostname}/api/download/run`, {}, {
         headers: {
-          token: store().token
+          token: store.token
         }
       });
       if (!response.ok) {
         if (response.msg === "令牌已过期" && !retry) {
-          const isRefreshed = await store().refreshToken();
+          const isRefreshed = await store.refreshToken();
           if (isRefreshed) {
             toggleRun(toggle, true);
             return; 
@@ -269,12 +270,12 @@ export default defineStore("downloader", ()=>{
     }else{
       const {data: response}=await axios.post(`${hostname}/api/download/stop`, {}, {
         headers: {
-          token: store().token
+          token: store.token
         }
       });
       if (!response.ok) {
         if (response.msg === "令牌已过期" && !retry) {
-          const isRefreshed = await store().refreshToken();
+          const isRefreshed = await store.refreshToken();
           if (isRefreshed) {
             toggleRun(toggle, true);
             return; 
@@ -311,7 +312,7 @@ export default defineStore("downloader", ()=>{
       }
     }, {
       headers: {
-        token: store().token,
+        token: store.token,
       }
     })
     if(response.ok){
