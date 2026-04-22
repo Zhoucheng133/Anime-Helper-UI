@@ -66,9 +66,9 @@ const typeOptions=[
 
 const searchRecnt=computed(()=>{
   if(searchKey.value==""){
-    return recent..list;
+    return recent.list;
   }
-  return recent..list.filter((item: DownloadItem)=>{
+  return recent.list.filter((item: DownloadItem)=>{
     return item.title.includes(searchKey.value);
   });
 });
@@ -76,7 +76,7 @@ const searchRecnt=computed(()=>{
 async function load(){
   // loadingRef.value.loadingHandler(true, "获取最近更新列表");
   loading.value=true;
-  await recent..getList(type.value);
+  await recent.getList(type.value);
   loading.value=false;
   // loadingRef.value.loadingHandler(false, "获取最近更新列表");
 }
@@ -117,7 +117,7 @@ const downloadHandler=(event: any, url: string)=>{
       size: "small",
       label: '下载',
     },
-    accept: () => recent..download(url),
+    accept: () => recent.download(url),
   });
 }
 
