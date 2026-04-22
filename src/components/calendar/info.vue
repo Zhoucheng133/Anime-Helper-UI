@@ -1,7 +1,7 @@
 <template>
   <Dialog v-model:visible="showInfo" modal header="番剧信息" :style="{ width: '25rem' }" :draggable="false" class="select-none" :closable="false">
     <div class="cover flex justify-center">
-      <img :src="item.image" alt="" width="100" height="141" class="cover_img"></img>
+      <img :src="item.image" alt="" width="100" height="141" class="cover_img" :draggable="false"></img>
     </div>
     <div class="flex items-center gap-2 mb-4 mt-4">
       <div class="font-semibold w-20">标题</div>
