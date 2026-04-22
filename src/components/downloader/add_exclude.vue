@@ -2,7 +2,7 @@
   <Dialog v-model:visible="showAdd" modal header="添加一个排除关键字..." :style="{ width: '25rem' }" :draggable="false" class="select-none" :closable="false">
     <div class="flex items-center gap-2 mb-4">
       <div class="font-semibold w-20">关键字</div>
-      <InputText size="small" id="title" class="flex-auto" autocomplete="off" v-model="key" />
+      <InputText size="small" class="flex-auto" autocomplete="off" v-model="key" />
     </div>
     <div class="flex justify-end gap-2">
       <Button type="button" label="取消" severity="secondary" @click="showAdd = false" size="small"></Button>

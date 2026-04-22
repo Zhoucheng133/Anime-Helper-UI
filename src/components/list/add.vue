@@ -1,28 +1,28 @@
 <template>
   <Dialog v-model:visible="showAdd" modal header="添加到列表..." :style="{ width: '25rem' }" :draggable="false" class="select-none" :closable="false">
     <div class="flex items-center gap-2 mb-4">
-      <Checkbox v-model="update" inputId="update" binary/>
-      <div> 当前在更新 </div>
+      <Checkbox v-model="update" binary/>
+      <div @click="update=!update">当前在更新</div>
     </div>
     <div class="flex items-center gap-2 mb-4">
       <div class="font-semibold w-20">标题</div>
-      <InputText size="small" id="title" class="flex-auto" autocomplete="off" v-model="title" />
+      <InputText size="small" class="flex-auto" autocomplete="off" v-model="title" />
     </div>
     <div class="flex items-center gap-2 mb-4">
       <div class="font-semibold w-20">集数</div>
-      <InputText type="number" size="small" id="episode" class="flex-auto" autocomplete="off" v-model="episode" min="1" />
+      <InputText type="number" size="small" class="flex-auto" autocomplete="off" v-model="episode" min="1" />
     </div>
     <div class="flex items-center gap-2 mb-4">
       <div class="font-semibold w-20">观看至</div>
-      <InputText type="number" size="small" id="watchTo" class="flex-auto" autocomplete="off" v-model="watchTo" min="0" :max="update ? updateTo : episode" />
+      <InputText type="number" size="small" class="flex-auto" autocomplete="off" v-model="watchTo" min="0" :max="update ? updateTo : episode" />
     </div>
     <div class="flex items-center gap-2 mb-4" v-if="update">
       <div class="font-semibold w-20">更新至</div>
-      <InputText type="number" size="small" id="updateTo" class="flex-auto" autocomplete="off" v-model="updateTo" min="1" :max="episode" />
+      <InputText type="number" size="small" class="flex-auto" autocomplete="off" v-model="updateTo" min="1" :max="episode" />
     </div>
     <div class="flex items-center gap-2 mb-4" v-if="update">
       <div class="font-semibold w-20">更新周</div>
-       <Select size="small" id="updateWeek" v-model="updateWeekday" :options="list.weekdays" scroll-height="20rem" optionLabel="name" />
+       <Select size="small" v-model="updateWeekday" :options="list.weekdays" scroll-height="20rem" optionLabel="name" />
     </div>
     <div class="flex justify-end gap-2">
       <Button type="button" label="取消" severity="secondary" @click="showAdd = false" size="small"></Button>

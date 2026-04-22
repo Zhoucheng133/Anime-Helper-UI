@@ -5,21 +5,21 @@
     </div>
     <div class="flex items-center gap-2 mb-4 mt-4">
       <div class="font-semibold w-20">标题</div>
-      <div id="title">{{ item.title }}</div>
+      <div>{{ item.title }}</div>
     </div>
     <div class="flex items-center gap-2 mb-4 mt-4">
       <div class="font-semibold w-20">集数</div>
-      <div id="eps">{{ item.eps }}</div>
+      <div>{{ item.eps }}</div>
     </div>
     <div class="flex items-center gap-2 mb-4 mt-4">
       <div class="font-semibold w-20">更新至</div>
-      <div id="updates">{{ item.updates }}</div>
+      <div>{{ item.updates }}</div>
     </div>
     <div class="flex items-center gap-2 mb-4 mt-4">
       <div class="font-semibold w-20">评分</div>
       <div class="rating">
-        <Rating id="rate" :modelValue="0" readonly class="rate0" />
-        <Rating id="rate" :modelValue="5" readonly class="rate5" :style="{'clip-path': `inset(0 ${rateCompute}% 0 0)`}" />
+        <Rating :modelValue="0" readonly class="rate0" />
+        <Rating :modelValue="5" readonly class="rate5" :style="{'clip-path': `inset(0 ${rateCompute}% 0 0)`}" />
       </div>
       <div>{{ item.score }} / 10</div>
     </div>

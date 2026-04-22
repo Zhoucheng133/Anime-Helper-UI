@@ -2,13 +2,13 @@
   <Dialog v-model:visible="visible" modal header="链接" :style="{ width: '25rem' }">
     <div class="flex items-center gap-4 mb-4">
       <InputGroup>
-        <InputText id="url" class="flex-auto" autocomplete="off" size="small" v-model="url" />
+        <InputText class="flex-auto" autocomplete="off" size="small" v-model="url" />
         <Button size="small" icon="pi pi-clipboard" @click="copyLink(url)" />
       </InputGroup>
     </div>
     <div class="flex items-center gap-4 mb-4">
       <InputGroup>
-        <InputText id="magnet" class="flex-auto" autocomplete="off" size="small" v-model="magnet" />
+        <InputText class="flex-auto" autocomplete="off" size="small" v-model="magnet" />
         <Button size="small" icon="pi pi-clipboard" @click="copyLink(magnet)" />
       </InputGroup>
     </div>

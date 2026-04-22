@@ -1,7 +1,7 @@
 <template>
   <Dialog v-model:visible="showDialog" modal header="从Bangumi中添加..." :draggable="false" class="bgm_search_dialog_content" :closable="true">
     <div class="flex items-center gap-2 mb-4">
-      <InputText size="small" id="title" class="flex-auto" autocomplete="off" v-model="title" placeholder="搜索标题" @keyup.enter="searchBangumi(title)" />
+      <InputText size="small" class="flex-auto" autocomplete="off" v-model="title" placeholder="搜索标题" @keyup.enter="searchBangumi(title)" />
       <Button size="small" @click="searchBangumi(title)" :disabled="loading">搜索</Button>
     </div>
     <div>
