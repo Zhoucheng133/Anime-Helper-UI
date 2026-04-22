@@ -25,8 +25,8 @@
         </Column>
         <Column header="操作" style="min-width: 140px;" class="select-none">
           <template #body="slotProps">
-            <Button severity="secondary" size="small" @click="infoHandler(slotProps.data)" :disabled="loading || slotProps.data.episode==0">查看</Button>
-            <Button size="small" @click="showAdd(slotProps.data.id)" :disabled="loading || slotProps.data.episode==0" class="ml-2">添加</Button>
+            <Button severity="secondary" size="small" @click="infoHandler(slotProps.data)" :disabled="loading">查看</Button>
+            <Button size="small" @click="showAdd(slotProps.data.id)" :disabled="loading" class="ml-2">添加</Button>
           </template>
         </Column>
       </DataTable>
