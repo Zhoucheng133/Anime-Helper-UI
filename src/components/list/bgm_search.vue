@@ -19,7 +19,7 @@
         <Column header="集数" style="min-width: 60px;">
           <template #body="slotProps">
             <div class="ep select-none">
-              {{ slotProps.data.eps }}
+              {{ slotProps.data.eps==0 ? '?' : slotProps.data.eps }}
             </div>
           </template>
         </Column>
