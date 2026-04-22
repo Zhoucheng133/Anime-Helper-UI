@@ -12,6 +12,7 @@ export interface ListItem{
   episode: number,
   now: number,
   time: number,
+  bgmId: string,
 }
 
 export default defineStore("list", ()=>{

@@ -24,8 +24,8 @@
       <div>{{ item.score }} / 10</div>
     </div>
     <div class="flex justify-end gap-2">
-      <Button type="button" label="取消" severity="secondary" @click="showInfo = false" size="small"></Button>
-      <Button type="button" label="添加到列表" @click="addHandler" size="small"></Button>
+      <Button type="button" label="完成" severity="secondary" @click="showInfo = false" size="small"></Button>
+      <Button type="button" label="添加到列表" @click="addHandler" size="small" v-if="showAdd"></Button>
     </div>
   </Dialog>
   <Loading ref="loadingRef" />
@@ -46,6 +46,8 @@ const emit = defineEmits([ "showAdd" ]);
 const toast=useToast();
 const loadingRef=ref();
 const store=Store();
+
+let showAdd=ref(true);
 
 const addHandler=()=>{
   showInfo.value=false;
@@ -68,8 +70,9 @@ let item=ref<BgmItem>({
 } as BgmItem);
 
 
-const showInfoHanlder=async (id: string, retry = false)=>{
+const showInfoHanlder=async (id: string, retry = false, add = true)=>{
   loadingRef.value.loadingHandler(true, "加载番剧信息");
+  showAdd.value=add;
   const {data: response}=await axios.get(`${hostname}/api/calendar/info/${id}`, {
     headers: {
       token: store.token,

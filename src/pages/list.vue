@@ -1,26 +1,25 @@
 <template>
   <div class="page">
     <div class="tool_bar">
-      <!-- <Button label="添加" size="small" @click="addRef.showAddHandler()" /> -->
       <Button label="添加" size="small" @click="toggleMenu" />
       <Menu ref="addmenuRef" id="overlay_menu" :model="addMenu" :popup="true" />
-      <Select size="small" v-model="list().selectedFilter" :options="list().filters" scroll-height="20rem" optionLabel="name" @change="list().getList()" />
-      <InputText size="small" style="width: 100%" v-if="list().selectedFilter.name=='搜索'" v-model="list().searchKeyWord" @change="list().getList()" @keyup.enter="searchHandler" />
-      <div v-if="list().selectedFilter.name=='更新周'">
-        <Select size="small" v-model="list().selectedWeekday" :options="list().weekdays" scroll-height="20rem" style="width: 120px;" optionLabel="name" @change="list().getList()"/>
+      <Select size="small" v-model="list.selectedFilter" :options="list.filters" scroll-height="20rem" optionLabel="name" @change="list.getList()" />
+      <InputText size="small" style="width: 100%" v-if="list.selectedFilter.name=='搜索'" v-model="list.searchKeyWord" @change="list.getList()" @keyup.enter="searchHandler" />
+      <div v-if="list.selectedFilter.name=='更新周'">
+        <Select size="small" v-model="list.selectedWeekday" :options="list.weekdays" scroll-height="20rem" style="width: 120px;" optionLabel="name" @change="list.getList()"/>
       </div>
       <div v-else></div>
     </div>
-    <div class="card" v-if="list().list.length!=0 && loading==false">
-      <DataTable :value="list().list">
+    <div class="card" v-if="list.list.length!=0 && loading==false">
+      <DataTable :value="list.list">
         <Column field="title" header="标题" style="min-width: 270px;">
           <template #body="slotProps">
-            <div class="item_title">{{ slotProps.data.title }}</div>
+            <div class="item_title" @click="showInfo(slotProps.data)">{{ slotProps.data.title }}</div>
           </template>
         </Column>
         <Column header="状态" style="min-width: 90px;">
           <template #body="slotProps">
-            <div class="update_tag tag" v-if="list().onUpudate(slotProps.data)">更新中</div>
+            <div class="update_tag tag" v-if="list.onUpudate(slotProps.data)">更新中</div>
             <div class="done_tag tag" v-else>已完结</div>
           </template>
         </Column>
@@ -33,21 +32,21 @@
         </Column>
         <Column header="更新周" style="min-width: 90px;">
           <template #body="slotProps">
-            <div class="weekday_tag weekday_tag_now" v-if="list().getWeekday(slotProps.data.time) === list().getWeekday(Date.now())" >{{ list().getWeekday(slotProps.data.time) }}</div>
-            <div class="weekday_tag" v-else>{{ list().getWeekday(slotProps.data.time) }}</div>
+            <div class="weekday_tag weekday_tag_now" v-if="list.getWeekday(slotProps.data.time) === list.getWeekday(Date.now())" >{{ list.getWeekday(slotProps.data.time) }}</div>
+            <div class="weekday_tag" v-else>{{ list.getWeekday(slotProps.data.time) }}</div>
           </template>
         </Column>
         <Column header="进度" style="min-width: 200px;">
           <template #body="slotProps">
             <div class="progress_area">
-              <ProgressBar :class="percent(slotProps)==100 ? 'finished':'progress'" :value="list().calProgress(slotProps.data)" style="height: 18px" :showValue="false"/>
+              <ProgressBar :class="percent(slotProps)==100 ? 'finished':'progress'" :value="list.calProgress(slotProps.data)" style="height: 18px" :showValue="false"/>
                 <div class="progress_label">
-                  <div>{{ slotProps.data.now }} / {{ list().analyseEpisode(slotProps.data) }}</div>
+                  <div>{{ slotProps.data.now }} / {{ list.analyseEpisode(slotProps.data) }}</div>
                 </div>
                 <div class="progress_label white_label" :style="{
                   'clip-path': `polygon(0 0, ${percent(slotProps)}% 0, ${percent(slotProps)}% 100%, 0% 100%)`
                 }">
-                  <div>{{ slotProps.data.now }} / {{ list().analyseEpisode(slotProps.data) }}</div>
+                  <div>{{ slotProps.data.now }} / {{ list.analyseEpisode(slotProps.data) }}</div>
                 </div>
             </div>
           </template>
@@ -56,18 +55,18 @@
           <template #body="slotProps">
             <ButtonGroup>
               <Button severity="secondary" size="small" @click="editRef.showEditHandler(slotProps.data)"><i class="pi pi-pen-to-square" style="font-size: 12px;" /></Button>
-              <Button severity="secondary" size="small" @click="list().minus(slotProps.data)" :disabled="slotProps.data.now<=0" ><i class="pi pi-minus" style="font-size: 12px;" /></Button>
-              <Button severity="secondary" size="small" @click="list().add(slotProps.data)" :disabled="slotProps.data.now>=list().analyseEpisode(slotProps.data)"><i class="pi pi-plus" style="font-size: 12px;"/></Button>
+              <Button severity="secondary" size="small" @click="list.minus(slotProps.data)" :disabled="slotProps.data.now<=0" ><i class="pi pi-minus" style="font-size: 12px;" /></Button>
+              <Button severity="secondary" size="small" @click="list.add(slotProps.data)" :disabled="slotProps.data.now>=list.analyseEpisode(slotProps.data)"><i class="pi pi-plus" style="font-size: 12px;"/></Button>
               <Button severity="secondary" size="small" style="font-size: 12px;" @click="downloaderRef.showAddHandler(slotProps.data.title)">添加到</Button>
-              <Button severity="secondary" size="small" @click="list().deleteItem($event, slotProps.data)"><i class="pi pi-trash" style="font-size: 12px;"/></Button>
+              <Button severity="secondary" size="small" @click="list.deleteItem($event, slotProps.data)"><i class="pi pi-trash" style="font-size: 12px;"/></Button>
             </ButtonGroup>
           </template>
         </Column>
       </DataTable>
-      <Paginator :rows="20" :totalRecords="list().length" @update:first="paginatorChange" template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+      <Paginator :rows="20" :totalRecords="list.length" @update:first="paginatorChange" template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
         currentPageReportTemplate="第 {currentPage} 页 | 共 {totalPages} 页" />
     </div>
-    <div v-else-if="list().list.length==0 && loading==false" class="empty">
+    <div v-else-if="list.list.length==0 && loading==false" class="empty">
       <div class="empty_list">
         <i class="pi pi-ban" style="margin-right: 5px;" />
         <div>列表为空</div>
@@ -89,27 +88,37 @@
     <Edit ref="editRef"/>
     <AddDownloader ref="downloaderRef"/>
     <BgmSearch ref="bgmSearchRef"/>
+    <Info ref="infoRef" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { Button, Menu, Select, InputText, DataTable, Column, Paginator, ProgressBar, ButtonGroup, Tag } from 'primevue';
-import list from '../store/list';
+import listStore, { type ListItem } from '../store/list';
 import Add from '../components/list/add.vue';
 import Edit from "../components/list/edit.vue";
 import AddDownloader from '../components/list/add_downloader.vue';
 import BgmSearch from '../components/list/bgm_search.vue';
 import { onMounted, ref } from 'vue';
+import Info from '../components/list/info.vue';
 
 document.title="AnimeHelper | 列表";
 
 const loading=ref(true);
+const list=listStore();
 const addmenuRef=ref();
 const bgmSearchRef=ref();
+const infoRef=ref();
 
 function searchHandler(){
   document.activeElement instanceof HTMLElement &&
   document.activeElement.blur();
+}
+
+function showInfo(data: ListItem){
+  if(data.bgmId.length!=0){
+    infoRef.value.showInfoHanlder(data.bgmId, false, false);
+  }
 }
 
 const toggleMenu=(event: any)=>{
@@ -139,11 +148,11 @@ const addMenu=ref([
 ]);
 
 const percent=(slotProps: any)=>{
-  return list().calProgress(slotProps.data);
+  return list.calProgress(slotProps.data);
 }
 
 onMounted(async ()=>{
-  await list().getList();
+  await list.getList();
   loading.value=false;
 })
 
@@ -152,8 +161,8 @@ const editRef=ref();
 const downloaderRef=ref();
 
 function paginatorChange(val: number){
-  list().offset=val;
-  list().getList();
+  list.offset=val;
+  list.getList();
 }
 </script>
 
@@ -224,6 +233,7 @@ function paginatorChange(val: number){
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  cursor: pointer;
 }
 .tool_bar{
   margin-top: 10px;

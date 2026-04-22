@@ -22,7 +22,7 @@
     </div>
     <div class="flex items-center gap-2 mb-4" v-if="update">
       <div class="font-semibold w-20">更新周</div>
-       <Select size="small" v-model="updateWeekday" :options="list().weekdays" scroll-height="20rem" optionLabel="name" />
+       <Select size="small" v-model="updateWeekday" :options="list.weekdays" scroll-height="20rem" optionLabel="name" />
     </div>
     <div class="flex justify-end gap-2">
       <Button type="button" label="取消" severity="secondary" @click="showEdit = false" size="small"></Button>
@@ -34,7 +34,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import type { ListItem } from '../../store/list';
-import list from '../../store/list';
+import listStore from '../../store/list';
 import { Dialog, Button, InputText, Checkbox, Select } from 'primevue';
 
 const id=ref("");
@@ -44,17 +44,18 @@ const update=ref(false);
 const episode=ref("");
 const watchTo=ref("");
 const updateTo=ref("");
+const list=listStore();
 
-const updateWeekday=ref(list().weekdays[0]);
+const updateWeekday=ref(list.weekdays[0]);
 
 const showEdit=ref(false);
 
 const toWeekday=(time: number)=>{
   if(time==0){
-    return list().weekdays[0];
+    return list.weekdays[0];
   }
   const wd = new Date(time).getDay();
-  return list().weekdays[wd==0 ? 6 : wd-1];
+  return list.weekdays[wd==0 ? 6 : wd-1];
 }
 
 const showEditHandler=(item: ListItem)=>{
@@ -62,18 +63,18 @@ const showEditHandler=(item: ListItem)=>{
   showEdit.value=true;
   title.value=item.title;
   watchTo.value=item.now.toString();
-  update.value=list().calculateEpisodesReleased(item.time)<item.episode;
-  updateTo.value=list().analyseEpisode(item).toString();
+  update.value=list.calculateEpisodesReleased(item.time)<item.episode;
+  updateTo.value=list.analyseEpisode(item).toString();
   episode.value=item.episode.toString();
   updateWeekday.value=toWeekday(item.time);
 }
 
 const eidtHandler=async ()=>{
-  if(!list().formChecker(title.value, update.value, episode.value, watchTo.value, updateTo.value)){
+  if(!list.formChecker(title.value, update.value, episode.value, watchTo.value, updateTo.value)){
     return;
   }
 
-  await list().editItem(id.value, title.value, update.value,parseInt(episode.value), parseInt(watchTo.value), parseInt(updateTo.value), updateWeekday.value.code);
+  await list.editItem(id.value, title.value, update.value,parseInt(episode.value), parseInt(watchTo.value), parseInt(updateTo.value), updateWeekday.value.code);
 
   showEdit.value=false;
 }
