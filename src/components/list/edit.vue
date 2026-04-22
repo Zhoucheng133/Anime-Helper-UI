@@ -2,26 +2,26 @@
   <Dialog v-model:visible="showEdit" modal header="编辑列表项..." :style="{ width: '25rem' }" :draggable="false" class="select-none" :closable="false">
     <div class="flex items-center gap-2 mb-4">
       <Checkbox v-model="update" inputId="update" binary/>
-      <label for="update"> 当前在更新 </label>
+      <div> 当前在更新 </div>
     </div>
     <div class="flex items-center gap-2 mb-4">
-      <label for="title" class="font-semibold w-20">标题</label>
+      <div class="font-semibold w-20">标题</div>
       <InputText size="small" id="title" class="flex-auto" autocomplete="off" v-model="title" />
     </div>
     <div class="flex items-center gap-2 mb-4">
-      <label for="episode" class="font-semibold w-20">集数</label>
+      <div class="font-semibold w-20">集数</div>
       <InputText type="number" size="small" id="episode" class="flex-auto" autocomplete="off" v-model="episode" min="1" />
     </div>
     <div class="flex items-center gap-2 mb-4">
-      <label for="watchTo" class="font-semibold w-20">观看至</label>
+      <div class="font-semibold w-20">观看至</div>
       <InputText type="number" size="small" id="watchTo" class="flex-auto" autocomplete="off" v-model="watchTo" min="0" :max="update ? updateTo : episode" />
     </div>
     <div class="flex items-center gap-2 mb-4" v-if="update">
-      <label for="updateTo" class="font-semibold w-20">更新至</label>
+      <div class="font-semibold w-20">更新至</div>
       <InputText type="number" size="small" id="updateTo" class="flex-auto" autocomplete="off" v-model="updateTo" min="1" :max="episode" />
     </div>
     <div class="flex items-center gap-2 mb-4" v-if="update">
-      <label for="updateWeek" class="font-semibold w-20">更新周</label>
+      <div class="font-semibold w-20">更新周</div>
        <Select size="small" id="updateWeek" v-model="updateWeekday" :options="list().weekdays" scroll-height="20rem" optionLabel="name" />
     </div>
     <div class="flex justify-end gap-2">

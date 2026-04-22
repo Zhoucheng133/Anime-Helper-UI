@@ -2,11 +2,11 @@
   <Dialog v-model:visible="showAdd" modal header="添加到下载器列表..." :style="{ width: '25rem' }" :draggable="false" class="select-none" :closable="false">
     <div class="mb-5 select-text">{{ full }}</div>
     <div class="flex items-center gap-2 mb-4">
-      <label for="title" class="font-semibold w-20">标题</label>
+      <div class="font-semibold w-20">标题</div>
       <InputText size="small" id="title" class="flex-auto" autocomplete="off" v-model="title" />
     </div>
     <div class="flex items-center gap-2 mb-4">
-      <label for="ass" class="font-semibold w-20">字幕组</label>
+      <div class="font-semibold w-20">字幕组</div>
       <InputText size="small" id="ass" class="flex-auto" autocomplete="off" v-model="ass"/>
     </div>
     <div class="flex justify-end gap-2">

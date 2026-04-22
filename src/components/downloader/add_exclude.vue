@@ -1,7 +1,7 @@
 <template>
   <Dialog v-model:visible="showAdd" modal header="添加一个排除关键字..." :style="{ width: '25rem' }" :draggable="false" class="select-none" :closable="false">
     <div class="flex items-center gap-2 mb-4">
-      <label for="title" class="font-semibold w-20">关键字</label>
+      <div class="font-semibold w-20">关键字</div>
       <InputText size="small" id="title" class="flex-auto" autocomplete="off" v-model="key" />
     </div>
     <div class="flex justify-end gap-2">
