@@ -83,13 +83,13 @@ const searchHandler=async (retry=false)=>{
   loading.value=true;
   const {data: response}=await axios.get(`${hostname}/api/search/${searchKey.value}`, {
     headers: {
-      token: store().token,
+      token: store.token,
     }
   });
   if(response.ok){
     result.value=response.msg;
   }else if(response.msg=="令牌已过期"){
-    if(!retry && await store().refreshToken()){
+    if(!retry && await store.refreshToken()){
       searchHandler(true);
       return;
     }
