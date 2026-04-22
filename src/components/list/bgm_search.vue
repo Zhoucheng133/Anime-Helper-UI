@@ -14,7 +14,7 @@
         <Column header="集数" style="min-width: 60px;">
           <template #body="slotProps">
             <div class="ep">
-              {{ slotProps.data.episode }}
+              {{ slotProps.data.eps }}
             </div>
           </template>
         </Column>
