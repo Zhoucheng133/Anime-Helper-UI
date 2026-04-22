@@ -29,6 +29,7 @@
     </div>
   </Dialog>
   <Loading ref="loadingRef" />
+  <Add ref="addRef" />
 </template>
 
 <script setup lang="ts">
@@ -40,10 +41,13 @@ import hostname from '../../env/hostname';
 import Store from '../../store';
 import Loading from '../loading.vue';
 import Rating from 'primevue/rating';
+import Add from './add.vue';
 
 const toast=useToast();
 const loadingRef=ref();
 const store=Store();
+
+const addRef=ref();
 
 const rateCompute=computed(()=>{
   return 100 - (item.value.score * 10);
@@ -61,7 +65,7 @@ let item=ref<BgmItem>({
 } as BgmItem);
 
 const addHandler=()=>{
-
+  addRef.value.showAddHandler(item.value, weekday.value);
 }
 
 const showInfoHanlder=async (id: string, week: number, retry = false)=>{

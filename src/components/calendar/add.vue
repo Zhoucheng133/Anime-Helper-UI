@@ -22,33 +22,26 @@
     </div>
     <div class="flex items-center gap-2 mb-4" v-if="update">
       <label for="updateWeek" class="font-semibold w-20">更新周</label>
-       <Select size="small" id="updateWeek" v-model="updateWeekday" :options="list().weekdays" scroll-height="20rem" optionLabel="name" />
+       <Select size="small" id="updateWeek" v-model="updateWeekday" :options="list.weekdays" scroll-height="20rem" optionLabel="name" />
     </div>
     <div class="flex justify-end gap-2">
       <Button type="button" label="取消" severity="secondary" @click="showAdd = false" size="small"></Button>
       <Button type="button" label="添加" @click="addHandler" size="small"></Button>
     </div>
   </Dialog>
-  <Loading ref="loadingRef" />
 </template>
 
 <script lang="ts" setup>
-import { useToast, Dialog, InputText, Button, Checkbox, Select } from 'primevue';
+import { Dialog, InputText, Button, Checkbox, Select } from 'primevue';
 import { ref } from 'vue';
-import list from '../../store/list';
-import Loading from '../loading.vue';
-import type { CalendarItem } from '../../store/calendar';
-import axios from 'axios';
-import hostname from '../../env/hostname';
-import store from '../../store';
+import listStore from '../../store/list';
 import calendar from '../../store/calendar';
+import type { BgmItem } from '../../types/bgm';
 
-const loadingRef=ref();
+const list=listStore();
 
 const showAdd=ref(false);
-const updateWeekday=ref(list().weekdays[0]);
-
-const toast=useToast();
+const updateWeekday=ref(list.weekdays[0]);
 
 const title=ref("");
 const update=ref(true);
@@ -58,37 +51,21 @@ const updateTo=ref("");
 
 const id=ref("");
 
-const showAddHandler=async (item: CalendarItem, weekday: number, retry = false)=>{
-  loadingRef.value.loadingHandler(true, "加载番剧信息");
+const showAddHandler=async (item: BgmItem, weekday: number)=>{
+  title.value=item.title;
+  episode.value=item.eps.toString();
+  updateTo.value=item.updates.toString();
   id.value=item.id;
   showAdd.value=true;
-  title.value=item.title;
-  updateWeekday.value=list().weekdays[weekday==0 ? 6 : weekday-1];
-  const {data: response}=await axios.get(`${hostname}/api/calendar/info/${item.id}`, {
-    headers: {
-      token: store().token,
-    }
-  });
-  if(response.ok){
-    episode.value=response.msg.eps;
-    updateTo.value=response.msg.updates;
-  }else if(response.msg=="令牌已过期"){
-    if(!retry && await store().refreshToken()){
-      showAddHandler(item, weekday, true);
-      return;
-    }
-  }else{
-    toast.add({ severity: 'error', summary: '获取信息失败', detail: response.msg, life: 3000 });
-  }
-  loadingRef.value.loadingHandler(false, "加载番剧信息");
+  updateWeekday.value=list.weekdays[weekday==0 ? 6 : weekday-1];
 }
 
 const addHandler=async ()=>{
-  if(!list().formChecker(title.value, update.value, episode.value, watchTo.value, updateTo.value)){
+  if(!list.formChecker(title.value, update.value, episode.value, watchTo.value, updateTo.value)){
     return;
   }
 
-  const ok=await list().addItem(title.value, update.value,parseInt(episode.value), parseInt(watchTo.value), parseInt(updateTo.value), updateWeekday.value.code, id.value.toString());
+  const ok=await list.addItem(title.value, update.value,parseInt(episode.value), parseInt(watchTo.value), parseInt(updateTo.value), updateWeekday.value.code, id.value.toString());
   if(ok){
     calendar().getList();
     showAdd.value=false;
