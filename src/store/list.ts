@@ -185,14 +185,15 @@ export default defineStore("list", ()=>{
     }
   }
 
-  async function addItem(title: string, update: boolean, episode: number, watchTo: number, updateTo: number, updateWeekday: number, retry=false){
+  async function addItem(title: string, update: boolean, episode: number, watchTo: number, updateTo: number, updateWeekday: number, bgmId: string, retry=false): Promise<boolean>{
     const todayTimestamp = Date.now();
     const jsonItem={
       id: nanoid(),
       title: title,
       episode: episode,
       now: watchTo,
-      time: update ? getTimestampOfFirstEpisode(todayTimestamp, updateWeekday, updateTo) : 0
+      time: update ? getTimestampOfFirstEpisode(todayTimestamp, updateWeekday, updateTo) : 0,
+      bgmId: bgmId
     }
     const {data: response}=await axios.post(`${hostname}/api/list/add`, {
       data: jsonItem
@@ -202,14 +203,16 @@ export default defineStore("list", ()=>{
       }
     })
     if(response.ok){
-      getList()
+      await getList()
+      return true;
     }else if(response.msg=="令牌已过期"){
       if(!retry && await store().refreshToken()){
-        addItem(title, update, episode, watchTo, updateTo, updateWeekday, true);
-        return;
+        return addItem(title, update, episode, watchTo, updateTo, updateWeekday, bgmId, true);
       }
+      return false;
     }else{
       toast.add({ severity: 'error', summary: '添加失败', detail: response.msg, life: 3000 });
+      return false;
     }
   }
 

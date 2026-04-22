@@ -88,9 +88,11 @@ const addHandler=async ()=>{
     return;
   }
 
-  list().addItem(title.value, update.value,parseInt(episode.value), parseInt(watchTo.value), parseInt(updateTo.value), updateWeekday.value.code);
-  calendar().getList();
-  showAdd.value=false;
+  const ok=await list().addItem(title.value, update.value,parseInt(episode.value), parseInt(watchTo.value), parseInt(updateTo.value), updateWeekday.value.code, id.value.toString());
+  if(ok){
+    calendar().getList();
+    showAdd.value=false;
+  }
 }
 
 defineExpose({showAddHandler})

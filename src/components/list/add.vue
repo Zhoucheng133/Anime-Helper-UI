@@ -22,7 +22,7 @@
     </div>
     <div class="flex items-center gap-2 mb-4" v-if="update">
       <label for="updateWeek" class="font-semibold w-20">更新周</label>
-       <Select size="small" id="updateWeek" v-model="updateWeekday" :options="list().weekdays" scroll-height="20rem" optionLabel="name" />
+       <Select size="small" id="updateWeek" v-model="updateWeekday" :options="list.weekdays" scroll-height="20rem" optionLabel="name" />
     </div>
     <div class="flex justify-end gap-2">
       <Button type="button" label="取消" severity="secondary" @click="showAdd = false" size="small"></Button>
@@ -34,7 +34,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Dialog, InputText, Button, Checkbox, Select } from 'primevue';
-import list from '../../store/list';
+import listStore from '../../store/list';
+
+const list=listStore();
 
 const showAdd=ref(false);
 
@@ -44,22 +46,24 @@ const episode=ref("");
 const watchTo=ref("0");
 const updateTo=ref("");
 
-const updateWeekday=ref(list().weekdays[0]);
+const updateWeekday=ref(list.weekdays[0]);
 
 const addHandler=async ()=>{
-  if(!list().formChecker(title.value, update.value, episode.value, watchTo.value, updateTo.value)){
+  if(!list.formChecker(title.value, update.value, episode.value, watchTo.value, updateTo.value)){
     return;
   }
 
-  await list().addItem(title.value, update.value,parseInt(episode.value), parseInt(watchTo.value), parseInt(updateTo.value), updateWeekday.value.code);
+  const ok=await list.addItem(title.value, update.value,parseInt(episode.value), parseInt(watchTo.value), parseInt(updateTo.value), updateWeekday.value.code, "");
 
-  showAdd.value=false;
-  title.value="";
-  update.value=false;
-  episode.value="";
-  watchTo.value="";
-  updateTo.value="";
-  updateWeekday.value=list().weekdays[0];
+  if(ok){
+    showAdd.value=false;
+    title.value="";
+    update.value=false;
+    episode.value="";
+    watchTo.value="0";
+    updateTo.value="";
+    updateWeekday.value=list.weekdays[0];
+  }
 }
 
 const showAddHandler=()=>{

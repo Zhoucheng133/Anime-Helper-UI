@@ -90,7 +90,7 @@ const addHandler=async (item: BangumiItem, retry=false)=>{
     }
   });
   if(rlt.data.ok){
-    await list().addItem(item.title, item.episode>rlt.data.msg.updates, item.episode, 0, rlt.data.msg.updates, rlt.data.msg.day)
+    await list().addItem(item.title, item.episode>rlt.data.msg.updates, item.episode, 0, rlt.data.msg.updates, rlt.data.msg.day, item.id.toString())
     showDialog.value=false;
   }else if(rlt.data.msg=="令牌已过期"){
     if(!retry && await store().refreshToken()){
