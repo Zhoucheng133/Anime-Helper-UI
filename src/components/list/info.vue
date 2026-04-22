@@ -29,7 +29,6 @@
     </div>
   </Dialog>
   <Loading ref="loadingRef" />
-  <Add ref="addRef" />
 </template>
 
 <script setup lang="ts">
@@ -41,19 +40,22 @@ import hostname from '../../env/hostname';
 import Store from '../../store';
 import Loading from '../loading.vue';
 import Rating from 'primevue/rating';
-import Add from './add.vue';
+
+const emit = defineEmits([ "showAdd" ]);
 
 const toast=useToast();
 const loadingRef=ref();
 const store=Store();
 
-const addRef=ref();
+const addHandler=()=>{
+  showInfo.value=false;
+  emit("showAdd", item.value);
+}
 
 const rateCompute=computed(()=>{
   return 100 - (item.value.score * 10);
 })
 
-let weekday=ref<number>(0)
 let showInfo=ref(false);
 let item=ref<BgmItem>({
   title: '',
@@ -65,14 +67,9 @@ let item=ref<BgmItem>({
   weekday: 0,
 } as BgmItem);
 
-const addHandler=()=>{
-  showInfo.value=false;
-  addRef.value.showAddHandler(item.value, weekday.value);
-}
 
-const showInfoHanlder=async (id: string, week: number, retry = false)=>{
+const showInfoHanlder=async (id: string, retry = false)=>{
   loadingRef.value.loadingHandler(true, "加载番剧信息");
-  weekday.value=week;
   const {data: response}=await axios.get(`${hostname}/api/calendar/info/${id}`, {
     headers: {
       token: store.token,
@@ -83,7 +80,7 @@ const showInfoHanlder=async (id: string, week: number, retry = false)=>{
     showInfo.value=true;
   }else if(response.msg=="令牌已过期"){
     if(!retry && await store.refreshToken()){
-      showInfoHanlder(id, week, true);
+      showInfoHanlder(id, true);
       return;
     }
   }else{

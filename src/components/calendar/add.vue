@@ -47,7 +47,7 @@ const title=ref("");
 const update=ref(true);
 const episode=ref("");
 const watchTo=ref("0");
-const updateTo=ref("");
+const updateTo=ref("0");
 
 const id=ref("");
 
@@ -56,8 +56,14 @@ const showAddHandler=async (item: BgmItem, weekday: number)=>{
   episode.value=item.eps.toString();
   updateTo.value=item.updates.toString();
   id.value=item.id;
-  showAdd.value=true;
   updateWeekday.value=list.weekdays[weekday==0 ? 6 : weekday-1];
+
+  if(item.updates>=item.eps){
+    update.value=false;
+    updateTo.value="0";
+  }
+
+  showAdd.value=true;
 }
 
 const addHandler=async ()=>{

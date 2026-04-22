@@ -5,4 +5,5 @@ export interface BgmItem{
   updates: number,
   eps: number,
   image: string,
+  weekday: number,
 }
