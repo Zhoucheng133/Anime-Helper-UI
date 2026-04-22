@@ -14,7 +14,7 @@
       <DataTable :value="list.list">
         <Column field="title" header="标题" style="min-width: 270px;">
           <template #body="slotProps">
-            <div class="item_title" @click="showInfo(slotProps.data)">{{ slotProps.data.title }}</div>
+            <div class="item_title" @click="showInfo(slotProps.data, $event)">{{ slotProps.data.title }}</div>
           </template>
         </Column>
         <Column header="状态" style="min-width: 90px;">
@@ -89,11 +89,12 @@
     <AddDownloader ref="downloaderRef"/>
     <BgmSearch ref="bgmSearchRef"/>
     <Info ref="infoRef" />
+    <Bind ref="bindRef" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { Button, Menu, Select, InputText, DataTable, Column, Paginator, ProgressBar, ButtonGroup, Tag } from 'primevue';
+import { Button, Menu, Select, InputText, DataTable, Column, Paginator, ProgressBar, ButtonGroup, Tag, useConfirm } from 'primevue';
 import listStore, { type ListItem } from '../store/list';
 import Add from '../components/list/add.vue';
 import Edit from "../components/list/edit.vue";
@@ -101,24 +102,46 @@ import AddDownloader from '../components/list/add_downloader.vue';
 import BgmSearch from '../components/list/bgm_search.vue';
 import { onMounted, ref } from 'vue';
 import Info from '../components/list/info.vue';
+import Bind from '../components/list/bind.vue';
 
 document.title="AnimeHelper | 列表";
 
 const loading=ref(true);
+const confirm = useConfirm();
 const list=listStore();
 const addmenuRef=ref();
 const bgmSearchRef=ref();
 const infoRef=ref();
+const bindRef=ref();
 
 function searchHandler(){
   document.activeElement instanceof HTMLElement &&
   document.activeElement.blur();
 }
 
-function showInfo(data: ListItem){
+function showInfo(data: ListItem, event: any, ){
   if(data.bgmId.length!=0){
-    infoRef.value.showInfoHanlder(data.bgmId, false, false);
+    infoRef.value.showInfoHanlder(data.bgmId, false, data.id);
+    return;
   }
+
+  confirm.require({
+    target: event.currentTarget,
+    message: '没有绑定Bangumi信息, 是否要绑定?',
+    rejectProps: {
+      label: '取消',
+      severity: 'secondary',
+      outlined: true,
+      size: "small"
+    },
+    acceptProps: {
+      size: "small",
+      label: '绑定',
+    },
+    accept: ()=>{
+      bindRef.value.bindHandler(data.title, data.id)
+    },
+  });
 }
 
 const toggleMenu=(event: any)=>{

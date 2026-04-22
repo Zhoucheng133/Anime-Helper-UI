@@ -24,8 +24,9 @@
       <div>{{ item.score }} / 10</div>
     </div>
     <div class="flex justify-end gap-2">
+      <Button type="button" label="取消绑定" severity="danger" @click="unbindHandler" size="small" v-if="listId.length>0"></Button>
       <Button type="button" label="完成" severity="secondary" @click="showInfo = false" size="small"></Button>
-      <Button type="button" label="添加到列表" @click="addHandler" size="small" v-if="showAdd"></Button>
+      <Button type="button" label="添加到列表" @click="addHandler" size="small" v-if="listId.length==0"></Button>
     </div>
   </Dialog>
   <Loading ref="loadingRef" />
@@ -40,14 +41,24 @@ import hostname from '../../env/hostname';
 import Store from '../../store';
 import Loading from '../loading.vue';
 import Rating from 'primevue/rating';
+import listStore from '../../store/list';
 
 const emit = defineEmits([ "showAdd" ]);
+
+const unbindHandler=async ()=>{
+  const rlt=await list.unbind(listId.value);
+  if(rlt){
+    toast.add({ severity: 'success', summary: '取消绑定成功', detail: `已取消绑定 ${item.value.title}`, life: 3000 });
+    showInfo.value=false;
+  }
+}
 
 const toast=useToast();
 const loadingRef=ref();
 const store=Store();
+const list=listStore();
 
-let showAdd=ref(true);
+let listId=ref("");
 
 const addHandler=()=>{
   showInfo.value=false;
@@ -69,10 +80,9 @@ let item=ref<BgmItem>({
   weekday: 0,
 } as BgmItem);
 
-
-const showInfoHanlder=async (id: string, retry = false, add = true)=>{
+const showInfoHanlder=async (id: string, retry = false, list_id = "")=>{
   loadingRef.value.loadingHandler(true, "加载番剧信息");
-  showAdd.value=add;
+  listId.value=list_id;
   const {data: response}=await axios.get(`${hostname}/api/calendar/info/${id}`, {
     headers: {
       token: store.token,

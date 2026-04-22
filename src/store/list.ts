@@ -332,6 +332,55 @@ export default defineStore("list", ()=>{
     return true;
   }
 
+  async function bind(listId: string, bgmId: string, retry=false): Promise<boolean>{
+    const {data: response}=await axios.post(`${hostname}/api/list/bind`, {
+      data: {
+        listId: listId,
+        bgmId: bgmId
+      }
+    }, {
+      headers: {
+        token: store.token,
+      }
+    })
+    if(response.ok){
+      getList();
+      return true;
+    }else if(response.msg=="令牌已过期"){
+      if(!retry && await store.refreshToken()){
+        return bind(listId, bgmId, true);
+      }
+      return false;
+    }else{
+      toast.add({ severity: 'error', summary: '绑定失败', detail: response.msg, life: 3000 });
+      return false;
+    }
+  }
+
+  async function unbind(listId: string, retry=false): Promise<boolean>{
+    const {data: response}=await axios.post(`${hostname}/api/list/unbind`, {
+      data: {
+        listId: listId
+      }
+    }, {
+      headers: {
+        token: store.token,
+      }
+    })
+    if(response.ok){
+      getList();
+      return true;
+    }else if(response.msg=="令牌已过期"){
+      if(!retry && await store.refreshToken()){
+        return unbind(listId, true);
+      }
+      return false;
+    }else{
+      toast.add({ severity: 'error', summary: '解除绑定', detail: response.msg, life: 3000 });
+      return false;
+    }
+  }
+
   return {
     deleteItem,
     editItem,
@@ -353,6 +402,8 @@ export default defineStore("list", ()=>{
     length,
     list,
     getList,
-    formChecker
+    formChecker,
+    bind,
+    unbind,
   };
 })
