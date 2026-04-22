@@ -56,15 +56,16 @@ const showDialog=ref(false);
 const title=ref('');
 
 async function searchBangumi(keyword: string, retry=false){
-  loading.value=true;
 
-  document.activeElement instanceof HTMLElement &&
-  document.activeElement.blur();
-  
   if(keyword.length==0){
     toast.add({ severity: 'error', summary: '搜索失败', detail: '关键字不能为空', life: 3000 });
     return;
   }
+
+  loading.value=true;
+
+  document.activeElement instanceof HTMLElement &&
+  document.activeElement.blur();
 
   let rlt=await axios.get(`${hostname}/api/list/bgm/search/${keyword}`, {
     headers: {
