@@ -14,7 +14,9 @@
       <DataTable :value="list.list">
         <Column field="title" header="标题" style="min-width: 270px;">
           <template #body="slotProps">
-            <div class="item_title" @click="showInfo(slotProps.data, $event)">{{ slotProps.data.title }}</div>
+            <div class="item_title" style="width: fit-content;" @click="showInfo(slotProps.data, $event)">
+              {{ slotProps.data.title }}
+            </div>
           </template>
         </Column>
         <Column header="状态" style="min-width: 90px;">
