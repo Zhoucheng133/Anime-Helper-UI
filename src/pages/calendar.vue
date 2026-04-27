@@ -10,12 +10,11 @@
       <AccordionPanel v-for="(values, index) in calendar().list" :key="index" :value="index">
         <AccordionHeader>{{ list().weekdays[index==0 ? 6 : index-1].name }}</AccordionHeader>
         <AccordionContent>
-          <Tag rounded v-for="(item, _) in values" :key="item.id" :value="item.title" :class="item.added ? 'select-none m-1' : 'select-none m-1 cursor-pointer'" :severity="item.added ? 'warn' : 'secondary'" @click="showInfo(item, index)" />
+          <Tag rounded v-for="(item, _) in values" :key="item.id" :value="item.title" class="select-none m-1 cursor-pointer" :severity="item.added ? 'warn' : 'secondary'" @click="showInfo(item, index)" />
         </AccordionContent>
       </AccordionPanel>
     </Accordion>
-    <!-- <Add ref="addRef" /> -->
-     <Info ref="infoRef" />
+    <Info ref="infoRef" />
   </div>
 </template>
 
@@ -33,9 +32,7 @@ const loading=ref(true);
 const infoRef=ref();
 
 const showInfo=(item: CalendarItem, weekday: number)=>{
-  if(!item.added){
-    infoRef.value.showInfoHanlder(item.id, weekday);
-  }
+  infoRef.value.showInfoHanlder(item.id, weekday, false, !item.added);
 }
 
 onMounted(async ()=>{

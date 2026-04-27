@@ -25,7 +25,7 @@
     </div>
     <div class="flex justify-end gap-2">
       <Button type="button" label="取消" severity="secondary" @click="showInfo = false" size="small"></Button>
-      <Button type="button" label="添加到列表" @click="addHandler" size="small"></Button>
+      <Button type="button" label="添加到列表" @click="addHandler" size="small" :disabled="!enableAdd"></Button>
     </div>
   </Dialog>
   <Loading ref="loadingRef" />
@@ -46,6 +46,8 @@ import Add from './add.vue';
 const toast=useToast();
 const loadingRef=ref();
 const store=Store();
+
+const enableAdd=ref(true);
 
 const addRef=ref();
 
@@ -70,9 +72,10 @@ const addHandler=()=>{
   addRef.value.showAddHandler(item.value, weekday.value);
 }
 
-const showInfoHanlder=async (id: string, week: number, retry = false)=>{
+const showInfoHanlder=async (id: string, week: number, retry = false, add = true)=>{
   loadingRef.value.loadingHandler(true, "加载番剧信息");
   weekday.value=week;
+  enableAdd.value=add;
   const {data: response}=await axios.get(`${hostname}/api/calendar/info/${id}`, {
     headers: {
       token: store.token,
