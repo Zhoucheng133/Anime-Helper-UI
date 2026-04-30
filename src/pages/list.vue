@@ -11,10 +11,11 @@
       <div v-else></div>
     </div>
     <div class="card" v-if="list.list.length!=0 && loading==false">
-      <DataTable :value="list.list" stripedRows tableStyle="table-layout: fixed; width: 100%">
-        <Column field="title" header="标题" style="width: 100%; overflow: hidden;">
+      <DataTable :value="list.list" stripedRows tableStyle="table-layout: fixed; width: 100%" v-model:expandedRows="expandedRows" dataKey="id">
+        <Column expander style="width: 25px" v-if="mobile" />
+        <Column field="title" header="标题" style="overflow: hidden;">
           <template #body="slotProps">
-            <div class="item_title" style="width: 100%" @click="showInfo(slotProps.data, $event)" v-tooltip.top="{ value: slotProps.data.title, showDelay: 500, }">
+            <div class="item_title" style="width: 100%" @click="mobile ? toggleExpansion(slotProps.data) : showInfo(slotProps.data, $event)" v-tooltip.top="{ value: slotProps.data.title, showDelay: 500, }">
               {{ slotProps.data.title }}
             </div>
           </template>
@@ -53,7 +54,7 @@
             </div>
           </template>
         </Column>
-        <Column header="操作" style="width: 220px;" v-if="!mobile">
+        <Column header="操作" style="width: 210px;" v-if="!mobile">
           <template #body="slotProps">
             <ButtonGroup>
               <Button severity="secondary" size="small" @click="editRef.showEditHandler(slotProps.data)"><i class="pi pi-pen-to-square" style="font-size: 12px;" /></Button>
@@ -64,6 +65,50 @@
             </ButtonGroup>
           </template>
         </Column>
+        <template #expansion="slotProps">
+          <div class="p-4">
+            <div class="expanded_detail">
+              <div class="title">标题</div>
+              <div>{{ slotProps.data.title }}</div>
+              <div class="title">状态</div>
+              <div>
+                <div class="update_tag tag" v-if="list.onUpudate(slotProps.data)">更新中</div>
+                <div class="done_tag tag" v-else>已完结</div>
+              </div>
+              <div class="title">集数</div>
+              <div>{{ slotProps.data.episode }}</div>
+              <div class="title">更新周</div>
+              <div>
+                <div class="weekday_tag weekday_tag_now" v-if="list.getWeekday(slotProps.data.time) === list.getWeekday(Date.now())" >{{ list.getWeekday(slotProps.data.time) }}</div>
+                <div class="weekday_tag" v-else>{{ list.getWeekday(slotProps.data.time) }}</div>
+              </div>
+              <div class="title">进度</div>
+              <div>
+                <div class="progress_area">
+                  <ProgressBar :class="percent(slotProps)==100 ? 'finished':'progress'" :value="list.calProgress(slotProps.data)" style="height: 18px" :showValue="false"/>
+                    <div class="progress_label">
+                      <div>{{ slotProps.data.now }} / {{ list.analyseEpisode(slotProps.data) }}</div>
+                    </div>
+                    <div class="progress_label white_label" :style="{
+                      'clip-path': `polygon(0 0, ${percent(slotProps)}% 0, ${percent(slotProps)}% 100%, 0% 100%)`
+                    }">
+                      <div>{{ slotProps.data.now }} / {{ list.analyseEpisode(slotProps.data) }}</div>
+                    </div>
+                </div>
+              </div>
+              <div class="title">操作</div>
+              <div>
+                <ButtonGroup>
+                  <Button severity="secondary" size="small" @click="editRef.showEditHandler(slotProps.data)"><i class="pi pi-pen-to-square" style="font-size: 12px;" /></Button>
+                  <Button severity="secondary" size="small" @click="list.minus(slotProps.data)" :disabled="slotProps.data.now<=0" ><i class="pi pi-minus" style="font-size: 12px;" /></Button>
+                  <Button severity="secondary" size="small" @click="list.add(slotProps.data)" :disabled="slotProps.data.now>=list.analyseEpisode(slotProps.data)"><i class="pi pi-plus" style="font-size: 12px;"/></Button>
+                  <Button severity="secondary" size="small" style="font-size: 12px;" @click="downloaderRef.showAddHandler(slotProps.data.title)">添加到</Button>
+                  <Button severity="secondary" size="small" @click="list.deleteItem($event, slotProps.data)"><i class="pi pi-trash" style="font-size: 12px;"/></Button>
+                </ButtonGroup>
+              </div>
+            </div>
+          </div>
+        </template>
       </DataTable>
       <Paginator :rows="20" :totalRecords="list.length" @update:first="paginatorChange" template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
         currentPageReportTemplate="第 {currentPage} 页 | 共 {totalPages} 页" />
@@ -119,6 +164,18 @@ const infoRef=ref();
 const bindRef=ref();
 const store=Store();
 const mobile=storeToRefs(store).mobile;
+const expandedRows = ref<Record<string, boolean>>({});
+
+function toggleExpansion(data: ListItem){
+  const id = data.id;
+  if (expandedRows.value[id]) {
+      const { [id]: _, ...rest } = expandedRows.value;
+      expandedRows.value = rest;
+  } else {
+      // 如果不存在，添加该 key (展开)
+      expandedRows.value = { ...expandedRows.value, [id]: true };
+  }
+}
 
 function searchHandler(){
   document.activeElement instanceof HTMLElement &&
@@ -202,6 +259,13 @@ function paginatorChange(val: number){
 </style>
 
 <style scoped>
+.expanded_detail{
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  align-items: center;
+  row-gap: 15px;
+  column-gap: 20px;
+}
 .ep{
   padding-left: 6px;
 }
