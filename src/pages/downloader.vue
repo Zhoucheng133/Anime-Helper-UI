@@ -19,7 +19,7 @@
         <AccordionHeader>番剧列表</AccordionHeader>
         <AccordionContent>
           <Button size="small" @click="showAddList">添加</Button>
-          <DataTable :value="downloader.list" v-if="downloader.list.length!=0">
+          <DataTable :value="downloader.list" v-if="downloader.list.length!=0" stripedRows>
             <Column field="title" header="标题"></Column>
             <Column field="ass" header="字幕组"></Column>
             <Column header="操作">
@@ -39,7 +39,7 @@
         <AccordionHeader>排除关键字</AccordionHeader>
         <AccordionContent>
           <Button size="small" @click="addExclude">添加</Button>
-          <DataTable :value="downloader.exclude" v-if="downloader.exclude.length!=0">
+          <DataTable :value="downloader.exclude" v-if="downloader.exclude.length!=0" stripedRows>
             <Column field="key" header="关键字"></Column>
             <Column header="操作">
               <template #body="slotProps">

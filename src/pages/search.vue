@@ -13,7 +13,7 @@
       </div>
     </div>
     <div v-else-if="result.length!=0">
-      <DataTable :value="result">
+      <DataTable :value="result" stripedRows>
         <Column field="title" header="标题">
           <template #body="slotProps">
             <div class="title_area">

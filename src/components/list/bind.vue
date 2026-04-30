@@ -5,7 +5,7 @@
       <Button size="small" @click="searchBangumi(title)" :disabled="loading">搜索</Button>
     </div>
     <div>
-      <DataTable :value="ls" v-if="ls.length!=0" class="mb-5">
+      <DataTable :value="ls" v-if="ls.length!=0" class="mb-5" stripedRows>
         <Column field="title" header="封面" style="min-width: 70px;">
           <template #body="slotProps">
             <img :src="slotProps.data.image" height="70.7" width="50" :draggable="false" />

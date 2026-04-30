@@ -10,7 +10,7 @@
         <div style="margin-left: 10px;">正在加载中...</div>
       </div>
     </div>
-    <DataTable :value="searchRecnt" v-else>
+    <DataTable :value="searchRecnt" stripedRows v-else>
       <Column field="title" header="标题">
         <template #body="slotProps">
           <div class="title_area">

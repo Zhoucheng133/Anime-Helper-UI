@@ -11,7 +11,7 @@
       <div v-else></div>
     </div>
     <div class="card" v-if="list.list.length!=0 && loading==false">
-      <DataTable :value="list.list">
+      <DataTable :value="list.list" stripedRows>
         <Column field="title" header="标题" style="min-width: 270px;">
           <template #body="slotProps">
             <div class="item_title" style="width: fit-content;" @click="showInfo(slotProps.data, $event)">
