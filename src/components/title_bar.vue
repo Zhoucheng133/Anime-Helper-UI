@@ -27,6 +27,7 @@ import { Button, Menu } from 'primevue';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import About from './about.vue';
+import { storeToRefs } from 'pinia';
 
 const route=useRoute();
 const router=useRouter();
@@ -113,7 +114,7 @@ const menuItems=ref([
   }
 ])
 
-const mobile=ref(false);
+const mobile=storeToRefs(store).mobile;
 
 const toRoute=(path: string)=>{
   router.push(path);

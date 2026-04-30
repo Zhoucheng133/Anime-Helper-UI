@@ -14,6 +14,7 @@ export default defineStore("main", ()=>{
   const token=ref("");
 
   const toast=useToast();
+  const mobile=ref(false);
 
   async function refreshToken(): Promise<boolean> {
     const {data: response}=await axios.get(`${hostname}/api/refresh`);
@@ -63,5 +64,6 @@ export default defineStore("main", ()=>{
     token,
     refreshToken,
     authHandler,
+    mobile
   };
 })
