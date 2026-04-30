@@ -10,11 +10,12 @@
         <div style="margin-left: 10px;">正在加载中...</div>
       </div>
     </div>
-    <DataTable :value="searchRecnt" stripedRows v-else>
-      <Column field="title" header="标题">
+    <DataTable :value="searchRecnt" stripedRows tableStyle="table-layout: fixed; width: 100%" v-model:expandedRows="expandedRows" dataKey="magnet" v-else>
+      <Column expander style="width: 25px" v-if="mobile" />
+      <Column field="title" header="标题" style="overflow: hidden;">
         <template #body="slotProps">
-          <div class="title_area">
-            <div class="title">
+          <div class="title_area" @click="toggleExpansion(slotProps.data)">
+            <div class="title line-clamp-2" v-tooltip.top="{ value: slotProps.data.title, showDelay: 500, }">
               {{ slotProps.data.title }}
             </div>
             <div class="flex">
@@ -28,7 +29,7 @@
           </div>
         </template>
       </Column>
-      <Column header="操作" style="min-width: 150px;">
+      <Column header="操作" style="width: 150px;" v-if="!mobile">
         <template #body="slotProps">
           <ButtonGroup>
             <Button severity="secondary" icon="pi pi-link" size="small" style="font-size: 12px;" @click="copyHandler(slotProps.data as DownloadItem)" />
@@ -37,6 +38,13 @@
           </ButtonGroup>
         </template>
       </Column>
+      <template #expansion="slotProps">
+        <ButtonGroup>
+          <Button severity="secondary" icon="pi pi-link" size="small" style="font-size: 12px;" @click="copyHandler(slotProps.data as DownloadItem)" />
+          <Button severity="secondary" label="添加至" size="small" style="font-size: 12px;" @click="addRef.showAddHandler(slotProps.data.title)" />
+          <Button severity="secondary" size="small" @click="downloadHandler($event, slotProps.data.url)" ><i class="pi pi-download" style="font-size: 12px;"></i></Button>
+        </ButtonGroup>
+      </template>
     </DataTable>
   </div>
   <Add ref="addRef"/>
@@ -50,13 +58,31 @@ import { computed, onMounted, ref } from 'vue';
 import Add from '../components/recent/add.vue';
 import Copy from '../components/recent/copy.vue';
 import dayjs from 'dayjs';
+import Store from '../store';
+import { storeToRefs } from 'pinia';
 const confirm=useConfirm();
 const addRef=ref();
 const searchKey=ref("");
 const loading=ref(false);
 const recent=recentStore();
+const store=Store();
+const mobile=storeToRefs(store).mobile;
+const expandedRows=ref<Record<string, boolean>>({});
 
 document.title="AnimeHelper | 最近更新";
+
+function toggleExpansion(data: DownloadItem){
+  if(!mobile.value){
+    return;
+  }
+  const id = data.magnet;
+  if (expandedRows.value[id]) {
+    const { [id]: _, ...rest } = expandedRows.value;
+    expandedRows.value = rest;
+  } else {
+    expandedRows.value = { ...expandedRows.value, [id]: true };
+  }
+}
 
 const type=ref("kisssub");
 const typeOptions=[
@@ -151,9 +177,9 @@ const downloadHandler=(event: any, url: string)=>{
   gap: 10px;
 }
 .title{
-  width: 800px;
-  overflow: hidden;
+  width: 100%;
+  /* overflow: hidden;
   white-space: nowrap;
-  text-overflow: ellipsis;
+  text-overflow: ellipsis; */
 }
 </style>

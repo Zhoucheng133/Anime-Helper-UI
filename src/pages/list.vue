@@ -169,11 +169,10 @@ const expandedRows = ref<Record<string, boolean>>({});
 function toggleExpansion(data: ListItem){
   const id = data.id;
   if (expandedRows.value[id]) {
-      const { [id]: _, ...rest } = expandedRows.value;
-      expandedRows.value = rest;
+    const { [id]: _, ...rest } = expandedRows.value;
+    expandedRows.value = rest;
   } else {
-      // 如果不存在，添加该 key (展开)
-      expandedRows.value = { ...expandedRows.value, [id]: true };
+    expandedRows.value = { ...expandedRows.value, [id]: true };
   }
 }
 

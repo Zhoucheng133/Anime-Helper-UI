@@ -13,11 +13,12 @@
       </div>
     </div>
     <div v-else-if="result.length!=0">
-      <DataTable :value="result" stripedRows>
+      <DataTable :value="result" stripedRows tableStyle="table-layout: fixed; width: 100%" v-model:expandedRows="expandedRows" dataKey="magnet">
+        <Column expander style="width: 25px" v-if="mobile" />
         <Column field="title" header="标题">
           <template #body="slotProps">
-            <div class="title_area">
-              <div class="title">
+            <div class="title_area" @click="toggleExpansion(slotProps.data)">
+              <div class="title line-clamp-2">
                 {{ slotProps.data.title }}
               </div>
               <div class="flex">
@@ -28,7 +29,7 @@
             </div>
           </template>
         </Column>
-        <Column header="操作" style="min-width: 150px;">
+        <Column header="操作" style="width: 150px;" v-if="!mobile">
           <template #body="slotProps">
             <ButtonGroup>
               <Button severity="secondary" icon="pi pi-link" size="small" style="font-size: 12px;" @click="copyHandler(slotProps.data as DownloadItem)" />
@@ -37,6 +38,13 @@
             </ButtonGroup>
           </template>
         </Column>
+        <template #expansion="slotProps">
+        <ButtonGroup>
+              <Button severity="secondary" icon="pi pi-link" size="small" style="font-size: 12px;" @click="copyHandler(slotProps.data as DownloadItem)" />
+              <Button severity="secondary" label="添加至" size="small" style="font-size: 12px;" @click="addRef.showAddHandler(slotProps.data.title)" />
+              <Button severity="secondary" size="small" @click="downloadHandler($event, slotProps.data.url)" ><i class="pi pi-download" style="font-size: 12px;"></i></Button>
+            </ButtonGroup>
+      </template>
       </DataTable>
     </div>
     <div v-else class="empty">
@@ -63,11 +71,14 @@ import axios from 'axios';
 import Store from '../store';
 import Add from '../components/recent/add.vue';
 import Copy from '../components/recent/copy.vue';
+import { storeToRefs } from 'pinia';
 // import Loading from '../components/loading.vue';
 const confirm=useConfirm();
 const addRef=ref();
 const toast=useToast();
 const store=Store();
+
+const mobile=storeToRefs(store).mobile;
 
 document.title="AnimeHelper | 搜索";
 
@@ -76,6 +87,22 @@ const loading=ref(false);
 const searchKey = ref("");
 
 const result = ref<DownloadItem[]>([]);
+
+const expandedRows=ref<Record<string, boolean>>({});
+
+function toggleExpansion(data: DownloadItem){
+  if(!mobile.value){
+    return;
+  }
+  const id = data.magnet;
+  if (expandedRows.value[id]) {
+    const { [id]: _, ...rest } = expandedRows.value;
+    expandedRows.value = rest;
+  } else {
+    expandedRows.value = { ...expandedRows.value, [id]: true };
+  }
+}
+
 
 const searchHandler=async (retry=false)=>{
   document.activeElement instanceof HTMLElement &&
