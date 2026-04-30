@@ -11,34 +11,34 @@
       <div v-else></div>
     </div>
     <div class="card" v-if="list.list.length!=0 && loading==false">
-      <DataTable :value="list.list" stripedRows>
-        <Column field="title" header="标题" style="min-width: 270px;">
+      <DataTable :value="list.list" stripedRows tableStyle="table-layout: fixed; width: 100%">
+        <Column field="title" header="标题" style="width: 100%; overflow: hidden;">
           <template #body="slotProps">
-            <div class="item_title" style="width: fit-content;" @click="showInfo(slotProps.data, $event)">
+            <div class="item_title" style="width: 100%" @click="showInfo(slotProps.data, $event)" v-tooltip.top="{ value: slotProps.data.title, showDelay: 500, }">
               {{ slotProps.data.title }}
             </div>
           </template>
         </Column>
-        <Column header="状态" style="min-width: 90px;">
+        <Column header="状态" style="width: 90px;" v-if="!mobile">
           <template #body="slotProps">
             <div class="update_tag tag" v-if="list.onUpudate(slotProps.data)">更新中</div>
             <div class="done_tag tag" v-else>已完结</div>
           </template>
         </Column>
-        <Column header="集数" style="min-width: 60px;">
+        <Column header="集数" style="width: 60px;" v-if="!mobile">
           <template #body="slotProps">
             <div class="ep">
               {{ slotProps.data.episode }}
             </div>
           </template>
         </Column>
-        <Column header="更新周" style="min-width: 90px;">
+        <Column header="更新周" style="width: 90px;" v-if="!mobile">
           <template #body="slotProps">
             <div class="weekday_tag weekday_tag_now" v-if="list.getWeekday(slotProps.data.time) === list.getWeekday(Date.now())" >{{ list.getWeekday(slotProps.data.time) }}</div>
             <div class="weekday_tag" v-else>{{ list.getWeekday(slotProps.data.time) }}</div>
           </template>
         </Column>
-        <Column header="进度" style="min-width: 200px;">
+        <Column header="进度" style="width: 200px;" v-if="!mobile">
           <template #body="slotProps">
             <div class="progress_area">
               <ProgressBar :class="percent(slotProps)==100 ? 'finished':'progress'" :value="list.calProgress(slotProps.data)" style="height: 18px" :showValue="false"/>
@@ -53,7 +53,7 @@
             </div>
           </template>
         </Column>
-        <Column header="操作" style="min-width: 230px;">
+        <Column header="操作" style="width: 220px;" v-if="!mobile">
           <template #body="slotProps">
             <ButtonGroup>
               <Button severity="secondary" size="small" @click="editRef.showEditHandler(slotProps.data)"><i class="pi pi-pen-to-square" style="font-size: 12px;" /></Button>
@@ -105,6 +105,8 @@ import BgmSearch from '../components/list/bgm_search.vue';
 import { onMounted, ref } from 'vue';
 import Info from '../components/list/info.vue';
 import Bind from '../components/list/bind.vue';
+import Store from '../store';
+import { storeToRefs } from 'pinia';
 
 document.title="AnimeHelper | 列表";
 
@@ -115,6 +117,8 @@ const addmenuRef=ref();
 const bgmSearchRef=ref();
 const infoRef=ref();
 const bindRef=ref();
+const store=Store();
+const mobile=storeToRefs(store).mobile;
 
 function searchHandler(){
   document.activeElement instanceof HTMLElement &&
