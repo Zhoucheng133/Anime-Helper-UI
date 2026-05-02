@@ -325,6 +325,7 @@ function paginatorChange(val: number){
   white-space: nowrap;
   text-overflow: ellipsis;
   cursor: pointer;
+  max-width: 100%;
 }
 .tool_bar{
   margin-top: 10px;
