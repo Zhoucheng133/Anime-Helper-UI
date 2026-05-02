@@ -15,7 +15,7 @@
         <Column expander style="width: 25px" v-if="mobile" />
         <Column field="title" header="标题" style="overflow: hidden;">
           <template #body="slotProps">
-            <div class="item_title" style="width: 100%" @click="mobile ? toggleExpansion(slotProps.data) : showInfo(slotProps.data, $event)" v-tooltip.top="{ value: slotProps.data.title, showDelay: 500, }">
+            <div class="item_title" :style="{width: mobile ? '100%' : 'fit-content'}" @click="mobile ? toggleExpansion(slotProps.data) : showInfo(slotProps.data, $event)" v-tooltip.top="{ value: slotProps.data.title, showDelay: 500, }">
               {{ slotProps.data.title }}
             </div>
           </template>
@@ -321,7 +321,6 @@ function paginatorChange(val: number){
   color: white;
 }
 .item_title{
-  width: 100%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
