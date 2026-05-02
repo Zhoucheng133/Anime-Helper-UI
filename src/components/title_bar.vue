@@ -173,6 +173,13 @@ onMounted(()=>{
   height: 60px;
   background-color: white;
 }
+
+@media (prefers-color-scheme: dark){
+  .header{
+    background-color: #1f1f1f;
+    border-bottom: 2px solid black;
+  }
+}
 .head_img{
   margin-left: 30px;
   width: 180px;

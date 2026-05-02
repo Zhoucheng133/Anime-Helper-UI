@@ -36,7 +36,10 @@ app.use(router)
 app.use(pinia)
 app.use(PrimeVue, {
   theme: {
-    preset: MyPreset
+    preset: MyPreset,
+    options: {
+      darkModeSelector: '.my-app-dark',
+    }
   }
 });
 app.use(ToastService);
