@@ -10,11 +10,18 @@ export enum Pages{
   other
 }
 
+export enum Display{
+  auto,
+  dark,
+  light
+}
+
 export default defineStore("main", ()=>{
   const token=ref("");
 
   const toast=useToast();
   const mobile=ref(false);
+  const darkMode=ref(false);
 
   async function refreshToken(): Promise<boolean> {
     const {data: response}=await axios.get(`${hostname}/api/refresh`);
@@ -60,10 +67,37 @@ export default defineStore("main", ()=>{
     return Pages.other
   }
 
+  function setDisplayMode(mode: Display){
+    if (mode === Display.auto) {
+      localStorage.removeItem("display");
+      updateUI(darkModeMediaQuery.matches);
+    } else {
+      const isDark = mode === Display.dark;
+      localStorage.setItem("display", isDark ? "dark" : "light");
+      updateUI(isDark);
+    }
+  }
+
+  const updateUI = (isDark: boolean) => {
+    const html = document.documentElement;
+    darkMode.value = isDark;
+    if (isDark) {
+      html.classList.add('helper-page-dark');
+    } else {
+      html.classList.remove('helper-page-dark');
+    }
+  };
+
+  const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
   return {
     token,
     refreshToken,
     authHandler,
-    mobile
+    mobile,
+    darkMode,
+    setDisplayMode,
+    updateUI,
+    darkModeMediaQuery
   };
 })

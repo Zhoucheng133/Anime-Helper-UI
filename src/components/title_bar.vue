@@ -12,17 +12,19 @@
       <Button label="下载器" variant="text" severity="secondary" @click="toRoute('/downloader')" :disabled="route.path=='/downloader'" icon="pi pi-download"/>
     </div>
     <div class="signout_area">
+      <Button :icon="!darkMode ? 'pi pi-sun' : 'pi pi-moon'" class="darkmode" variant="text" v-if="!(store.token.length==0)"  @click="darkModeHandler"/>
       <Button icon="pi pi-user" class="signout" variant="text" v-if="!(store.token.length==0) && !mobile" @click="userHandler" />
       <Button icon="pi pi-bars" class="signout" variant="text" v-if="!(store.token.length==0) && mobile" @click="menuHandler" />
       <Menu ref="menu" id="overlay_menu" :model="menuItems" :popup="true" />
       <Menu ref="desktopMenu" :model="desktopMenuItems" :popup="true"></Menu>
+      <Menu ref="darkModeMenu" :model="darkModeMenuItems" :popup="true"></Menu>
     </div>
     <About ref="aboutRef" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import Store from '../store';
+import Store, { Display } from '../store';
 import { Button, Menu } from 'primevue';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -33,7 +35,14 @@ const route=useRoute();
 const router=useRouter();
 const store=Store();
 
+const { mobile, darkMode }=storeToRefs(store);
+
 const aboutRef=ref();
+const darkModeMenu=ref();
+
+function darkModeHandler(event: any){
+  darkModeMenu.value.toggle(event);
+}
 
 const showAbout=()=>{
   aboutRef.value.showAboutHandler();
@@ -42,6 +51,35 @@ const showAbout=()=>{
 function userHandler(event: any){
   desktopMenu.value.toggle(event);
 }
+
+const darkModeMenuItems=ref([
+  {
+    label: "显示",
+    items: [
+      {
+        label: '跟随系统',
+        icon: 'pi pi-sparkles',
+        command: ()=>{
+          store.setDisplayMode(Display.auto);
+        }
+      },
+      {
+        label: '浅色',
+        icon: 'pi pi-sun',
+        command: ()=>{
+          store.setDisplayMode(Display.light);
+        }
+      },
+      {
+        label: '深色',
+        icon: 'pi pi-moon',
+        command: ()=>{
+          store.setDisplayMode(Display.dark);
+        }
+      },
+    ]
+  }
+])
 
 const desktopMenuItems=ref([
   {
@@ -114,8 +152,6 @@ const menuItems=ref([
   }
 ])
 
-const mobile=storeToRefs(store).mobile;
-
 const toRoute=(path: string)=>{
   router.push(path);
 }
@@ -153,10 +189,11 @@ onMounted(()=>{
 .signout_area{
   display: flex;
   width: 180px;
+  justify-content: flex-end;
 }
 .signout{
   margin-right: 20px;
-  margin-left: auto;
+  margin-left: 10px;
 }
 .head_label{
   margin-left: 15px;
@@ -174,11 +211,9 @@ onMounted(()=>{
   background-color: white;
 }
 
-@media (prefers-color-scheme: dark){
-  .header{
-    background-color: #1f1f1f;
-    border-bottom: 2px solid black;
-  }
+.helper-page-dark .header{
+  background-color: #1f1f1f;
+  border-bottom: 2px solid black;
 }
 .head_img{
   margin-left: 30px;
