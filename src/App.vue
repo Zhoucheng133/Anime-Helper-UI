@@ -9,21 +9,27 @@
 import Toast from 'primevue/toast';
 import { ConfirmPopup } from 'primevue';
 import TitleBar from './components/title_bar.vue';
+import Store from './store';
+import { onMounted, onUnmounted } from 'vue';
+const store = Store();
 
-import { onMounted } from 'vue';
+const handleThemeChange = (isDarkFromSystem: boolean) => {
+  const saved = localStorage.getItem('display');
+  if (saved) {
+    store.updateUI(saved === 'dark');
+  } else {
+    store.updateUI(isDarkFromSystem);
+  }
+};
+
+const themeListener = (e: MediaQueryListEvent) => handleThemeChange(e.matches);
 
 onMounted(() => {
-  const html: any = document.querySelector('html');
-  const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-  const applyTheme = (isDark: any) => {
-    if (isDark) {
-      html.classList.add('my-app-dark');
-    } else {
-      html.classList.remove('my-app-dark');
-    }
-  };
+  handleThemeChange(store.darkModeMediaQuery.matches);
+  store.darkModeMediaQuery.addEventListener('change', themeListener);
+});
 
-  applyTheme(darkModeMediaQuery.matches);
-  darkModeMediaQuery.addEventListener('change', (e) => applyTheme(e.matches));
+onUnmounted(() => {
+  store.darkModeMediaQuery.removeEventListener('change', themeListener);
 });
 </script>
