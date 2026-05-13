@@ -69,7 +69,7 @@
           <div class="p-4">
             <div class="expanded_detail">
               <div class="title">标题</div>
-              <div>{{ slotProps.data.title }}</div>
+              <div @click="showInfo(slotProps.data, $event)">{{ slotProps.data.title }}</div>
               <div class="title">状态</div>
               <div>
                 <div class="update_tag tag" v-if="list.onUpudate(slotProps.data)">更新中</div>
