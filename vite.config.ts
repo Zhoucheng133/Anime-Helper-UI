@@ -13,7 +13,7 @@ export default defineConfig({
       includeAssets: ['icon.svg'],
       manifest: {
         name: "AnimeHelper",
-        short_name: 'AniHelper',
+        short_name: 'AnimeHelper',
         theme_color: '#ffffff',
         icons: [
           {
