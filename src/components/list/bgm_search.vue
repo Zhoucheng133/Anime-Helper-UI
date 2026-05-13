@@ -5,25 +5,25 @@
       <Button size="small" @click="searchBangumi(title)" :disabled="loading">搜索</Button>
     </div>
     <div>
-      <DataTable :value="ls" v-if="ls.length!=0" class="mb-5" stripedRows>
-        <Column field="title" header="封面" style="min-width: 70px;">
+      <DataTable :value="ls" v-if="ls.length!=0" class="mb-5" stripedRows tableStyle="table-layout: fixed; width: 100%">
+        <Column field="title" header="封面" style="width: 70px;">
           <template #body="slotProps">
             <img :src="slotProps.data.image" height="70.7" width="50" :draggable="false" />
           </template>
         </Column>
-        <Column field="title" header="标题" style="min-width: 280px;">
+        <Column field="title" header="标题">
           <template #body="slotProps">
-            <div class="item_title">{{ slotProps.data.title }}</div>
+            <div class="item_title" @click="handleClickTitle(slotProps.data)">{{ slotProps.data.title }}</div>
           </template>
         </Column>
-        <Column header="集数" style="min-width: 60px;">
+        <Column header="集数" style="width: 60px;" v-if="!mobile">
           <template #body="slotProps">
             <div class="ep select-none">
               {{ slotProps.data.eps==0 ? '?' : slotProps.data.eps }}
             </div>
           </template>
         </Column>
-        <Column header="操作" style="min-width: 140px;" class="select-none">
+        <Column header="操作" style="width: 140px;" class="select-none" v-if="!mobile">
           <template #body="slotProps">
             <Button severity="secondary" size="small" @click="infoHandler(slotProps.data)" :disabled="loading">查看</Button>
             <Button size="small" @click="showAdd(slotProps.data.id)" :disabled="loading" class="ml-2">添加</Button>
@@ -51,14 +51,21 @@ import Info from './info.vue';
 import type { BgmItem } from '../../types/bgm';
 import Add from '../calendar/add.vue';
 import Loading from '../loading.vue';
-
+import { storeToRefs } from 'pinia';
+const store=Store();
+const mobile=storeToRefs(store).mobile;
 const toast = useToast();
 const infoRef=ref();
 const loadingRef=ref();
 const addRef=ref();
-const store=Store();
 
 const loading=ref(false);
+
+function handleClickTitle(item: BangumiItem){
+  if(mobile.value){
+    infoHandler(item)
+  }
+}
 
 interface BangumiItem{
   id: number,
@@ -164,7 +171,10 @@ defineExpose({showDialogHandler})
   padding-bottom: 20px;
 }
 .item_title{
-  width: 260px;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .ep{
   padding-left: 6px;
