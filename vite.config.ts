@@ -27,7 +27,7 @@ export default defineConfig({
             type: 'image/png'
           },
           {
-            src: 'public/icon.svg',
+            src: 'icon.svg',
             sizes: 'any',
             type: 'image/svg+xml',
             purpose: 'any'
