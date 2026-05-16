@@ -11,7 +11,7 @@
       <div class="font-semibold w-20">集数</div>
       <div>{{ item.eps }}</div>
     </div>
-    <div class="flex items-center gap-2 mb-4 mt-4">
+    <div class="flex items-center gap-2 mb-4 mt-4" v-if="item.updates < item.eps">
       <div class="font-semibold w-20">更新至</div>
       <div>{{ item.updates }}</div>
     </div>
