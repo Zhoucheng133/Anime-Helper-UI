@@ -30,6 +30,7 @@ import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import About from './about.vue';
 import { storeToRefs } from 'pinia';
+import axios from 'axios';
 
 const route=useRoute();
 const router=useRouter();
@@ -93,7 +94,8 @@ const desktopMenuItems=ref([
       {
         label: '注销',
         icon: 'pi pi-sign-out',
-        command: ()=>{
+        command: async ()=>{
+          await axios.post("/api/logout");
           localStorage.clear();
           window.location.href="/login";
         }
