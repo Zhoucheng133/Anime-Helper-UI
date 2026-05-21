@@ -4,9 +4,9 @@
       <Button label="添加" size="small" @click="toggleMenu" />
       <Menu ref="addmenuRef" id="overlay_menu" :model="addMenu" :popup="true" />
       <Select size="small" v-model="list.selectedFilter" :options="list.filters" scroll-height="20rem" optionLabel="name" @change="filterChanged" />
-      <InputText size="small" style="width: 100%" v-if="list.selectedFilter.name=='搜索'" v-model="list.searchKeyWord" @change="list.getList()" @keyup.enter="searchHandler" />
+      <InputText size="small" style="width: 100%" v-if="list.selectedFilter.name=='搜索'" v-model="list.searchKeyWord" @change="filterChanged" @keyup.enter="searchHandler" />
       <div v-if="list.selectedFilter.name=='更新周'">
-        <Select size="small" v-model="list.selectedWeekday" :options="list.weekdays" scroll-height="20rem" style="width: 120px;" optionLabel="name" @change="list.getList()"/>
+        <Select size="small" v-model="list.selectedWeekday" :options="list.weekdays" scroll-height="20rem" style="width: 120px;" optionLabel="name" @change="filterChanged"/>
       </div>
       <div v-else></div>
     </div>
@@ -110,7 +110,7 @@
           </div>
         </template>
       </DataTable>
-      <Paginator :rows="20" :totalRecords="list.length" @update:first="paginatorChange" template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+      <Paginator :rows="20" :totalRecords="list.length" @update:first="paginatorChange" template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink" :first="list.offset"
         currentPageReportTemplate="第 {currentPage} 页 | 共 {totalPages} 页" />
     </div>
     <div v-else-if="list.list.length==0 && loading==false" class="empty">
@@ -155,11 +155,6 @@ import { storeToRefs } from 'pinia';
 
 document.title="AnimeHelper | 列表";
 
-const filterChanged=()=>{
-  list.getList()
-  list.offset=0;
-}
-
 const loading=ref(true);
 const confirm = useConfirm();
 const list=listStore();
@@ -170,6 +165,11 @@ const bindRef=ref();
 const store=Store();
 const mobile=storeToRefs(store).mobile;
 const expandedRows = ref<Record<string, boolean>>({});
+
+const filterChanged=async ()=>{
+  list.offset=0;
+  await list.getList();
+}
 
 function toggleExpansion(data: ListItem){
   const id = data.id;
