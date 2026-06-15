@@ -5,7 +5,7 @@
     </div>
     <div class="flex items-center gap-2 mb-4 mt-4">
       <div class="font-semibold w-20">标题</div>
-      <div>{{ item.title }}</div>
+      <div class="select-text">{{ item.title }}</div>
     </div>
     <div class="flex items-center gap-2 mb-4 mt-4">
       <div class="font-semibold w-20">集数</div>
