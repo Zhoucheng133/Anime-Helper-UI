@@ -51,14 +51,16 @@ const updateTo=ref("0");
 
 const id=ref("");
 
-const showAddHandler=async (item: BgmItem, weekday: number)=>{
+const showAddHandler=async (item: BgmItem, weekday: number | undefined)=>{
   title.value=item.title;
   episode.value=item.eps.toString();
   updateTo.value=item.updates.toString();
   id.value=item.id;
-  updateWeekday.value=list.weekdays[weekday==0 ? 6 : weekday-1];
+  if(weekday){
+    updateWeekday.value=list.weekdays[weekday==0 ? 6 : weekday-1];
+  }
 
-  if(item.updates>=item.eps){
+  if(item.updates>=item.eps || weekday==undefined){
     update.value=false;
     updateTo.value="0";
   }
