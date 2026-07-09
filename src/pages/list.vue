@@ -1,14 +1,15 @@
 <template>
   <div class="page">
     <div class="tool_bar">
-      <Button label="添加" size="small" @click="toggleMenu" />
+      <Button v-if="mobile" size="small" @click="toggleMenu" icon="pi pi-plus" style="width: 35px;" />
+      <Button v-else label="添加" size="small" @click="toggleMenu" style="width: 60px;" />
       <Menu ref="addmenuRef" id="overlay_menu" :model="addMenu" :popup="true" />
-      <Select size="small" v-model="list.selectedFilter" :options="list.filters" scroll-height="20rem" optionLabel="name" @change="filterChanged" />
-      <InputText size="small" style="width: 100%" v-show="list.selectedFilter.name=='搜索'" v-model="list.searchKeyWord" @change="list.getList()" @keyup.enter="searchHandler" ref="searchInputRef" />
-      <div v-if="list.selectedFilter.name=='更新周'">
+
+      <Select size="small" v-model="list.selectedFilter" :options="list.filters" scroll-height="20rem" optionLabel="name" @change="filterChanged" style="width: 120px;" />
+      <InputText size="small" style="width: 100%; flex: 1;" v-if="list.selectedFilter.name=='搜索'" v-model="list.searchKeyWord" @change="list.getList()" @keyup.enter="searchHandler" ref="searchInputRef" />
+      <div v-if="list.selectedFilter.name=='更新周'" style="flex: 1">
         <Select size="small" v-model="list.selectedWeekday" :options="list.weekdays" scroll-height="20rem" style="width: 120px;" optionLabel="name" @change="filterChanged"/>
       </div>
-      <div v-else></div>
     </div>
     <div class="card" v-if="list.list.length!=0 && loading==false">
       <DataTable :value="list.list" stripedRows tableStyle="table-layout: fixed; width: 100%" v-model:expandedRows="expandedRows" dataKey="id">
@@ -340,8 +341,7 @@ function paginatorChange(val: number){
 .tool_bar{
   margin-top: 10px;
   height: 35px;
-  display: grid;
-  grid-template-columns: 60px 120px auto;
+  display: flex;
   gap: 10px;
 }
 .empty{
