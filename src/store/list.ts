@@ -63,6 +63,8 @@ export default defineStore("list", ()=>{
     {name: "星期六", code: 6},
     {name: "星期日", code: 0},
   ])
+  const sort=ref("add_new_old");
+
   const today = new Date().getDay();
   const selectedWeekday=ref(weekdays.value.find(day => day.code === (today || 0))??weekdays.value[0]);
   
@@ -83,6 +85,7 @@ export default defineStore("list", ()=>{
         limit: limit.value,
         filter: selectedFilter.value.code,
         param: selectedFilter.value.code=='weekday' ? selectedWeekday.value.code : searchKeyWord.value,
+        sort: sort.value
       },
       headers: {
         token: store.token,
@@ -406,5 +409,6 @@ export default defineStore("list", ()=>{
     formChecker,
     bind,
     unbind,
+    sort
   };
 })

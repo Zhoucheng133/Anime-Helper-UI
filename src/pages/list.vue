@@ -5,6 +5,9 @@
       <Button v-else label="添加" size="small" @click="toggleMenu" style="width: 60px;" />
       <Menu ref="addmenuRef" id="overlay_menu" :model="addMenu" :popup="true" />
 
+      <Button variant="text" size="small" @click="toggleSort" style="width: 35px;" icon="pi pi-sort-alt" />
+      <Menu ref="sortmenuRef" id="sort_menu" :model="sortMenu" :popup="true" />
+
       <Select size="small" v-model="list.selectedFilter" :options="list.filters" scroll-height="20rem" optionLabel="name" @change="filterChanged" style="width: 120px;" />
       <InputText size="small" style="width: 100%; flex: 1;" v-if="list.selectedFilter.name=='搜索'" v-model="list.searchKeyWord" @change="list.getList()" @keyup.enter="searchHandler" ref="searchInputRef" />
       <div v-if="list.selectedFilter.name=='更新周'" style="flex: 1">
@@ -148,7 +151,7 @@ import Add from '../components/list/add.vue';
 import Edit from "../components/list/edit.vue";
 import AddDownloader from '../components/list/add_downloader.vue';
 import BgmSearch from '../components/list/bgm_search.vue';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import Info from '../components/list/info.vue';
 import Bind from '../components/list/bind.vue';
 import Store from '../store';
@@ -164,8 +167,10 @@ const addmenuRef=ref();
 const bgmSearchRef=ref();
 const infoRef=ref();
 const bindRef=ref();
+const sortmenuRef=ref();
 const store=Store();
 const mobile=storeToRefs(store).mobile;
+const sort=storeToRefs(list).sort;
 const expandedRows = ref<Record<string, boolean>>({});
 
 const filterChanged=async ()=>{
@@ -217,9 +222,69 @@ function showInfo(data: ListItem, event: any, ){
   });
 }
 
+function toggleSort(event: any){
+  sortmenuRef.value.toggle(event);
+}
+
 const toggleMenu=(event: any)=>{
   addmenuRef.value.toggle(event);
 }
+
+const sortMenu=computed(()=>{
+  return [{
+    label: '排序方式',
+    items: [
+      {
+        label: '标题A-Z',
+        icon: sort.value == "az" ? 'pi pi-check' : "",
+        command: ()=>{
+          sort.value="az";
+          filterChanged();
+        }
+      },
+      {
+        label: '标题Z-A',
+        icon: sort.value == "za" ? 'pi pi-check' : "",
+        command: ()=>{
+          sort.value="za";
+          filterChanged();
+        }
+      },
+      {
+        label: '新添加在前',
+        icon: sort.value == "add_new_old" ? 'pi pi-check' : "",
+        command: ()=>{
+          sort.value="add_new_old";
+          filterChanged();
+        }
+      },
+      {
+        label: '新添加在后',
+        icon: sort.value == "add_old_new" ? 'pi pi-check' : "",
+        command: ()=>{
+          sort.value="add_old_new";
+          filterChanged();
+        }
+      },
+      {
+        label: '已完结在前',
+        icon: sort.value == "update_end" ? 'pi pi-check' : "",
+        command: ()=>{
+          sort.value="update_end";
+          filterChanged();
+        }
+      },
+      {
+        label: '已完结在后',
+        icon: sort.value == "update_first" ? 'pi pi-check' : "",
+        command: ()=>{
+          sort.value="update_first";
+          filterChanged();
+        }
+      },
+    ]
+  }];
+})
 
 const addMenu=ref([
   {
