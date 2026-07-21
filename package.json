@@ -11,7 +11,7 @@
   "dependencies": {
     "@primeuix/themes": "^1.2.5",
     "@tailwindcss/vite": "^4.2.4",
-    "axios": "^1.15.2",
+    "axios": "^1.18.0",
     "dayjs": "^1.11.20",
     "nanoid": "^5.1.9",
     "pinia": "^3.0.4",
