@@ -50,6 +50,7 @@ export default defineStore("list", ()=>{
     {name: "更新中", code: "onUpdate"},
     {name: "已完结", code: "updateDone"},
     {name: "已看完", code: "watchDone"},
+    {name: "未看完", code: "unwatched"},
     {name: "搜索", code: "search"},
     {name: "更新周", code: "weekday"},
   ])
