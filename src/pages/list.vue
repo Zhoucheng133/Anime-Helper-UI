@@ -332,6 +332,14 @@ function paginatorChange(val: number){
 .finished > .p-progressbar-value{
   background-color: hsl(145.96000000000004 79.46% 43.92% / 1);
 }
+
+.helper-page-dark .finished > .p-progressbar-value{
+  background-color: #15803d;
+}
+
+.helper-page-dark .progress > .p-progressbar-value{
+  background-color: var(--p-primary-600);
+}
 </style>
 
 <style scoped>
@@ -370,6 +378,14 @@ function paginatorChange(val: number){
   color: #15803d;
   background-color: #dcfce7;
 }
+.helper-page-dark .done_tag{
+  background-color: #475569;
+  color: #f1f5f9;
+}
+.helper-page-dark .update_tag{
+  background-color: #15803d;
+  color: #dcfce7;
+}
 .tag{
   font-size: 12px;
   user-select: none;
@@ -391,12 +407,25 @@ function paginatorChange(val: number){
   justify-content: center;
   font-size: 12px;
   box-sizing: border-box;
+  user-select: none;
 }
+
+.helper-page-dark .weekday_tag{
+  border: 2px solid grey;
+}
+
 .weekday_tag_now{
-  background-color: var(--p-button-primary-background);
-  border: 2px solid var(--p-button-primary-background);
+  background-color: var(--p-primary-color);
+  border: 2px solid var(--p-primary-color);
   color: white;
 }
+
+.helper-page-dark .weekday_tag_now{
+  color: var(--p-primary-100);
+  background-color: var(--p-primary-600);
+  border: 2px solid var(--p-primary-600);
+}
+
 .item_title{
   overflow: hidden;
   white-space: nowrap;

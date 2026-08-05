@@ -81,6 +81,18 @@ defineExpose({showLogHandler})
   background-color: #dcfce7;
   color: #15803d;
 }
+
+.helper-page-dark .tag_err{
+  color: #fee2e2;
+  background-color: #b91c1c;
+}
+
+.helper-page-dark .tag_success{
+  color: #dcfce7;
+  background-color: #15803d;
+}
+
+
 .item_msg{
   overflow: hidden;
   white-space: nowrap;
