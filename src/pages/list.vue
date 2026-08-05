@@ -114,8 +114,9 @@
           </div>
         </template>
       </DataTable>
-      <Paginator :rows="20" :totalRecords="list.length" @update:first="paginatorChange" template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink" :first="list.offset"
+      <Paginator v-if="mobile" :rows="20" :totalRecords="list.length" @update:first="paginatorChange" template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink" :first="list.offset"
         currentPageReportTemplate="第 {currentPage} 页 | 共 {totalPages} 页" />
+      <Paginator v-else :rows="20" :totalRecords="list.length" @update:first="paginatorChange" :first="list.offset" ></Paginator>
     </div>
     <div v-else-if="list.list.length==0 && loading==false" class="empty">
       <div class="empty_list">
