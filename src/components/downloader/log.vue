@@ -1,8 +1,7 @@
 <template>
   <Dialog v-model:visible="showLog" modal header="日志" :style="{ width: '40rem' }" :draggable="false" class="select-none" :closable="true">
     <div class="mb-5">
-      <div
-        class="item" v-for="(item, index) in groupedLogs" :key="index" v-tooltip.bottom="item.msg">
+      <div class="item" v-for="item in groupedLogs" v-tooltip.bottom="item.msg" v-if="!mobile">
         <div class="item_tag">
           <div class="tag tag_success" v-if="item.ok">OK</div>
           <div class="tag tag_err" v-else>ERR</div>
@@ -14,6 +13,22 @@
           <div v-else>{{ convertTime(item.time) }}</div>
         </div>
       </div>
+
+      <div class="item_m" v-for="item in groupedLogs" v-tooltip.bottom="item.msg" v-else >
+        <div class="item_tag">
+          <div class="tag tag_success" v-if="item.ok">OK</div>
+          <div class="tag tag_err" v-else>ERR</div>
+        </div>
+        <div class="item_data_m flex-col" style="width: 100%;">
+          <div class="item_msg_m" v-if="item.count > 1">{{ item.msg }} x {{ item.count }}</div>
+          <div class="item_msg_m" v-else>{{ item.msg }}</div>
+          <div class="item_time_m">
+            <div class="item_item_long" v-if="item.count > 1">{{ convertTime(item.start) }} → {{ convertTime(item.end) }}</div>
+            <div v-else>{{ convertTime(item.time) }}</div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </Dialog>
 </template>
@@ -25,6 +40,7 @@ import axios from 'axios';
 import hostname from '../../env/hostname';
 import Store from '../../store';
 import dayjs from 'dayjs';
+import { storeToRefs } from 'pinia';
 const toast=useToast();
 
 const groupedLogs = computed(() => {
@@ -55,6 +71,7 @@ const groupedLogs = computed(() => {
 
 const showLog=ref(false);
 const store=Store();
+const mobile=storeToRefs(store).mobile;
 
 let convertTime=(time: number)=>{
   return dayjs(time).format("YYYY-MM-DD HH:mm");
@@ -139,5 +156,24 @@ defineExpose({showLogHandler})
   gap: 5px;
   margin-top: 5px;
   margin-bottom: 5px;
+}
+.item_m{
+  display: grid;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  gap: 5px;
+  grid-template-columns: 50px auto;
+  overflow: hidden;
+  white-space: nowrap;  
+  text-overflow: ellipsis;
+}
+.item_data_m{
+  min-width: 0;
+}
+.item_msg_m, .item_time_m, .item_item_long{
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>
