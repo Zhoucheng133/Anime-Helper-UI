@@ -1,26 +1,57 @@
 <template>
   <Dialog v-model:visible="showLog" modal header="日志" :style="{ width: '40rem' }" :draggable="false" class="select-none" :closable="true">
     <div class="mb-5">
-      <div class="item" v-for="(item, index) in logs" :key="index" v-tooltip.bottom="item.msg">
+      <div
+        class="item" v-for="(item, index) in groupedLogs" :key="index" v-tooltip.bottom="item.msg">
         <div class="item_tag">
           <div class="tag tag_success" v-if="item.ok">OK</div>
           <div class="tag tag_err" v-else>ERR</div>
         </div>
-        <div class="item_msg">{{ item.msg }}</div>
-        <div class="item_time">{{ convertTime(item.time) }}</div>
+        <div v-if="item.count > 1" class="item_msg">{{ item.msg }} x {{ item.count }}</div>
+        <div v-else class="item_msg">{{ item.msg }}</div>
+        <div class="item_time">
+          <div v-if="item.count > 1">{{ convertTime(item.start) }}<br/> → {{ convertTime(item.end) }}</div>
+          <div v-else>{{ convertTime(item.time) }}</div>
+        </div>
       </div>
     </div>
   </Dialog>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { Dialog, useToast } from 'primevue';
 import axios from 'axios';
 import hostname from '../../env/hostname';
 import Store from '../../store';
 import dayjs from 'dayjs';
 const toast=useToast();
+
+const groupedLogs = computed(() => {
+  const result = [];
+
+  for (const log of logs.value) {
+    const last = result[result.length - 1];
+
+    if (
+      last &&
+      last.msg === log.msg &&
+      last.ok === log.ok
+    ) {
+      last.end = log.time;
+      last.count++;
+    } else {
+      result.push({
+        ...log,
+        start: log.time,
+        end: log.time,
+        count: 1
+      });
+    }
+  }
+
+  return result.reverse();
+});
 
 const showLog=ref(false);
 const store=Store();
@@ -44,7 +75,7 @@ const showLogHandler=async (retry = false)=>{
     }
   })
   if(response.ok){
-    logs.value=response.msg.reverse() as Log[];
+    logs.value=response.msg as Log[];
   }else if(response.msg=="令牌已过期"){
     if(!retry && await store.refreshToken()){
       showLogHandler(true);
@@ -60,6 +91,9 @@ defineExpose({showLogHandler})
 </script>
 
 <style scoped>
+.item_time{
+  text-align: right;
+}
 .item_tag{
   display: flex;
   align-items: center;
@@ -92,15 +126,16 @@ defineExpose({showLogHandler})
   background-color: #15803d;
 }
 
-
 .item_msg{
+  width: 100%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 .item{
   display: grid;
-  grid-template-columns: 50px auto 150px;
+  grid-template-columns: 50px auto 180px;
+  align-items: center;
   gap: 5px;
   margin-top: 5px;
   margin-bottom: 5px;
