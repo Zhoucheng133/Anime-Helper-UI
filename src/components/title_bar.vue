@@ -166,11 +166,7 @@ function menuHandler(event: any){
 }
 
 function calWidth(){
-  if(window.innerWidth<900){
-    mobile.value=true;
-  }else{
-    mobile.value=false;
-  }
+  mobile.value=window.innerWidth<900;
 }
 
 onMounted(()=>{
