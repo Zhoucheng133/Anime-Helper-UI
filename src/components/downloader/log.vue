@@ -6,22 +6,30 @@
           <div class="tag tag_success" v-if="item.ok">OK</div>
           <div class="tag tag_err" v-else>ERR</div>
         </div>
-        <div v-if="item.count > 1" class="item_msg">{{ item.msg }} x {{ item.count }}</div>
-        <div v-else class="item_msg">{{ item.msg }}</div>
-        <div class="item_time">
-          <div v-if="item.count > 1">{{ convertTime(item.start) }}<br/> → {{ convertTime(item.end) }}</div>
-          <div v-else>{{ convertTime(item.time) }}</div>
+        <div class="item_content_area">
+          <div class="item_msg">{{ item.msg }}</div>
+          <div class="item_time">
+            <div v-if="item.count > 1">{{ convertTime(item.start) }} → {{ convertTime(item.end) }}</div>
+            <div v-else>{{ convertTime(item.time) }}</div>
+          </div>
+        </div>
+        <div class="item_count">
+          <div class="tag_count" v-if="item.count > 1">x {{ item.count }}</div>
         </div>
       </div>
 
-      <div class="item_m" v-for="item in groupedLogs" v-tooltip.bottom="item.msg" v-else >
+      <div class="item_m" v-for="item in groupedLogs" v-tooltip.bottom="item.msg" v-else>
         <div class="item_tag">
           <div class="tag tag_success" v-if="item.ok">OK</div>
           <div class="tag tag_err" v-else>ERR</div>
         </div>
         <div class="item_data_m flex-col" style="width: 100%;">
-          <div class="item_msg_m" v-if="item.count > 1">{{ item.msg }} x {{ item.count }}</div>
-          <div class="item_msg_m" v-else>{{ item.msg }}</div>
+          <div class="item_content_area_m flex items-center justify-between" style="display: flex; align-items: center; justify-content: space-between; gap: 5px;">
+            <div class="item_msg_m" style="flex: 1;">{{ item.msg }}</div>
+            <div class="item_count_m" v-if="item.count > 1">
+              <div class="tag_count">x {{ item.count }}</div>
+            </div>
+          </div>
           <div class="item_time_m">
             <div class="item_item_long" v-if="item.count > 1">{{ convertTime(item.start) }} → {{ convertTime(item.end) }}</div>
             <div v-else>{{ convertTime(item.time) }}</div>
@@ -108,8 +116,57 @@ defineExpose({showLogHandler})
 </script>
 
 <style scoped>
+.tag_count{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background-color: #f1f5f9;
+  color: #475569;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.helper-page-dark .tag_count{
+  background-color: #334155;
+  color: #cbd5e1;
+}
+
 .item_time{
+  font-size: 12px;
+  color: #888;
+  margin-top: 2px;
+}
+.item_time_m{
+  font-size: 12px;
+  color: #888;
+  margin-top: 2px;
+}
+.item_content_area{
+  min-width: 0;
+  overflow: hidden;
+}
+.item_content_area_m{
+  min-width: 0;
+  overflow: hidden;
+}
+.item_count{
   text-align: right;
+  font-weight: bold;
+  font-size: 13px;
+  color: #666;
+  white-space: nowrap;
+}
+.item_count_m{
+  text-align: right;
+  font-weight: bold;
+  font-size: 13px;
+  color: #666;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
 }
 .item_tag{
   display: flex;
@@ -151,21 +208,20 @@ defineExpose({showLogHandler})
 }
 .item{
   display: grid;
-  grid-template-columns: 50px auto 180px;
+  grid-template-columns: 50px auto 80px;
   align-items: center;
   gap: 5px;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 .item_m{
   display: grid;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin-top: 8px;
+  margin-bottom: 8px;
   gap: 5px;
   grid-template-columns: 50px auto;
   overflow: hidden;
-  white-space: nowrap;  
-  text-overflow: ellipsis;
+  align-items: center;
 }
 .item_data_m{
   min-width: 0;
