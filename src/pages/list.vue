@@ -1,17 +1,19 @@
 <template>
   <div class="page">
     <div class="tool_bar">
-      <Button v-if="mobile" size="small" @click="toggleMenu" icon="pi pi-plus" style="width: 35px;" />
-      <Button v-else label="添加" size="small" @click="toggleMenu" style="width: 60px;" />
-      <Menu ref="addmenuRef" id="overlay_menu" :model="addMenu" :popup="true" />
+      <div class="tool_bar_left">
+        <Button v-if="mobile" size="small" @click="toggleMenu" icon="pi pi-plus" style="width: 35px;" />
+        <Button v-else label="添加" size="small" @click="toggleMenu" style="width: 60px;" />
+        <Menu ref="addmenuRef" id="overlay_menu" :model="addMenu" :popup="true" />
 
-      <Button variant="text" size="small" @click="toggleSort" style="width: 35px;" icon="pi pi-sort-alt" />
-      <Menu ref="sortmenuRef" id="sort_menu" :model="sortMenu" :popup="true" />
+        <Select size="small" v-model="list.selectedFilter" :options="list.filters" scroll-height="20rem" optionLabel="name" @change="filterChanged" style="width: 120px;" />
+        <Select size="small" v-if="list.selectedFilter.name=='更新周'" v-model="list.selectedWeekday" :options="list.weekdays" scroll-height="20rem" style="width: 120px;" optionLabel="name" @change="filterChanged"/>
+      </div>
 
-      <Select size="small" v-model="list.selectedFilter" :options="list.filters" scroll-height="20rem" optionLabel="name" @change="filterChanged" style="width: 120px;" />
-      <InputText size="small" style="width: 100%; flex: 1;" v-if="list.selectedFilter.name=='搜索'" v-model="list.searchKeyWord" @change="list.getList()" @keyup.enter="searchHandler" ref="searchInputRef" />
-      <div v-if="list.selectedFilter.name=='更新周'" style="flex: 1">
-        <Select size="small" v-model="list.selectedWeekday" :options="list.weekdays" scroll-height="20rem" style="width: 120px;" optionLabel="name" @change="filterChanged"/>
+      <div class="tool_bar_right" :class="{ 'search_active': list.selectedFilter.name=='Search' || list.selectedFilter.code=='search' }">
+        <InputText size="small" style="width: 100%;" v-if="list.selectedFilter.name=='搜索'" v-model="list.searchKeyWord" @change="list.getList()" @keyup.enter="searchHandler" ref="searchInputRef" placeholder="输入关键字搜索..." />
+        <Button variant="text" size="small" @click="toggleSort" style="width: 35px; height: 35px;" icon="pi pi-sort-alt" v-tooltip.left="'排序方式'" />
+        <Menu ref="sortmenuRef" id="sort_menu" :model="sortMenu" :popup="true" />
       </div>
     </div>
     <div class="card" v-if="list.list.length!=0 && loading==false">
@@ -437,7 +439,24 @@ function paginatorChange(val: number){
   margin-top: 10px;
   height: 35px;
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   gap: 10px;
+}
+.tool_bar_left{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.tool_bar_right{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  justify-content: flex-end;
+}
+.tool_bar_right.search_active{
+  max-width: none;
 }
 .empty{
   height: 100%;
