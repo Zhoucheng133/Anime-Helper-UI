@@ -32,6 +32,7 @@ interface DownloaderDataType{
   client: string,
   list: DownloaderListType[],
   exclude: DownloaderExcludeType[]
+  saverunning: number | undefined
 }
 
 export default defineStore("downloader", ()=>{
@@ -59,6 +60,8 @@ export default defineStore("downloader", ()=>{
   const freq=ref("15");
   const link=ref("");
   const secret=ref("");
+
+  const saverunning=ref(true);
   
   const list=ref<DownloaderListType[]>([]);
   const exclude=ref<DownloaderExcludeType[]>([]);
@@ -80,6 +83,7 @@ export default defineStore("downloader", ()=>{
       exclude.value=data.exclude;
       clientTypeSelected.value=(data.client=='qbit' ? clientType.value[1] : data.client=='transmission' ? clientType.value[2] : clientType.value[0]);
       username.value=data.username;
+      saverunning.value=data.saverunning==1;
     }else if(response.msg=="令牌已过期"){
       
       if(!retry && await store.refreshToken()){
@@ -322,6 +326,27 @@ export default defineStore("downloader", ()=>{
     }
   }
 
+  async function toggleSaveRunning(save: boolean, retry=false){
+    const {data: response}=await axios.post(`${hostname}/api/downloader/saverunning`, {
+      save
+    }, {
+      headers: {
+        token: store.token,
+      }
+    })
+    if(response.ok){
+      toast.add({ severity: 'success', summary: '设置成功', detail: `下次启动${!save?'不':''}检查运行状态和自动启动`, life: 3000 });
+    }else if(response.msg=="令牌已过期"){
+      
+      if(!retry && await store.refreshToken()){
+        toggleSaveRunning(save, true);
+        return;
+      }
+    }else{
+      toast.add({ severity: 'error', summary: '请求失败', detail: response.msg, life: 3000 });
+    }
+  }
+
   return {
     toggleRun,
     delFromExclude,
@@ -341,6 +366,8 @@ export default defineStore("downloader", ()=>{
     clientType,
     clientTypeSelected,
     username,
-    check
+    check,
+    saverunning,
+    toggleSaveRunning
   }
 })

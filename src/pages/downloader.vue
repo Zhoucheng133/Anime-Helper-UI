@@ -7,12 +7,18 @@
         <ToggleSwitch v-model="downloader.running" @value-change="downloader.toggleRun" />
       </div>
     </div>
-    <div class="flex items-center m-5">
+    <div class="flex items-start m-5">
       <div class="label">系统操作</div>
-      <ButtonGroup>
-        <Button label="显示日志" size="small" severity="secondary" @click="showLog" />
-        <Button label="下载器配置" size="small" severity="secondary" @click="showConfig" />
-      </ButtonGroup>
+      <div class="operations">
+        <ButtonGroup>
+          <Button label="显示日志" size="small" severity="secondary" @click="showLog" />
+          <Button label="下载器配置" size="small" severity="secondary" @click="showConfig" />
+        </ButtonGroup>
+        <div class="saverunning">
+          <Checkbox v-model="downloader.saverunning" binary inputId="saverunning" @change="setSaveRunning" />
+          <label for="saverunning" class="ml-2">启动检查运行状态</label>
+        </div>
+      </div>
     </div>
     <Accordion :multiple="true" :value="[0, 1]">
       <AccordionPanel :value="0">
@@ -63,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import { ToggleSwitch, Tag, ButtonGroup, Button, Accordion, AccordionPanel, AccordionHeader, AccordionContent, DataTable, Column, useConfirm } from 'primevue';
+import { ToggleSwitch, Tag, ButtonGroup, Button, Accordion, AccordionPanel, AccordionHeader, AccordionContent, DataTable, Column, useConfirm, Checkbox } from 'primevue';
 import downloaderStore from '../store/downloader';
 import { onMounted, ref } from 'vue';
 import AddList from '../components/downloader/add_list.vue';
@@ -85,6 +91,10 @@ onMounted(()=>{
 
 const showConfig=()=>{
   configRef.value.showConfigHandler();
+}
+
+const setSaveRunning=()=>{
+  downloader.toggleSaveRunning(downloader.saverunning)
 }
 
 const showLog=()=>{
@@ -140,6 +150,16 @@ const delFromListHandler=(event: any, id: string)=>{
 </script>
 
 <style scoped>
+.saverunning{
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+.operations{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 .label{
   width: 100px;
   flex-shrink: 0;
