@@ -3,6 +3,7 @@
     <div class="topbar">
       <Select size="small" :options="typeOptions" v-model="type" optionLabel="name" option-value="code" :fluid="false" @change="load"/>
       <InputText size="small" v-model="searchKey"/>
+      <Button variant="text" size="small" @click="refresh" style="width: 35px; height: 35px;" icon="pi pi-refresh" v-tooltip.left="'刷新'" />
     </div>
     <div v-if="loading" class="empty">
       <div class="add_tip">
@@ -52,7 +53,7 @@
 </template>
 
 <script lang="ts" setup >
-import { DataTable, Column, Button, ButtonGroup, useConfirm, InputText, Select } from 'primevue';
+import { DataTable, Column, Button, ButtonGroup, useConfirm, InputText, Select, useToast } from 'primevue';
 import recentStore, { type DownloadItem } from '../store/recent';
 import { computed, onMounted, ref } from 'vue';
 import Add from '../components/recent/add.vue';
@@ -61,6 +62,7 @@ import dayjs from 'dayjs';
 import Store from '../store';
 import { storeToRefs } from 'pinia';
 const confirm=useConfirm();
+const toast=useToast();
 const addRef=ref();
 const searchKey=ref("");
 const loading=ref(false);
@@ -105,6 +107,13 @@ async function load(){
   await recent.getList(type.value);
   loading.value=false;
   // loadingRef.value.loadingHandler(false, "获取最近更新列表");
+}
+
+async function refresh(){
+  loading.value=true;
+  await recent.getList(type.value);
+  loading.value=false;
+  toast.add({ severity: 'success', summary: '刷新成功', detail: '最近更新已刷新', life: 3000 });
 }
 
 const copyRef=ref();
@@ -173,8 +182,15 @@ const downloadHandler=(event: any, url: string)=>{
 .topbar{
   margin-top: 10px;
   display: grid;
-  grid-template-columns: 150px auto;
+  grid-template-columns: 130px 1fr 35px;
   gap: 10px;
+  align-items: center;
+}
+@media screen and (max-width: 600px) {
+  .topbar {
+    grid-template-columns: 100px 1fr 35px;
+    gap: 6px;
+  }
 }
 .title{
   width: 100%;

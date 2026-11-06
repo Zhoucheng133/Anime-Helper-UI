@@ -12,6 +12,7 @@
 
       <div class="tool_bar_right" :class="{ 'search_active': list.selectedFilter.name=='Search' || list.selectedFilter.code=='search' }">
         <InputText size="small" style="width: 100%;" v-if="list.selectedFilter.name=='搜索'" v-model="list.searchKeyWord" @change="list.getList()" @keyup.enter="searchHandler" ref="searchInputRef" placeholder="输入关键字搜索..." />
+        <Button variant="text" size="small" @click="refreshList" style="width: 35px; height: 35px;" icon="pi pi-refresh" v-tooltip.left="'刷新'" />
         <Button variant="text" size="small" @click="toggleSort" style="width: 35px; height: 35px;" icon="pi pi-sort-alt" v-tooltip.left="'排序方式'" />
         <Menu ref="sortmenuRef" id="sort_menu" :model="sortMenu" :popup="true" />
       </div>
@@ -148,7 +149,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Button, Menu, Select, InputText, DataTable, Column, Paginator, ProgressBar, ButtonGroup, Tag, useConfirm } from 'primevue';
+import { Button, Menu, Select, InputText, DataTable, Column, Paginator, ProgressBar, ButtonGroup, Tag, useConfirm, useToast } from 'primevue';
 import listStore, { type ListItem } from '../store/list';
 import Add from '../components/list/add.vue';
 import Edit from "../components/list/edit.vue";
@@ -165,6 +166,7 @@ document.title="AnimeHelper | 列表";
 const loading=ref(true);
 const searchInputRef=ref();
 const confirm = useConfirm();
+const toast = useToast();
 const list=listStore();
 const addmenuRef=ref();
 const bgmSearchRef=ref();
@@ -227,6 +229,11 @@ function showInfo(data: ListItem, event: any, ){
 
 function toggleSort(event: any){
   sortmenuRef.value.toggle(event);
+}
+
+const refreshList = async () => {
+  await list.getList();
+  toast.add({ severity: 'success', summary: '刷新成功', detail: '列表已刷新', life: 3000 });
 }
 
 const toggleMenu=(event: any)=>{
@@ -457,6 +464,16 @@ function paginatorChange(val: number){
 }
 .tool_bar_right.search_active{
   max-width: none;
+}
+@media screen and (max-width: 768px) {
+  .tool_bar {
+    height: auto;
+    flex-wrap: wrap;
+  }
+  .tool_bar_right {
+    width: 100%;
+    justify-content: flex-start;
+  }
 }
 .empty{
   height: 100%;
