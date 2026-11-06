@@ -12,7 +12,7 @@
 
       <div class="tool_bar_right" :class="{ 'search_active': list.selectedFilter.name=='Search' || list.selectedFilter.code=='search' }">
         <InputText size="small" style="width: 100%;" v-if="list.selectedFilter.name=='搜索'" v-model="list.searchKeyWord" @change="list.getList()" @keyup.enter="searchHandler" ref="searchInputRef" placeholder="输入关键字搜索..." />
-        <Button variant="text" size="small" @click="refreshList" style="width: 35px; height: 35px;" icon="pi pi-refresh" v-tooltip.left="'刷新'" />
+        <Button v-if="list.selectedFilter.code!='search'" variant="text" size="small" @click="refreshList" style="width: 35px; height: 35px;" icon="pi pi-refresh" v-tooltip.left="'刷新'" />
         <Button variant="text" size="small" @click="toggleSort" style="width: 35px; height: 35px;" icon="pi pi-sort-alt" v-tooltip.left="'排序方式'" />
         <Menu ref="sortmenuRef" id="sort_menu" :model="sortMenu" :popup="true" />
       </div>
