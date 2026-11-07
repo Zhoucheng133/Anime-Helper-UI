@@ -9,6 +9,7 @@ export interface CalendarItem{
   title: string,
   id: string,
   added: boolean,
+  image: string,
 }
 
 export default defineStore("calendar", ()=>{
