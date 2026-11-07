@@ -9,8 +9,18 @@
     <Accordion :multiple="true" :value="[0, 1, 2, 3, 4, 5, 6]" v-else>
       <AccordionPanel v-for="(values, index) in calendar().list" :key="index" :value="index">
         <AccordionHeader>{{ list().weekdays[index==0 ? 6 : index-1].name }}</AccordionHeader>
-        <AccordionContent>
-          <Tag rounded v-for="(item, _) in values" :key="item.id" :value="item.title" class="select-none m-1 cursor-pointer" :severity="item.added ? 'warn' : 'secondary'" @click="showInfo(item, index)" />
+        <AccordionContent class="overflow-x-scroll">
+          <div class="w-full min-w-0">
+            <div class="flex overflow-x-auto gap-4 py-2 px-1 items-start scrollbar-none w-full max-w-full">
+              <CalendarCard 
+                v-for="(item, _) in values" 
+                :key="item.id" 
+                :item="item"
+                :weekday="index"
+                @click="showInfo(item, index)"
+              />
+            </div>
+          </div>
         </AccordionContent>
       </AccordionPanel>
     </Accordion>
@@ -19,10 +29,11 @@
 </template>
 
 <script lang="ts" setup>
-import { Accordion, AccordionPanel, AccordionHeader, AccordionContent, Tag } from 'primevue';
+import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'primevue';
 import { onMounted, ref } from 'vue';
 import list from '../store/list';
 import Info from '../components/calendar/info.vue';
+import CalendarCard from '../components/calendar/card.vue';
 import type { CalendarItem } from '../store/calendar';
 import calendar from '../store/calendar';
 
@@ -61,5 +72,11 @@ onMounted(async ()=>{
   margin-top: 10px;
   flex-wrap: wrap;
   justify-content: center;
+}
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
 </style>
