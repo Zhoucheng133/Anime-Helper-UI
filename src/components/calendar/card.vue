@@ -3,7 +3,7 @@
     class="flex flex-col items-center cursor-pointer select-none shrink-0 w-25 group"
     @click="$emit('click')"
   >
-    <div class="relative w-25 h-35.25 rounded overflow-hidden shadow">
+    <div class="relative w-25 h-35.25 rounded overflow-hidden">
       <Skeleton v-if="loading && !hasError && item.image" width="100px" height="141px" class="absolute inset-0" />
       
       <div v-if="hasError || !item.image" class="w-full h-full bg-gray-100 dark:bg-gray-800 flex flex-col items-center justify-center text-gray-400 p-2 text-center">

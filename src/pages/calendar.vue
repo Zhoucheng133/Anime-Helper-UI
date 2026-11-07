@@ -9,17 +9,21 @@
     <Accordion :multiple="true" :value="[0, 1, 2, 3, 4, 5, 6]" v-else>
       <AccordionPanel v-for="(values, index) in calendar().list" :key="index" :value="index">
         <AccordionHeader>{{ list().weekdays[index==0 ? 6 : index-1].name }}</AccordionHeader>
-        <AccordionContent class="overflow-x-scroll scrollbar-none">
-          <div class="w-full min-w-0">
-            <div class="flex overflow-x-auto gap-4 py-2 px-1 items-start w-full max-w-full">
-              <CalendarCard 
-                v-for="(item, _) in values" 
-                :key="item.id" 
-                :item="item"
-                :weekday="index"
-                @click="showInfo(item, index)"
-              />
-            </div>
+        <AccordionContent style="overflow-x: hidden; position: relative;">
+          <div class="scroll_btn_l">
+            <!-- Scroll Left -->
+          </div>
+          <div class="scroll_btn_r">
+            <!-- Scroll Left -->
+          </div>
+          <div class="content scrollbar-none">
+            <CalendarCard 
+              v-for="(item, _) in values" 
+              :key="item.id" 
+              :item="item"
+              :weekday="index"
+              @click="showInfo(item, index)"
+            />
           </div>
         </AccordionContent>
       </AccordionPanel>
@@ -53,6 +57,32 @@ onMounted(async ()=>{
 </script >
 
 <style scoped>
+:deep(.p-accordioncontent-wrapper) {
+  overflow-x: hidden;
+}
+
+.scroll_btn_r{
+  position: absolute;
+  right: 0;
+  top: 70.5px;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+.scroll_btn_l{
+  position: absolute;
+  left: 0;
+  top: 70.5px;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+.content{
+  width: 100%;
+  display: flex;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  gap: 16px;
+}
 .empty{
   height: 100%;
   width: 100%;
