@@ -73,9 +73,12 @@ onMounted(async ()=>{
   overflow-x: hidden;
 }
 
-.scroll_btn_r{
+.helper-page-dark .scroll_btn_r, .helper-page-dark .scroll_btn_l{
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.scroll_btn_r, .scroll_btn_l{
   position: absolute;
-  right: 0;
   top: 70.5px;
   transform: translateY(-50%);
   z-index: 10;
@@ -89,20 +92,12 @@ onMounted(async ()=>{
   border-radius: 5px;
 }
 
+.scroll_btn_r{
+  right: 0;
+}
+
 .scroll_btn_l{
-  position: absolute;
   left: 0;
-  top: 70.5px;
-  transform: translateY(-50%);
-  z-index: 10;
-  height: 50px;
-  width: 30px;
-  background-color: rgba(255, 255, 255, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border-radius: 5px;
 }
 .content{
   width: 100%;
