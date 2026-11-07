@@ -10,13 +10,13 @@
       <AccordionPanel v-for="(values, index) in calendar().list" :key="index" :value="index">
         <AccordionHeader>{{ list().weekdays[index==0 ? 6 : index-1].name }}</AccordionHeader>
         <AccordionContent style="overflow-x: hidden; position: relative;">
-          <div class="scroll_btn_l" @click="scroll(index, 'left')">
+          <div class="scroll_btn_l" :class="{ 'scroll_btn_disabled': scrollStates[index]?.atStart }" @click="scroll(index, 'left')">
             <i class="pi pi-chevron-left"></i>
           </div>
-          <div class="scroll_btn_r" @click="scroll(index, 'right')">
+          <div class="scroll_btn_r" :class="{ 'scroll_btn_disabled': scrollStates[index]?.atEnd }" @click="scroll(index, 'right')">
              <i class="pi pi-chevron-right"></i>
           </div>
-          <div :ref="el => { if (el) contentRefs[index] = el as HTMLElement }" class="content scrollbar-none">
+          <div :ref="el => { if (el) contentRefs[index] = el as HTMLElement }"  class="content scrollbar-none" @scroll="checkScrollState(index)">
             <CalendarCard 
               v-for="(item, _) in values" 
               :key="item.id" 
@@ -34,7 +34,7 @@
 
 <script lang="ts" setup>
 import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'primevue';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, nextTick } from 'vue';
 import list from '../store/list';
 import Info from '../components/calendar/info.vue';
 import CalendarCard from '../components/calendar/card.vue';
@@ -46,12 +46,27 @@ const loading=ref(true);
 
 const infoRef=ref();
 const contentRefs = ref<Record<number, HTMLElement>>({});
+const scrollStates = ref<Record<number, { atStart: boolean; atEnd: boolean }>>({});
 
 const showInfo=(item: CalendarItem, weekday: number)=>{
   infoRef.value.showInfoHanlder(item.id, weekday, false, !item.added);
 }
 
+const checkScrollState = (index: number) => {
+  const el = contentRefs.value[index];
+  if (el) {
+    const { scrollLeft, clientWidth, scrollWidth } = el;
+    const atStart = scrollLeft <= 1;
+    const atEnd = scrollWidth <= clientWidth || scrollLeft + clientWidth >= scrollWidth - 1;
+    scrollStates.value[index] = { atStart, atEnd };
+  }
+};
+
 const scroll = (index: number, direction: 'left' | 'right') => {
+  const state = scrollStates.value[index];
+  if (direction === 'left' && state?.atStart) return;
+  if (direction === 'right' && state?.atEnd) return;
+
   const el = contentRefs.value[index];
   if (el) {
     const scrollAmount = 400;
@@ -65,6 +80,10 @@ const scroll = (index: number, direction: 'left' | 'right') => {
 onMounted(async ()=>{
   await calendar().getList();
   loading.value=false;
+  await nextTick();
+  Object.keys(contentRefs.value).forEach((_, index) => {
+    checkScrollState(Number(index));
+  });
 })
 </script >
 
@@ -90,6 +109,12 @@ onMounted(async ()=>{
   justify-content: center;
   cursor: pointer;
   border-radius: 5px;
+}
+
+.scroll_btn_disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .scroll_btn_r{
