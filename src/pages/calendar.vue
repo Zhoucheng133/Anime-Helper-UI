@@ -10,13 +10,13 @@
       <AccordionPanel v-for="(values, index) in calendar().list" :key="index" :value="index">
         <AccordionHeader>{{ list().weekdays[index==0 ? 6 : index-1].name }}</AccordionHeader>
         <AccordionContent style="overflow-x: hidden; position: relative;">
-          <div class="scroll_btn_l">
-            <!-- Scroll Left -->
+          <div class="scroll_btn_l" @click="scroll(index, 'left')">
+            <i class="pi pi-chevron-left"></i>
           </div>
-          <div class="scroll_btn_r">
-            <!-- Scroll Left -->
+          <div class="scroll_btn_r" @click="scroll(index, 'right')">
+             <i class="pi pi-chevron-right"></i>
           </div>
-          <div class="content scrollbar-none">
+          <div :ref="el => { if (el) contentRefs[index] = el as HTMLElement }" class="content scrollbar-none">
             <CalendarCard 
               v-for="(item, _) in values" 
               :key="item.id" 
@@ -45,10 +45,22 @@ document.title="AnimeHelper | 每日放送";
 const loading=ref(true);
 
 const infoRef=ref();
+const contentRefs = ref<Record<number, HTMLElement>>({});
 
 const showInfo=(item: CalendarItem, weekday: number)=>{
   infoRef.value.showInfoHanlder(item.id, weekday, false, !item.added);
 }
+
+const scroll = (index: number, direction: 'left' | 'right') => {
+  const el = contentRefs.value[index];
+  if (el) {
+    const scrollAmount = 400;
+    el.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
+      behavior: 'smooth'
+    });
+  }
+};
 
 onMounted(async ()=>{
   await calendar().getList();
@@ -67,6 +79,14 @@ onMounted(async ()=>{
   top: 70.5px;
   transform: translateY(-50%);
   z-index: 10;
+  height: 50px;
+  width: 30px;
+  background-color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 5px;
 }
 
 .scroll_btn_l{
@@ -75,6 +95,14 @@ onMounted(async ()=>{
   top: 70.5px;
   transform: translateY(-50%);
   z-index: 10;
+  height: 50px;
+  width: 30px;
+  background-color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 5px;
 }
 .content{
   width: 100%;
