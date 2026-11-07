@@ -9,9 +9,9 @@
     <Accordion :multiple="true" :value="[0, 1, 2, 3, 4, 5, 6]" v-else>
       <AccordionPanel v-for="(values, index) in calendar().list" :key="index" :value="index">
         <AccordionHeader>{{ list().weekdays[index==0 ? 6 : index-1].name }}</AccordionHeader>
-        <AccordionContent class="overflow-x-scroll">
+        <AccordionContent class="overflow-x-scroll scrollbar-none">
           <div class="w-full min-w-0">
-            <div class="flex overflow-x-auto gap-4 py-2 px-1 items-start scrollbar-none w-full max-w-full">
+            <div class="flex overflow-x-auto gap-4 py-2 px-1 items-start w-full max-w-full">
               <CalendarCard 
                 v-for="(item, _) in values" 
                 :key="item.id" 
