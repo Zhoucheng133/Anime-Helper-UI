@@ -1,11 +1,7 @@
 <template>
   <Dialog v-model:visible="showInfo" modal header="番剧信息" :style="{ width: '25rem' }" :draggable="false" class="select-none" :closable="false">
     <div class="cover flex justify-center">
-      <img v-if="item.image!=''" :src="item.image" alt="" width="100" height="141" class="cover_img" :draggable="false"></img>
-      <div v-else class="bg-gray-100 dark:bg-gray-800 flex flex-col items-center justify-center text-gray-400 p-2 text-center" style="height: 141px; width: 100px;" :draggable="false">
-        <i class="pi pi-image text-2xl mb-1"></i>
-        <span class="text-[10px] line-clamp-2">暂无封面</span>
-      </div>
+      <Cover :src="item.image" :title="item.title" width="100px" height="141px" :showText="true" iconSize="24px" />
     </div>
     <div class="flex items-center gap-2 mb-4 mt-4">
       <div class="font-semibold w-20">标题</div>
@@ -44,6 +40,7 @@ import axios from 'axios';
 import hostname from '../../env/hostname';
 import Store from '../../store';
 import Loading from '../loading.vue';
+import Cover from '../cover.vue';
 import Rating from 'primevue/rating';
 import Add from './add.vue';
 

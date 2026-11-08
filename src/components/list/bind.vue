@@ -8,7 +8,7 @@
       <DataTable :value="ls" v-if="ls.length!=0" class="mb-5" stripedRows tableStyle="table-layout: fixed; width: 100%">
         <Column field="title" header="封面" style="width: 70px;">
           <template #body="slotProps">
-            <img :src="slotProps.data.image" height="70.7" width="50" :draggable="false" />
+            <Cover :src="slotProps.data.image" :title="slotProps.data.title" width="50px" height="70.7px" :showText="false" iconSize="20px" />
           </template>
         </Column>
         <Column field="title" header="标题">
@@ -48,6 +48,7 @@ import Store from '../../store';
 import Info from './info.vue';
 import type { BgmItem } from '../../types/bgm';
 import Add from '../calendar/add.vue';
+import Cover from '../cover.vue';
 import List from '../../store/list';
 import { storeToRefs } from 'pinia';
 
