@@ -202,7 +202,7 @@ onMounted(()=>{
   display: flex;
   align-items: center;
   border-bottom: 2px solid #f0f0f0;
-  z-index: 10;
+  z-index: 20;
   justify-content: space-between;
   user-select: none;
   height: 60px;
