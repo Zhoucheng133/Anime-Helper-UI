@@ -8,7 +8,10 @@
       <DataTable :value="ls" v-if="ls.length!=0" class="mb-5" stripedRows tableStyle="table-layout: fixed; width: 100%">
         <Column field="title" header="封面" style="width: 70px;">
           <template #body="slotProps">
-            <img :src="slotProps.data.image" height="70.7" width="50" :draggable="false" />
+            <img v-if="slotProps.data.image!=''" :src="slotProps.data.image" alt="" height="70.7" width="50" :draggable="false" />
+            <div v-else class="bg-gray-100 dark:bg-gray-800 flex flex-col items-center justify-center text-gray-400 p-2 text-center" style="height: 70.7px; width: 50px;" :draggable="false">
+              <i class="pi pi-image text-2xl mb-1"></i>
+            </div>
           </template>
         </Column>
         <Column field="title" header="标题">
