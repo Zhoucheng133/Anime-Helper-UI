@@ -337,21 +337,20 @@ function paginatorChange(val: number){
 }
 </script>
 
-<style>
-.finished > .p-progressbar-value{
+<style scoped>
+
+:deep(.finished > .p-progressbar-value){
   background-color: hsl(145.96000000000004 79.46% 43.92% / 1);
 }
 
-.helper-page-dark .finished > .p-progressbar-value{
+:deep(.helper-page-dark .finished > .p-progressbar-value){
   background-color: #15803d;
 }
 
-.helper-page-dark .progress > .p-progressbar-value{
+:deep(.helper-page-dark .progress > .p-progressbar-value){
   background-color: var(--p-primary-600);
 }
-</style>
 
-<style scoped>
 .expanded_detail{
   display: grid;
   grid-template-columns: 60px 1fr;

@@ -131,18 +131,15 @@ defineExpose({bindHandler})
 
 </script>
 
-<style>
-.bgm_search_dialog_content{
+<style scoped>
+:global(.bgm_search_dialog_content){
   width: 40rem;
 }
 @media screen and (max-width: 40rem){
-  .bgm_search_dialog_content{
+  :global(.bgm_search_dialog_content){
     width: 100%;
   }
 }
-</style>
-
-<style scoped>
 .loading{
   width: 100%;
   display: flex;
