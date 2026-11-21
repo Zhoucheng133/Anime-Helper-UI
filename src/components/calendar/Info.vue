@@ -39,10 +39,10 @@ import { useToast, Dialog, Button } from 'primevue';
 import axios from 'axios';
 import hostname from '../../env/hostname';
 import Store from '../../store';
-import Loading from '../loading.vue';
-import Cover from '../cover.vue';
+import Loading from '../Loading.vue';
+import Cover from '../Cover.vue';
 import Rating from 'primevue/rating';
-import Add from './add.vue';
+import Add from './Add.vue';
 
 const toast=useToast();
 const loadingRef=ref();

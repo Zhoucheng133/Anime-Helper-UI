@@ -8,7 +8,7 @@
 <script lang="ts" setup>
 import Toast from 'primevue/toast';
 import { ConfirmPopup } from 'primevue';
-import TitleBar from './components/title_bar.vue';
+import TitleBar from './components/TitleBar.vue';
 import Store from './store';
 import { onMounted, onUnmounted } from 'vue';
 const store = Store();

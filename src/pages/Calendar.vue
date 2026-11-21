@@ -36,8 +36,8 @@
 import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'primevue';
 import { onMounted, ref, nextTick } from 'vue';
 import list from '../store/list';
-import Info from '../components/calendar/info.vue';
-import CalendarCard from '../components/calendar/card.vue';
+import Info from '../components/calendar/Info.vue';
+import CalendarCard from '../components/calendar/Card.vue';
 import type { CalendarItem } from '../store/calendar';
 import calendar from '../store/calendar';
 

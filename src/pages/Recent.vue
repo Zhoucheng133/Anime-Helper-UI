@@ -56,8 +56,8 @@
 import { DataTable, Column, Button, ButtonGroup, useConfirm, InputText, Select, useToast } from 'primevue';
 import recentStore, { type DownloadItem } from '../store/recent';
 import { computed, onMounted, ref } from 'vue';
-import Add from '../components/recent/add.vue';
-import Copy from '../components/recent/copy.vue';
+import Add from '../components/recent/Add.vue';
+import Copy from '../components/recent/Copy.vue';
 import dayjs from 'dayjs';
 import Store from '../store';
 import { storeToRefs } from 'pinia';

@@ -151,13 +151,13 @@
 <script lang="ts" setup>
 import { Button, Menu, Select, InputText, DataTable, Column, Paginator, ProgressBar, ButtonGroup, Tag, useConfirm, useToast } from 'primevue';
 import listStore, { type ListItem } from '../store/list';
-import Add from '../components/list/add.vue';
-import Edit from "../components/list/edit.vue";
-import AddDownloader from '../components/list/add_downloader.vue';
-import BgmSearch from '../components/list/bgm_search.vue';
+import Add from '../components/list/Add.vue';
+import Edit from "../components/list/Edit.vue";
+import AddDownloader from '../components/list/AddDownloader.vue';
+import BgmSearch from '../components/list/BgmSearch.vue';
 import { computed, onMounted, ref } from 'vue';
-import Info from '../components/list/info.vue';
-import Bind from '../components/list/bind.vue';
+import Info from '../components/list/Info.vue';
+import Bind from '../components/list/Bind.vue';
 import Store from '../store';
 import { storeToRefs } from 'pinia';
 

@@ -7,7 +7,7 @@ const router=createRouter({
     {
       name: "主页",
       path: "/list",
-      component: ()=>import("../pages/list.vue")
+      component: ()=>import("../pages/List.vue")
     },
     {
       path: "/",
@@ -15,36 +15,36 @@ const router=createRouter({
     },
     {
       path: "/login",
-      component: ()=>import("../pages/login.vue")
+      component: ()=>import("../pages/Login.vue")
     },
     {
       path: "/register",
-      component: ()=>import("../pages/register.vue")
+      component: ()=>import("../pages/Register.vue")
     },
     {
       path: "/calendar",
-      component: ()=>import("../pages/calendar.vue")
+      component: ()=>import("../pages/Calendar.vue")
     },
     {
       path: "/recent",
-      component: ()=>import("../pages/recent.vue")
+      component: ()=>import("../pages/Recent.vue")
     },
     {
       path: "/downloader",
-      component: ()=>import("../pages/downloader.vue")
+      component: ()=>import("../pages/Downloader.vue")
     },
     {
       path: "/search",
-      component: ()=>import("../pages/search.vue")
+      component: ()=>import("../pages/Search.vue")
     },
     {
       path: "/change-password",
-      component: ()=>import("../pages/change_password.vue")
+      component: ()=>import("../pages/ChangePassword.vue")
     },
     {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
-      component: () => import('../pages/not_found.vue')
+      component: () => import('../pages/NotFound.vue')
     }
   ]
 })

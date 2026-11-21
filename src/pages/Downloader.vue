@@ -72,10 +72,10 @@
 import { ToggleSwitch, Tag, ButtonGroup, Button, Accordion, AccordionPanel, AccordionHeader, AccordionContent, DataTable, Column, useConfirm, Checkbox } from 'primevue';
 import downloaderStore from '../store/downloader';
 import { onMounted, ref } from 'vue';
-import AddList from '../components/downloader/add_list.vue';
-import AddExclude from '../components/downloader/add_exclude.vue';
-import Config from '../components/downloader/config.vue';
-import Log from '../components/downloader/log.vue';
+import AddList from '../components/downloader/AddList.vue';
+import AddExclude from '../components/downloader/AddExclude.vue';
+import Config from '../components/downloader/Config.vue';
+import Log from '../components/downloader/Log.vue';
 const confirm = useConfirm();
 const addListRef=ref();
 const addExcludeRef=ref();

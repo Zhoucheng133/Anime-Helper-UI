@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model:visible="showDialog" modal header="从Bangumi中绑定..." :draggable="false" class="bgm_search_dialog_content" :closable="true">
+  <Dialog v-model:visible="showDialog" modal header="从Bangumi中添加..." :draggable="false" class="bgm_search_dialog_content" :closable="true">
     <div class="flex items-center gap-2 mb-4">
       <InputText size="small" class="flex-auto" autocomplete="off" v-model="title" placeholder="搜索标题" @keyup.enter="searchBangumi(title)" />
       <Button size="small" @click="searchBangumi(title)" :disabled="loading">搜索</Button>
@@ -23,9 +23,10 @@
             </div>
           </template>
         </Column>
-        <Column header="操作" style="width: 70px;" class="select-none" v-if="!mobile">
+        <Column header="操作" style="width: 140px;" class="select-none" v-if="!mobile">
           <template #body="slotProps">
-            <Button size="small" @click="bind(slotProps.data)">绑定</Button>
+            <Button severity="secondary" size="small" @click="infoHandler(slotProps.data)" :disabled="loading">查看</Button>
+            <Button size="small" @click="showAdd(slotProps.data.id)" :disabled="loading" class="ml-2">添加</Button>
           </template>
         </Column>
       </DataTable>
@@ -36,6 +37,7 @@
   </Dialog>
   <Info ref="infoRef" @show-add="showAddFromInfo" />
   <Add ref="addRef"/>
+  <Loading ref="loadingRef" />
 </template>
 
 <script setup lang="ts">
@@ -45,23 +47,25 @@ import { ref } from 'vue';
 import hostname from '../../env/hostname';
 import { useToast } from "primevue/usetoast";
 import Store from '../../store';
-import Info from './info.vue';
+import Info from './Info.vue';
 import type { BgmItem } from '../../types/bgm';
-import Add from '../calendar/add.vue';
-import Cover from '../cover.vue';
-import List from '../../store/list';
+import Add from '../calendar/Add.vue';
+import Loading from '../Loading.vue';
+import Cover from '../Cover.vue';
 import { storeToRefs } from 'pinia';
-
-const toast = useToast();
-const addRef=ref();
 const store=Store();
-const list=List();
 const mobile=storeToRefs(store).mobile;
+const toast = useToast();
+const infoRef=ref();
+const loadingRef=ref();
+const addRef=ref();
 
 const loading=ref(false);
 
 function handleClickTitle(item: BangumiItem){
-  bind(item);
+  if(mobile.value){
+    infoHandler(item)
+  }
 }
 
 interface BangumiItem{
@@ -75,12 +79,8 @@ const ls=ref<BangumiItem[]>([]);
 const showDialog=ref(false);
 const title=ref('');
 
-async function bind(data: BangumiItem){
-  const rlt=await list.bind(listId.value, data.id.toString());
-  if(rlt){
-    toast.add({ severity: 'success', summary: '绑定成功', detail: `已绑定 ${data.title}`, life: 3000 });
-    showDialog.value=false;
-  }
+function infoHandler(item: BangumiItem){
+  infoRef.value.showInfoHanlder(item.id, 0);
 }
 
 async function searchBangumi(keyword: string, retry=false){
@@ -112,22 +112,42 @@ async function searchBangumi(keyword: string, retry=false){
   loading.value=false;
 }
 
+const showAdd=async (id: string, retry=false)=>{ 
+  loadingRef.value.loadingHandler(true, "加载集数信息");
+
+  let rlt=await axios.get(`${hostname}/api/list/bgm/updates/${id.toString()}`, {
+    headers: {
+      token: store.token,
+    }
+  })
+
+  loadingRef.value.loadingHandler(false, "加载集数信息");
+  
+  if(rlt.data.ok){
+    const data=rlt.data.msg as BgmItem;
+    addRef.value.showAddHandler(data, data.weekday);
+    showDialog.value=false;
+  }else if(rlt.data.msg=="令牌已过期"){
+    if(!retry && await store.refreshToken()){
+      return showAdd(id, true);
+    }
+  }else{
+    toast.add({ severity: 'error', summary: '搜索失败', detail: rlt.data.msg, life: 3000 });
+  }
+}
+
 const showAddFromInfo=async (item: BgmItem)=>{
   addRef.value.showAddHandler(item, item.weekday);
   showDialog.value=false;
 }
 
-let listId=ref('');
-
-const bindHandler=(keyword: string, id: string)=>{
+const showDialogHandler=()=>{
   ls.value=[];
-  title.value=keyword;
+  title.value='';
   showDialog.value=true;
-  listId.value=id;
-  searchBangumi(keyword);
 }
 
-defineExpose({bindHandler})
+defineExpose({showDialogHandler})
 
 </script>
 

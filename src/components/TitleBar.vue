@@ -28,7 +28,7 @@ import Store, { Display } from '../store';
 import { Button, Menu } from 'primevue';
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import About from './about.vue';
+import About from './About.vue';
 import { storeToRefs } from 'pinia';
 import axios from 'axios';
 
