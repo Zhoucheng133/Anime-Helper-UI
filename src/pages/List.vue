@@ -17,8 +17,8 @@
         <Menu ref="sortmenuRef" id="sort_menu" :model="sortMenu" :popup="true" />
       </div>
     </div>
-    <div class="card" v-if="list.list.length!=0 && loading==false">
-      <DataTable :value="list.list" stripedRows tableStyle="table-layout: fixed; width: 100%" v-model:expandedRows="expandedRows" dataKey="id">
+    <div class="card list_card" v-if="list.list.length!=0 && loading==false">
+      <DataTable :value="list.list" stripedRows tableStyle="table-layout: fixed; width: 100%" v-model:expandedRows="expandedRows" dataKey="id" class="list">
         <Column expander style="width: 25px" v-if="mobile" />
         <Column field="title" header="标题" style="overflow: hidden;">
           <template #body="slotProps">
@@ -338,6 +338,30 @@ function paginatorChange(val: number){
 </script>
 
 <style scoped>
+
+.list{
+  margin-top: 10px;
+}
+
+:deep(.list .p-datatable-thead > tr > th){
+  background: var(--p-surface-50);
+  padding: 8px 12px;
+  color: var(--p-text-muted-color);
+  font-size: 12px;
+  font-weight: bold;
+}
+
+:deep(.list .p-datatable-thead > tr > th:first-child){
+  border-top-left-radius: 10px;
+}
+
+:deep(.list .p-datatable-thead > tr > th:last-child){
+  border-top-right-radius: 10px;
+}
+
+:global(.helper-page-dark .list .p-datatable-thead > tr > th) {
+  background: var(--p-surface-900);
+}
 
 :deep(.finished > .p-progressbar-value){
   background-color: hsl(145.96000000000004 79.46% 43.92% / 1);
