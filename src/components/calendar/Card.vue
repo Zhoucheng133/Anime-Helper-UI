@@ -22,10 +22,8 @@
         @error="hasError = true; loading = false"
         :draggable="false" 
       />
-
-      <div v-if="item.added" class="absolute inset-0 border-2 border-amber-400 rounded pointer-events-none"></div>
     </div>
-    <span class="text-xs text-center mt-2 line-clamp-2 w-full px-0.5" :title="item.title">{{ item.title }}</span>
+    <span class="text-xs text-center mt-2 line-clamp-2 px-0.5 item_title" :title="item.title" :class="item.added ? 'added_title' : ''">{{ item.title }}</span>
   </div>
 </template>
 
@@ -49,3 +47,15 @@ watch(() => props.item.image, () => {
   hasError.value = false;
 });
 </script>
+
+<style scoped>
+.item_title{
+  border-radius: 5px;
+  padding: 2px 5px;
+}
+.added_title{
+  /* border: 1px solid orange; */
+  background-color: orange;
+  color: white;
+}
+</style>
