@@ -30,7 +30,7 @@
       </div>
     </div>
     <div class="flex justify-end gap-2">
-      <Button type="button" label="检验" severity="secondary" size="small" style="margin-right: auto;" @click="check"></Button>
+      <Button type="button" label="检验" severity="secondary" size="small" style="margin-right: auto;" :loading="checking" @click="check"></Button>
       <Button type="button" label="取消" severity="secondary" @click="showConfig = false" size="small"></Button>
       <Button type="button" label="完成" @click="configHandler" size="small"></Button>
     </div>
@@ -42,6 +42,7 @@ import { computed, ref } from 'vue';
 import { Dialog, Button, InputText, Select, Password} from 'primevue';
 import downloader from '../../store/downloader';
 const showConfig=ref(false);
+const checking=ref(false);
 
 const placeholder=computed(()=>{
   if(downloader().clientTypeSelected.id=='aria'){
@@ -54,7 +55,12 @@ const placeholder=computed(()=>{
 })
 
 const check=async ()=>{
-  await downloader().check();
+  checking.value=true;
+  try{
+    await downloader().check();
+  }finally{
+    checking.value=false;
+  }
 }
 
 const configHandler=async ()=>{
