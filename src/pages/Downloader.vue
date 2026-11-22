@@ -22,7 +22,12 @@
     </div>
     <Accordion :multiple="true" :value="[0, 1]">
       <AccordionPanel :value="0">
-        <AccordionHeader>番剧列表</AccordionHeader>
+        <AccordionHeader>
+          <div class="flex items-center gap-2">
+            <i class="pi pi-list" style="color: var(--p-primary-color);"></i>
+            <div>番剧列表</div>
+          </div>
+        </AccordionHeader>
         <AccordionContent>
           <Button size="small" @click="showAddList">添加</Button>
           <DataTable :value="downloader.list" v-if="downloader.list.length!=0" stripedRows>
@@ -42,7 +47,12 @@
         </AccordionContent>
       </AccordionPanel>
       <AccordionPanel :value="1">
-        <AccordionHeader>排除关键字</AccordionHeader>
+        <AccordionHeader>
+          <div class="flex items-center gap-2">
+            <i class="pi pi-filter" style="color: var(--p-primary-color);"></i>
+            <div>排除关键字</div>
+          </div>
+        </AccordionHeader>
         <AccordionContent>
           <Button size="small" @click="addExclude">添加</Button>
           <DataTable :value="downloader.exclude" v-if="downloader.exclude.length!=0" stripedRows>
