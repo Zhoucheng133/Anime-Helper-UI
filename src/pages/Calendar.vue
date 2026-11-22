@@ -7,7 +7,7 @@
       </div>
     </div>
     <Accordion :multiple="true" :value="[0, 1, 2, 3, 4, 5, 6]" v-else>
-      <AccordionPanel v-for="(values, index) in calendar().list" :key="index" :value="index">
+      <AccordionPanel v-for="(values, index) in sortedList" :key="index" :value="index">
         <AccordionHeader>{{ list().weekdays[index==0 ? 6 : index-1].name }}</AccordionHeader>
         <AccordionContent style="overflow-x: hidden; position: relative;">
           <div class="scroll_btn_l" :class="{ 'scroll_btn_disabled': scrollStates[index]?.atStart }" @click="scroll(index, 'left')">
@@ -34,7 +34,7 @@
 
 <script lang="ts" setup>
 import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from 'primevue';
-import { onMounted, ref, nextTick } from 'vue';
+import { computed, onMounted, ref, nextTick } from 'vue';
 import list from '../store/list';
 import Info from '../components/calendar/Info.vue';
 import CalendarCard from '../components/calendar/Card.vue';
@@ -43,6 +43,12 @@ import calendar from '../store/calendar';
 
 document.title="AnimeHelper | 每日放送";
 const loading=ref(true);
+
+const sortedList = computed(() =>
+  calendar().list?.map(items =>
+    [...items].sort((a, b) => Number(b.added) - Number(a.added))
+  ) ?? []
+);
 
 const infoRef=ref();
 const contentRefs = ref<Record<number, HTMLElement>>({});
