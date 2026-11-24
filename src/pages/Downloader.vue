@@ -55,14 +55,20 @@
         </AccordionHeader>
         <AccordionContent>
           <Button size="small" @click="addExclude">添加</Button>
-          <DataTable :value="downloader.exclude" v-if="downloader.exclude.length!=0" stripedRows>
-            <Column field="key" header="关键字"></Column>
-            <Column header="操作">
-              <template #body="slotProps">
-                <Button size="small" label="删除" severity="danger" variant="text" @click="delFromExcludeHandler($event, slotProps.data.id)" />
-              </template>
-            </Column>
-          </DataTable>
+          <div class="exclude_tags" v-if="downloader.exclude.length!=0">
+            <div class="exclude_tag" v-for="item in downloader.exclude" :key="item.id">
+              <Tag :value="item.key" severity="secondary" />
+              <Button
+                icon="pi pi-times"
+                size="small"
+                text
+                rounded
+                severity="secondary"
+                :aria-label="`删除 ${item.key}`"
+                @click="delFromExcludeHandler($event, item.id)"
+              />
+            </div>
+          </div>
           <div class="add_tip" v-else>
             <div>没有添加任何排除关键字，你可以</div>
             <Tag>添加</Tag>
@@ -192,5 +198,28 @@ const delFromListHandler=(event: any, id: string)=>{
   align-items: center;
   flex-wrap: wrap;
   justify-content: center;
+}
+.exclude_tags{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+.exclude_tag{
+  display: inline-flex;
+  align-items: center;
+  padding-right: 4px;
+  border-radius: var(--p-tag-border-radius);
+  background: var(--p-tag-secondary-background);
+  color: var(--p-tag-secondary-color);
+}
+.exclude_tag :deep(.p-tag){
+  background: transparent;
+  color: inherit;
+  border-radius: var(--p-tag-border-radius) 0 0 var(--p-tag-border-radius);
+}
+.exclude_tag .p-button{
+  width: 1.5rem;
+  height: 1.5rem;
 }
 </style>
