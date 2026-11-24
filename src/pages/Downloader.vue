@@ -29,20 +29,33 @@
           </div>
         </AccordionHeader>
         <AccordionContent>
-          <Button size="small" @click="showAddList">添加</Button>
-          <DataTable :value="downloader.list" v-if="downloader.list.length!=0" stripedRows>
-            <Column field="title" header="标题"></Column>
-            <Column field="ass" header="字幕组"></Column>
-            <Column header="操作">
-              <template #body="slotProps">
-                <Button size="small" label="删除" severity="danger" variant="text" @click="delFromListHandler($event, slotProps.data.id)" />
-              </template>
-            </Column>
-          </DataTable>
-          <div class="add_tip" v-else>
-            <div>没有添加任何需要下载的番剧，你需要</div>
-            <Tag>添加</Tag>
-            <div>才能执行下载器</div>
+          <div class="list_toolbar">
+            <div class="list_toolbar_title">
+              <span>已添加番剧</span>
+              <Badge :value="downloader.list.length" severity="secondary" />
+            </div>
+            <Button size="small" icon="pi pi-plus" label="添加" @click="showAddList" />
+          </div>
+          <div class="anime_list" v-if="downloader.list.length!=0">
+            <div class="anime_item" v-for="item in downloader.list" :key="item.id">
+              <span class="anime_title" v-tooltip.top="{ value: item.title, showDelay: 500 }">{{ item.title }}</span>
+              <Tag class="anime_ass" :value="item.ass" severity="secondary" />
+              <Button
+                class="anime_delete"
+                icon="pi pi-trash"
+                size="small"
+                text
+                rounded
+                severity="danger"
+                :aria-label="`删除 ${item.title}`"
+                @click="delFromListHandler($event, item)"
+              />
+            </div>
+          </div>
+          <div class="list_empty" v-else>
+            <i class="pi pi-list" />
+            <div>还没有添加需要下载的番剧</div>
+            <Button size="small" icon="pi pi-plus" label="添加第一个" @click="showAddList" />
           </div>
         </AccordionContent>
       </AccordionPanel>
@@ -54,7 +67,13 @@
           </div>
         </AccordionHeader>
         <AccordionContent>
-          <Button size="small" @click="addExclude">添加</Button>
+          <div class="list_toolbar">
+            <div class="list_toolbar_title">
+              <span>已添加关键字</span>
+              <Badge :value="downloader.exclude.length" severity="secondary" />
+            </div>
+            <Button size="small" icon="pi pi-plus" label="添加" @click="addExclude" />
+          </div>
           <div class="exclude_tags" v-if="downloader.exclude.length!=0">
             <div class="exclude_tag" v-for="item in downloader.exclude" :key="item.id">
               <Tag :value="item.key" severity="secondary" />
@@ -69,10 +88,10 @@
               />
             </div>
           </div>
-          <div class="add_tip" v-else>
-            <div>没有添加任何排除关键字，你可以</div>
-            <Tag>添加</Tag>
-            <div>确保不下载带有此关键字的资源</div>
+          <div class="list_empty" v-else>
+            <i class="pi pi-filter" />
+            <div>还没有添加排除关键字</div>
+            <Button size="small" icon="pi pi-plus" label="添加第一个" @click="addExclude" />
           </div>
         </AccordionContent>
       </AccordionPanel>
@@ -85,7 +104,7 @@
 </template>
 
 <script setup lang="ts">
-import { ToggleSwitch, Tag, ButtonGroup, Button, Accordion, AccordionPanel, AccordionHeader, AccordionContent, DataTable, Column, useConfirm, Checkbox } from 'primevue';
+import { ToggleSwitch, Tag, Badge, ButtonGroup, Button, Accordion, AccordionPanel, AccordionHeader, AccordionContent, useConfirm, Checkbox } from 'primevue';
 import downloaderStore from '../store/downloader';
 import { onMounted, ref } from 'vue';
 import AddList from '../components/downloader/AddList.vue';
@@ -144,10 +163,10 @@ const delFromExcludeHandler=(event: any, id: string)=>{
   });
 }
 
-const delFromListHandler=(event: any, id: string)=>{
+const delFromListHandler=(event: any, item: { id: string, title: string })=>{
   confirm.require({
     target: event.currentTarget,
-    message: '你确定要删除这个它吗',
+    message: `确定删除《${item.title}》吗？`,
     rejectProps: {
       label: '取消',
       severity: 'secondary',
@@ -159,7 +178,7 @@ const delFromListHandler=(event: any, id: string)=>{
       label: '删除',
       severity: "danger"
     },
-    accept: () => downloader.delFromList(id),
+    accept: () => downloader.delFromList(item.id),
   });
 }
 
@@ -192,18 +211,88 @@ const delFromListHandler=(event: any, id: string)=>{
     width: calc(100% - 40px);
   }
 }
-.add_tip{
-  margin-top: 20px;
+.list_toolbar{
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.list_toolbar_title{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--p-text-muted-color);
+}
+.anime_list{
+  border: 1px solid var(--p-surface-200);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.helper-page-dark .anime_list,
+.helper-page-dark .list_empty{
+  border-color: var(--p-surface-700);
+}
+.anime_item{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  transition: background-color .15s ease;
+}
+.anime_item + .anime_item{
+  border-top: 1px solid var(--p-surface-200);
+}
+.helper-page-dark .anime_item + .anime_item{
+  border-top-color: var(--p-surface-700);
+}
+.anime_item:hover{
+  background: var(--p-surface-50);
+}
+.helper-page-dark .anime_item:hover{
+  background: var(--p-surface-800);
+}
+.anime_title{
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.anime_ass{
+  white-space: nowrap;
+}
+.anime_delete{
+  width: 1.75rem;
+  height: 1.75rem;
+  opacity: .55;
+  transition: opacity .15s ease;
+}
+.anime_item:hover .anime_delete,
+.anime_delete:focus-visible{
+  opacity: 1;
+}
+.list_empty{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 32px 12px;
+  border: 1px dashed var(--p-surface-200);
+  border-radius: 10px;
+  color: var(--p-text-muted-color);
+  font-size: 13px;
+}
+.list_empty i{
+  font-size: 18px;
+  color: var(--p-primary-color);
 }
 .exclude_tags{
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 20px;
+  margin-top: 0;
 }
 .exclude_tag{
   display: inline-flex;
