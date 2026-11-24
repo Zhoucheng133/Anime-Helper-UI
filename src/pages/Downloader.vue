@@ -25,7 +25,7 @@
         <AccordionHeader>
           <div class="flex items-center gap-2">
             <i class="pi pi-list" style="color: var(--p-primary-color);"></i>
-            <div>番剧列表</div>
+            <div>自动下载列表</div>
           </div>
         </AccordionHeader>
         <AccordionContent>
