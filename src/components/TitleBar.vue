@@ -206,11 +206,13 @@ onMounted(()=>{
   justify-content: space-between;
   user-select: none;
   height: 60px;
-  background-color: white;
+  /* background-color: white; */
+  backdrop-filter: blur(15px);
+  background-color: rgba(255, 255, 255, 0.7);
 }
 
 .helper-page-dark .header{
-  background-color: #1f1f1f;
+  background-color: rgba(0, 0, 0, 0.3);
   border-bottom: 2px solid black;
 }
 .head_img{
