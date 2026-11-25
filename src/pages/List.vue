@@ -38,7 +38,7 @@
               {{ item.title }}
             </div>
             <div class="item_meta">
-              <div class="status_tag" :class="list.onUpudate(item) ? 'updating' : 'done'">
+              <div class="status_tag" :class="statusClass(item)">
                 {{ statusText(item) }}
               </div>
               <div class="episode_text">
@@ -77,7 +77,7 @@
               {{ item.title }}
             </div>
             <div class="desktop_item_meta">
-              <div class="status_tag" :class="list.onUpudate(item) ? 'updating' : 'done'">
+              <div class="status_tag" :class="statusClass(item)">
                 {{ statusText(item) }}
               </div>
               <div class="episode_text">共{{ item.episode }}集 · 观看进度 {{ item.now }} / {{ list.analyseEpisode(item) }}</div>
@@ -324,6 +324,13 @@ function statusText(item: ListItem): string{
   return `${list.getWeekday(item.time).replace('星期', '周')}更新`;
 }
 
+function statusClass(item: ListItem): string{
+  if(!list.onUpudate(item)){
+    return 'done';
+  }
+  return new Date(item.time).getDay() === new Date().getDay() ? 'updating today' : 'updating';
+}
+
 const percent=(item: ListItem)=>{
   return list.calProgress(item);
 }
@@ -499,6 +506,12 @@ function paginatorChange(val: number){
   background-color: #dcfce7;
 }
 
+.status_tag.updating.today{
+  color: #ffffff;
+  background-color: #16a34a;
+  font-weight: 600;
+}
+
 .status_tag.done{
   color: #475569;
   background-color: #f1f5f9;
@@ -507,6 +520,13 @@ function paginatorChange(val: number){
 .helper-page-dark .status_tag.updating{
   background-color: #15803d;
   color: #dcfce7;
+}
+
+.helper-page-dark .status_tag.updating.today{
+  background-color: #14532d;
+  color: #86efac;
+  box-shadow: inset 0 0 0 1px #22c55e;
+  font-weight: 600;
 }
 
 .helper-page-dark .status_tag.done{
