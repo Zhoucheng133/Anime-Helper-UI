@@ -455,10 +455,11 @@ function paginatorChange(val: number){
 }
 
 .item_title{
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-width: 0;
+  max-width: 100%;
+  width: fit-content;
   overflow: hidden;
-  width: 100%;
   white-space: nowrap;
   text-overflow: ellipsis;
   cursor: pointer;
@@ -600,6 +601,8 @@ function paginatorChange(val: number){
 }
 
 .desktop_item_title{
+  max-width: 100%;
+  width: fit-content;
   overflow: hidden;
   color: var(--p-text-color);
   font-size: 1.05rem;
