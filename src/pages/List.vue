@@ -17,106 +17,41 @@
         <Menu ref="sortmenuRef" id="sort_menu" :model="sortMenu" :popup="true" />
       </div>
     </div>
-    <div class="card list_card" v-if="list.list.length!=0 && loading==false">
-      <DataTable :value="list.list" stripedRows tableStyle="table-layout: fixed; width: 100%" v-model:expandedRows="expandedRows" dataKey="id" class="list">
-        <Column expander style="width: 25px" v-if="mobile" />
-        <Column field="title" header="标题" style="overflow: hidden;">
-          <template #body="slotProps">
-            <div class="item_title" :style="{width: mobile ? '100%' : 'fit-content'}" @click="mobile ? toggleExpansion(slotProps.data) : showInfo(slotProps.data, $event)" v-tooltip.top="{ value: slotProps.data.title, showDelay: 500, }">
-              {{ slotProps.data.title }}
+    <div class="list_card" v-if="list.list.length!=0 && loading==false">
+      <div v-for="item in list.list" :key="item.id" class="list_item">
+        <div class="item_header">
+          <div class="item_title" @click="showInfo(item, $event)" v-tooltip.top="{ value: item.title, showDelay: 500, }">
+            {{ item.title }}
+          </div>
+          <div class="item_meta">
+            <div class="status_tag" :class="list.onUpudate(item) ? 'updating' : 'done'">
+              {{ statusText(item) }}
             </div>
-          </template>
-        </Column>
-        <Column header="状态" style="width: 90px;" v-if="!mobile">
-          <template #body="slotProps">
-            <div class="update_tag tag" v-if="list.onUpudate(slotProps.data)">更新中</div>
-            <div class="done_tag tag" v-else>已完结</div>
-          </template>
-        </Column>
-        <Column header="集数" style="width: 60px;" v-if="!mobile">
-          <template #body="slotProps">
-            <div class="ep">
-              {{ slotProps.data.episode }}
-            </div>
-          </template>
-        </Column>
-        <Column header="更新周" style="width: 90px;" v-if="!mobile">
-          <template #body="slotProps">
-            <div class="weekday_tag weekday_tag_now" v-if="list.getWeekday(slotProps.data.time) === list.getWeekday(Date.now())" >{{ list.getWeekday(slotProps.data.time) }}</div>
-            <div class="weekday_tag" v-else>{{ list.getWeekday(slotProps.data.time) }}</div>
-          </template>
-        </Column>
-        <Column header="进度" style="width: 200px;" v-if="!mobile">
-          <template #body="slotProps">
-            <div class="progress_area">
-              <ProgressBar :class="percent(slotProps)==100 ? 'finished':'progress'" :value="list.calProgress(slotProps.data)" style="height: 18px" :showValue="false"/>
-                <div class="progress_label">
-                  <div>{{ slotProps.data.now }} / {{ list.analyseEpisode(slotProps.data) }}</div>
-                </div>
-                <div class="progress_label white_label" :style="{
-                  'clip-path': `polygon(0 0, ${percent(slotProps)}% 0, ${percent(slotProps)}% 100%, 0% 100%)`
-                }">
-                  <div>{{ slotProps.data.now }} / {{ list.analyseEpisode(slotProps.data) }}</div>
-                </div>
-            </div>
-          </template>
-        </Column>
-        <Column header="操作" style="width: 210px;" v-if="!mobile">
-          <template #body="slotProps">
-            <ButtonGroup>
-              <Button severity="secondary" size="small" @click="editRef.showEditHandler(slotProps.data)"><i class="pi pi-pen-to-square" style="font-size: 12px;" /></Button>
-              <Button severity="secondary" size="small" @click="list.minus(slotProps.data)" :disabled="slotProps.data.now<=0" ><i class="pi pi-minus" style="font-size: 12px;" /></Button>
-              <Button severity="secondary" size="small" @click="list.add(slotProps.data)" :disabled="slotProps.data.now>=list.analyseEpisode(slotProps.data)"><i class="pi pi-plus" style="font-size: 12px;"/></Button>
-              <Button severity="secondary" size="small" style="font-size: 12px;" @click="downloaderRef.showAddHandler(slotProps.data.title)">添加到</Button>
-              <Button severity="secondary" size="small" @click="list.deleteItem($event, slotProps.data)"><i class="pi pi-trash" style="font-size: 12px;"/></Button>
-            </ButtonGroup>
-          </template>
-        </Column>
-        <template #expansion="slotProps">
-          <div class="p-4">
-            <div class="expanded_detail">
-              <div class="title">标题</div>
-              <div @click="showInfo(slotProps.data, $event)">{{ slotProps.data.title }}</div>
-              <div class="title">状态</div>
-              <div>
-                <div class="update_tag tag" v-if="list.onUpudate(slotProps.data)">更新中</div>
-                <div class="done_tag tag" v-else>已完结</div>
-              </div>
-              <div class="title">集数</div>
-              <div>{{ slotProps.data.episode }}</div>
-              <div class="title">更新周</div>
-              <div>
-                <div class="weekday_tag weekday_tag_now" v-if="list.getWeekday(slotProps.data.time) === list.getWeekday(Date.now())" >{{ list.getWeekday(slotProps.data.time) }}</div>
-                <div class="weekday_tag" v-else>{{ list.getWeekday(slotProps.data.time) }}</div>
-              </div>
-              <div class="title">进度</div>
-              <div>
-                <div class="progress_area">
-                  <ProgressBar :class="percent(slotProps)==100 ? 'finished':'progress'" :value="list.calProgress(slotProps.data)" style="height: 18px" :showValue="false"/>
-                    <div class="progress_label">
-                      <div>{{ slotProps.data.now }} / {{ list.analyseEpisode(slotProps.data) }}</div>
-                    </div>
-                    <div class="progress_label white_label" :style="{
-                      'clip-path': `polygon(0 0, ${percent(slotProps)}% 0, ${percent(slotProps)}% 100%, 0% 100%)`
-                    }">
-                      <div>{{ slotProps.data.now }} / {{ list.analyseEpisode(slotProps.data) }}</div>
-                    </div>
-                </div>
-              </div>
-              <div class="title">操作</div>
-              <div>
-                <ButtonGroup>
-                  <Button severity="secondary" size="small" @click="editRef.showEditHandler(slotProps.data)"><i class="pi pi-pen-to-square" style="font-size: 12px;" /></Button>
-                  <Button severity="secondary" size="small" @click="list.minus(slotProps.data)" :disabled="slotProps.data.now<=0" ><i class="pi pi-minus" style="font-size: 12px;" /></Button>
-                  <Button severity="secondary" size="small" @click="list.add(slotProps.data)" :disabled="slotProps.data.now>=list.analyseEpisode(slotProps.data)"><i class="pi pi-plus" style="font-size: 12px;"/></Button>
-                  <Button severity="secondary" size="small" style="font-size: 12px;" @click="downloaderRef.showAddHandler(slotProps.data.title)">添加到</Button>
-                  <Button severity="secondary" size="small" @click="list.deleteItem($event, slotProps.data)"><i class="pi pi-trash" style="font-size: 12px;"/></Button>
-                </ButtonGroup>
-              </div>
+            <div class="episode_text">
+              共{{ item.episode }}集<template v-if="list.onUpudate(item)"> · 已更新{{ list.analyseEpisode(item) }}集</template>
             </div>
           </div>
-        </template>
-      </DataTable>
+        </div>
+        <div class="progress_header">
+          <div>观看进度</div>
+          <div>{{ item.now }} / {{ list.analyseEpisode(item) }}</div>
+        </div>
+        <div class="progress_area">
+          <ProgressBar :class="percent(item)==100 ? 'finished':'progress'" :value="percent(item)" :showValue="false" />
+        </div>
+        <div class="item_actions">
+          <ButtonGroup>
+            <Button severity="secondary" size="small" v-tooltip.top="'编辑'" @click="editRef.showEditHandler(item)"><i class="pi pi-pen-to-square" style="font-size: 12px;" /></Button>
+            <Button severity="secondary" size="small" v-tooltip.top="'添加到下载列表'" @click="downloaderRef.showAddHandler(item.title)"><i class="pi pi-download" style="font-size: 12px;" /></Button>
+            <Button severity="secondary" size="small" v-tooltip.top="'删除'" @click="list.deleteItem($event, item)"><i class="pi pi-trash" style="font-size: 12px;" /></Button>
+          </ButtonGroup>
+          <div class="counter">
+            <Button severity="secondary" size="small" @click="list.minus(item)" :disabled="item.now<=0"><i class="pi pi-minus" style="font-size: 12px;" /></Button>
+            <div class="episode_count">{{ item.now }}集</div>
+            <Button severity="secondary" size="small" @click="list.add(item)" :disabled="item.now>=list.analyseEpisode(item)"><i class="pi pi-plus" style="font-size: 12px;" /></Button>
+          </div>
+        </div>
+      </div>
       <Paginator v-if="mobile" :rows="20" :totalRecords="list.length" @update:first="paginatorChange" template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink" :first="list.offset"
         currentPageReportTemplate="第 {currentPage} 页 | 共 {totalPages} 页" />
       <Paginator v-else :rows="20" :totalRecords="list.length" @update:first="paginatorChange" :first="list.offset" ></Paginator>
@@ -149,7 +84,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Button, Menu, Select, InputText, DataTable, Column, Paginator, ProgressBar, ButtonGroup, Tag, useConfirm, useToast } from 'primevue';
+import { Button, Menu, Select, InputText, Paginator, ProgressBar, ButtonGroup, Tag, useConfirm, useToast } from 'primevue';
 import listStore, { type ListItem } from '../store/list';
 import Add from '../components/list/Add.vue';
 import Edit from "../components/list/Edit.vue";
@@ -176,7 +111,6 @@ const sortmenuRef=ref();
 const store=Store();
 const mobile=storeToRefs(store).mobile;
 const sort=storeToRefs(list).sort;
-const expandedRows = ref<Record<string, boolean>>({});
 
 const filterChanged=async ()=>{
   list.offset=0;
@@ -184,16 +118,6 @@ const filterChanged=async ()=>{
   if(list.selectedFilter.code=='search'){
     const inputEl = searchInputRef.value?.$el ?? searchInputRef.value;
     inputEl.focus();
-  }
-}
-
-function toggleExpansion(data: ListItem){
-  const id = data.id;
-  if (expandedRows.value[id]) {
-    const { [id]: _, ...rest } = expandedRows.value;
-    expandedRows.value = rest;
-  } else {
-    expandedRows.value = { ...expandedRows.value, [id]: true };
   }
 }
 
@@ -318,8 +242,15 @@ const addMenu=ref([
   }
 ]);
 
-const percent=(slotProps: any)=>{
-  return list.calProgress(slotProps.data);
+function statusText(item: ListItem): string{
+  if(!list.onUpudate(item)){
+    return '已完结';
+  }
+  return `${list.getWeekday(item.time).replace('星期', '周')}更新`;
+}
+
+const percent=(item: ListItem)=>{
+  return list.calProgress(item);
 }
 
 onMounted(async ()=>{
@@ -339,28 +270,102 @@ function paginatorChange(val: number){
 
 <style scoped>
 
-.list{
+:deep(.p-progressbar){
+  height: 5px;
+}
+
+.list_card{
   margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-:deep(.list .p-datatable-thead > tr > th){
-  background: var(--p-surface-50);
-  padding: 8px 12px;
-  color: var(--p-text-muted-color);
-  font-size: 12px;
-  font-weight: bold;
+.list_item{
+  padding: 12px 16px;
+  border: 1px solid var(--p-surface-200);
+  border-radius: 10px;
+  background: var(--p-surface-0);
 }
 
-:deep(.list .p-datatable-thead > tr > th:first-child){
-  border-top-left-radius: 10px;
-}
-
-:deep(.list .p-datatable-thead > tr > th:last-child){
-  border-top-right-radius: 10px;
-}
-
-:global(.helper-page-dark .list .p-datatable-thead > tr > th) {
+.helper-page-dark .list_item{
+  border-color: var(--p-surface-700);
   background: var(--p-surface-900);
+}
+
+.item_header{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.item_title{
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.item_meta{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.episode_text{
+  font-size: 12px;
+  color: var(--p-text-muted-color);
+  white-space: nowrap;
+}
+
+.status_tag{
+  font-size: 12px;
+  user-select: none;
+  border-radius: 14px;
+  padding: 0 10px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.status_tag.updating{
+  color: #15803d;
+  background-color: #dcfce7;
+}
+
+.status_tag.done{
+  color: #475569;
+  background-color: #f1f5f9;
+}
+
+.helper-page-dark .status_tag.updating{
+  background-color: #15803d;
+  color: #dcfce7;
+}
+
+.helper-page-dark .status_tag.done{
+  background-color: #475569;
+  color: #f1f5f9;
+}
+
+.progress_header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--p-text-muted-color);
+}
+
+.progress_area{
+  margin-top: 6px;
 }
 
 :deep(.finished > .p-progressbar-value){
@@ -375,96 +380,27 @@ function paginatorChange(val: number){
   background-color: var(--p-primary-600);
 }
 
-.expanded_detail{
-  display: grid;
-  grid-template-columns: 60px 1fr;
-  align-items: center;
-  row-gap: 15px;
-  column-gap: 20px;
-}
-.ep{
-  padding-left: 6px;
-}
-.white_label{
-  color: white;
-  transition: all .4s ease-in-out;
-}
-.progress_area{
-  display: grid;
-  grid-template-columns: auto;
-  align-items: center;
-  position: relative;
-}
-.progress_label{
-  position: absolute;
-  width: 100%;
+.item_actions{
   display: flex;
-  justify-content: center;
-  user-select: none;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
 }
-.done_tag{
-  color: #475569;
-  background-color: #f1f5f9;
+
+.counter{
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
-.update_tag{
-  color: #15803d;
-  background-color: #dcfce7;
-}
-.helper-page-dark .done_tag{
-  background-color: #475569;
-  color: #f1f5f9;
-}
-.helper-page-dark .update_tag{
-  background-color: #15803d;
-  color: #dcfce7;
-}
-.tag{
+
+.episode_count{
+  min-width: 56px;
+  text-align: center;
   font-size: 12px;
   user-select: none;
-  border-radius: 14px;
-  width: 54px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-}
-.weekday_tag{
-  border: 2px solid lightgrey;
-  border-radius: 14px;
-  width: 54px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  box-sizing: border-box;
-  user-select: none;
 }
 
-.helper-page-dark .weekday_tag{
-  border: 2px solid grey;
-}
-
-.weekday_tag_now{
-  background-color: var(--p-primary-color);
-  border: 2px solid var(--p-primary-color);
-  color: white;
-}
-
-.helper-page-dark .weekday_tag_now{
-  color: var(--p-primary-100);
-  background-color: var(--p-primary-600);
-  border: 2px solid var(--p-primary-600);
-}
-
-.item_title{
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  cursor: pointer;
-  max-width: 100%;
-}
 .tool_bar{
   margin-top: 10px;
   height: 35px;
@@ -496,6 +432,14 @@ function paginatorChange(val: number){
   .tool_bar_right {
     width: 100%;
     justify-content: flex-start;
+  }
+  .item_header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .item_actions {
+    flex-wrap: wrap;
   }
 }
 .empty{
