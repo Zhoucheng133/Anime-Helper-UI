@@ -30,47 +30,78 @@
         </div>
       </div>
     </div>
-    <div v-auto-animate class="list_card" v-if="list.list.length!=0 && loading==false">
-      <div v-for="item in list.list" :key="item.id" class="list_item" :class="{ 'list_item_desktop': !mobile }">
-        <div class="item_header" :class="{ 'item_header_desktop': !mobile }">
-          <div class="item_title" @click="showInfo(item, $event)" v-tooltip.top="{ value: item.title, showDelay: 500, }">
-            {{ item.title }}
-          </div>
-          <div class="item_meta">
-            <div class="status_tag" :class="list.onUpudate(item) ? 'updating' : 'done'">
-              {{ statusText(item) }}
+    <div v-auto-animate class="list_card" :class="{ 'list_card_desktop': !mobile }" v-if="list.list.length!=0 && loading==false">
+      <template v-if="mobile">
+        <div v-for="item in list.list" :key="item.id" class="list_item">
+          <div class="item_header">
+            <div class="item_title" @click="showInfo(item, $event)" v-tooltip.top="{ value: item.title, showDelay: 500, }">
+              {{ item.title }}
             </div>
-            <div class="episode_text">
-              共{{ item.episode }}集<template v-if="list.onUpudate(item)"> · 已更新{{ list.analyseEpisode(item) }}集</template>
+            <div class="item_meta">
+              <div class="status_tag" :class="list.onUpudate(item) ? 'updating' : 'done'">
+                {{ statusText(item) }}
+              </div>
+              <div class="episode_text">
+                共{{ item.episode }}集<template v-if="list.onUpudate(item)"> · 已更新{{ list.analyseEpisode(item) }}集</template>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="progress_header">
-          <div>观看进度</div>
-          <div>{{ item.now }} / {{ list.analyseEpisode(item) }}</div>
-        </div>
-        <div class="progress_area">
-          <ProgressBar :class="percent(item)==100 ? 'finished':'progress'" :value="percent(item)" :showValue="false" />
-          <div class="counter">
-            <Button severity="secondary" size="small" @click="list.minus(item)" :disabled="item.now<=0" icon="pi pi-minus" style="font-size: 12px;"></Button>
-            <div class="episode_count">{{ item.now }}集</div>
-            <Button severity="secondary" size="small" @click="list.add(item)" :disabled="item.now>=list.analyseEpisode(item)" style="font-size: 12px;" icon="pi pi-plus"></Button>
+          <div class="progress_header">
+            <div>观看进度</div>
+            <div>{{ item.now }} / {{ list.analyseEpisode(item) }}</div>
+          </div>
+          <div class="progress_area">
+            <ProgressBar :class="percent(item)==100 ? 'finished':'progress'" :value="percent(item)" :showValue="false" />
+            <div class="counter">
+              <Button severity="secondary" size="small" @click="list.minus(item)" :disabled="item.now<=0" icon="pi pi-minus" style="font-size: 12px;"></Button>
+              <div class="episode_count">{{ item.now }}集</div>
+              <Button severity="secondary" size="small" @click="list.add(item)" :disabled="item.now>=list.analyseEpisode(item)" style="font-size: 12px;" icon="pi pi-plus"></Button>
+            </div>
+          </div>
+          <div class="item_actions">
+            <ButtonGroup>
+              <Button severity="secondary" variant="text" v-tooltip.top="'编辑'" @click="editRef.showEditHandler(item)" icon="pi pi-pen-to-square" size="small" style="font-size: 12px;"></Button>
+              <Button severity="secondary" variant="text" v-tooltip.top="'添加到下载列表'" @click="downloaderRef.showAddHandler(item.title)" icon="pi pi-download" size="small" style="font-size: 12px;"></Button>
+              <Button class="bgm_button" :class="{ 'bgm_button_unbound': item.bgmId.length==0 }" :severity="item.bgmId.length==0 ? 'secondary' : 'primary'" variant="text"
+                v-tooltip.top="item.bgmId.length==0 ? '绑定Bangumi' : '查看Bangumi条目'" @click="openBgm(item, $event)"
+                :icon="item.bgmId.length==0 ? 'pi pi-link' : 'pi pi-external-link'" size="small" style="font-size: 12px;"></Button>
+              <Button severity="danger" variant="text" v-tooltip.top="'删除'" @click="list.deleteItem($event, item)" icon="pi pi-trash" size="small" style="font-size: 12px;"></Button>
+            </ButtonGroup>
           </div>
         </div>
-        <div class="item_actions">
-          <ButtonGroup>
-            <Button severity="secondary" variant="text" v-tooltip.top="'编辑'" @click="editRef.showEditHandler(item)" icon="pi pi-pen-to-square" size="small" style="font-size: 12px;"></Button>
-            <Button severity="secondary" variant="text" v-tooltip.top="'添加到下载列表'" @click="downloaderRef.showAddHandler(item.title)" icon="pi pi-download" size="small" style="font-size: 12px;"></Button>
-            <Button v-if="mobile" class="bgm_button" :class="{ 'bgm_button_unbound': item.bgmId.length==0 }" :severity="item.bgmId.length==0 ? 'secondary' : 'primary'" variant="text"
-              v-tooltip.top="item.bgmId.length==0 ? '绑定Bangumi' : '查看Bangumi条目'" @click="openBgm(item, $event)"
-              :icon="item.bgmId.length==0 ? 'pi pi-link' : 'pi pi-external-link'" size="small" style="font-size: 12px;"></Button>
-            <Button severity="danger" variant="text" v-tooltip.top="'删除'" @click="list.deleteItem($event, item)" icon="pi pi-trash" size="small" style="font-size: 12px;"></Button>
-          </ButtonGroup>
-          <Button v-if="!mobile" class="bgm_button" :class="{ 'bgm_button_unbound': item.bgmId.length==0 }" :severity="item.bgmId.length==0 ? 'secondary' : 'primary'" variant="text"
-            v-tooltip.top="item.bgmId.length==0 ? '绑定Bangumi' : '查看Bangumi条目'" @click="openBgm(item, $event)"
-            :icon="item.bgmId.length==0 ? 'pi pi-link' : 'pi pi-external-link'" size="small"></Button>
+      </template>
+      <template v-else>
+        <div v-for="item in list.list" :key="item.id" class="desktop_list_item">
+          <div class="desktop_item_info">
+            <div class="desktop_item_title" @click="showInfo(item, $event)" v-tooltip.top="{ value: item.title, showDelay: 500 }">
+              {{ item.title }}
+            </div>
+            <div class="desktop_item_meta">
+              <div class="status_tag" :class="list.onUpudate(item) ? 'updating' : 'done'">
+                {{ statusText(item) }}
+              </div>
+              <div class="episode_text">共{{ item.episode }}集</div>
+              <div class="episode_text">观看进度 {{ item.now }} / {{ list.analyseEpisode(item) }}</div>
+            </div>
+          </div>
+          <div class="desktop_item_controls">
+            <div class="desktop_counter">
+              <Button class="desktop_counter_button" severity="secondary" variant="text" v-tooltip.top="'减少一集'" @click="list.minus(item)" :disabled="item.now<=0" icon="pi pi-minus" />
+              <div class="desktop_episode_count">{{ item.now }}</div>
+              <Button class="desktop_counter_button" severity="secondary" variant="text" v-tooltip.top="'增加一集'" @click="list.add(item)" :disabled="item.now>=list.analyseEpisode(item)" icon="pi pi-plus" />
+            </div>
+            <div class="desktop_item_actions">
+              <Button severity="secondary" variant="text" v-tooltip.top="'编辑'" @click="editRef.showEditHandler(item)" icon="pi pi-pen-to-square" />
+              <Button severity="secondary" variant="text" v-tooltip.top="'添加到下载列表'" @click="downloaderRef.showAddHandler(item.title)" icon="pi pi-download" />
+              <Button severity="danger" variant="text" v-tooltip.top="'删除'" @click="list.deleteItem($event, item)" icon="pi pi-trash" />
+              <Button class="bgm_button" :class="{ 'bgm_button_unbound': item.bgmId.length==0 }" :severity="item.bgmId.length==0 ? 'secondary' : 'primary'" variant="text"
+                v-tooltip.top="item.bgmId.length==0 ? '绑定Bangumi' : '查看Bangumi条目'" @click="openBgm(item, $event)"
+                :icon="item.bgmId.length==0 ? 'pi pi-link' : 'pi pi-external-link'" />
+            </div>
+            <ProgressBar class="desktop_progress" :class="percent(item)==100 ? 'finished':'progress'" :value="percent(item)" :showValue="false" />
+          </div>
         </div>
-      </div>
+      </template>
       <Paginator v-if="mobile" :rows="20" :totalRecords="list.length" @update:first="paginatorChange" template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink" :first="list.offset"
         currentPageReportTemplate="第 {currentPage} 页 | 共 {totalPages} 页" />
       <Paginator v-else :rows="20" :totalRecords="list.length" @update:first="paginatorChange" :first="list.offset" ></Paginator>
@@ -382,6 +413,19 @@ function paginatorChange(val: number){
   gap: 10px;
 }
 
+.list_card_desktop{
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--p-surface-200);
+  border-radius: 24px;
+  background: var(--p-surface-0);
+}
+
+.helper-page-dark .list_card_desktop{
+  border-color: var(--p-surface-700);
+  background: var(--p-surface-900);
+}
+
 .list_item{
   padding: 12px 16px;
   border: 1px solid var(--p-surface-200);
@@ -397,15 +441,6 @@ function paginatorChange(val: number){
   column-gap: 10px;
 }
 
-.list_item_desktop{
-  grid-template-areas:
-    "header header"
-    "progress_header counter"
-    "progress counter"
-    "actions counter";
-  column-gap: 16px;
-}
-
 .helper-page-dark .list_item{
   border-color: var(--p-surface-700);
   background: var(--p-surface-900);
@@ -417,19 +452,6 @@ function paginatorChange(val: number){
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-}
-
-.item_header_desktop{
-  justify-content: space-between;
-}
-
-.item_header_desktop .item_title{
-  width: auto;
-}
-
-.item_header_desktop .item_meta{
-  width: auto;
-  gap: 16px;
 }
 
 .item_title{
@@ -511,11 +533,6 @@ function paginatorChange(val: number){
   margin-top: 6px;
 }
 
-.list_item_desktop .counter{
-  margin-top: 0;
-  align-self: center;
-}
-
 .bgm_button_unbound{
   opacity: 0.55;
 }
@@ -557,6 +574,103 @@ function paginatorChange(val: number){
   text-align: center;
   font-size: 12px;
   user-select: none;
+}
+
+.desktop_list_item{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 424px;
+  align-items: center;
+  gap: 32px;
+  min-height: 164px;
+  padding: 28px 24px;
+}
+
+.desktop_list_item + .desktop_list_item{
+  border-top: 1px solid var(--p-surface-200);
+}
+
+.helper-page-dark .desktop_list_item + .desktop_list_item{
+  border-color: var(--p-surface-700);
+}
+
+.desktop_item_info{
+  min-width: 0;
+}
+
+.desktop_item_title{
+  overflow: hidden;
+  color: var(--p-text-color);
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.desktop_item_meta{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 14px;
+  min-width: 0;
+}
+
+.desktop_item_meta .episode_text{
+  font-size: 1rem;
+}
+
+.desktop_item_controls{
+  display: grid;
+  grid-template-columns: 208px minmax(0, 1fr);
+  grid-template-areas:
+    "counter actions"
+    "progress .";
+  column-gap: 20px;
+  row-gap: 8px;
+  width: 424px;
+}
+
+.desktop_counter{
+  grid-area: counter;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.desktop_counter :deep(.p-button),
+.desktop_item_actions :deep(.p-button){
+  width: 40px;
+  height: 40px;
+  padding: 0;
+}
+
+.desktop_episode_count{
+  min-width: 48px;
+  color: var(--p-text-color);
+  font-size: 1.85rem;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  user-select: none;
+}
+
+.desktop_item_actions{
+  grid-area: actions;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.desktop_item_actions :deep(.pi-external-link){
+  font-size: 16px;
+}
+
+.desktop_progress{
+  grid-area: progress;
+  align-self: start;
+  margin-top: 2px;
 }
 
 .filter_bar{
