@@ -6,24 +6,28 @@
           :severity="list.selectedFilter.code==filter.code ? 'primary' : 'secondary'" :outlined="list.selectedFilter.code!=filter.code"
           @click="selectFilter(filter)" />
       </div>
-      <div class="action_group" v-if="!mobile">
-        <div class="expand_control" :class="{ 'is-expanded': searchExpanded }">
-          <Button class="move_icon" rounded variant="text" icon="pi pi-search" v-tooltip.top="'搜索'" @click="toggleSearch" />
-          <div class="expand_field search_field" :aria-hidden="!searchExpanded">
-            <InputText ref="searchInputRef" size="small" v-model="list.keyword" :tabindex="searchExpanded ? 0 : -1" @keyup.enter="searchHandler" placeholder="关键字搜索..." />
+      <div class="action_group" :class="{ 'action_group_mobile': mobile }">
+        <div class="action_scroll_area">
+          <div class="expand_control" :class="{ 'is-expanded': searchExpanded }">
+            <Button class="move_icon" rounded variant="text" icon="pi pi-search" v-tooltip.top="'搜索'" @click="toggleSearch" />
+            <div class="expand_field search_field" :aria-hidden="!searchExpanded">
+              <InputText ref="searchInputRef" size="small" v-model="list.keyword" :tabindex="searchExpanded ? 0 : -1" @keyup.enter="searchHandler" placeholder="关键字搜索..." />
+            </div>
           </div>
-        </div>
-        <div class="expand_control" :class="{ 'is-expanded': weekdayExpanded }">
-          <Button class="move_icon" rounded variant="text" icon="pi pi-calendar" v-tooltip.top="'更新周'" @click="toggleWeekday" />
-          <div class="expand_field weekday_field" :aria-hidden="!weekdayExpanded">
-            <Select class="weekday_selector" size="small" v-model="list.selectedWeekday" :tabindex="weekdayExpanded ? 0 : -1" :options="weekdayOptions" optionLabel="name" optionValue="code" @change="filterChanged" scroll-height="20rem" />
+          <div class="expand_control" :class="{ 'is-expanded': weekdayExpanded }">
+            <Button class="move_icon" rounded variant="text" icon="pi pi-calendar" v-tooltip.top="'更新周'" @click="toggleWeekday" />
+            <div class="expand_field weekday_field" :aria-hidden="!weekdayExpanded">
+              <Select class="weekday_selector" size="small" v-model="list.selectedWeekday" :tabindex="weekdayExpanded ? 0 : -1" :options="weekdayOptions" optionLabel="name" optionValue="code" @change="filterChanged" scroll-height="20rem" />
+            </div>
           </div>
+          <Button class="action_button" rounded variant="text" icon="pi pi-sort-alt" v-tooltip.top="'排序方式'" @click="toggleSort" />
+          <Menu ref="sortmenuRef" id="sort_menu" :model="sortMenu" :popup="true" />
+          <Button class="action_button" rounded variant="text" icon="pi pi-refresh" v-tooltip.top="'刷新'" @click="refreshList" />
         </div>
-        <Button class="action_button" rounded variant="text" icon="pi pi-sort-alt" v-tooltip.top="'排序方式'" @click="toggleSort" />
-        <Menu ref="sortmenuRef" id="sort_menu" :model="sortMenu" :popup="true" />
-        <Button class="action_button" rounded variant="text" icon="pi pi-refresh" v-tooltip.top="'刷新'" @click="refreshList" />
-        <Button size="small" label="添加" icon="pi pi-plus" @click="toggleMenu" />
-        <Menu ref="addmenuRef" id="overlay_menu" :model="addMenu" :popup="true" />
+        <div class="add_action">
+          <Button size="small" label="添加" icon="pi pi-plus" @click="toggleMenu" />
+          <Menu ref="addmenuRef" id="overlay_menu" :model="addMenu" :popup="true" />
+        </div>
       </div>
     </div>
     <div class="list_card" v-if="list.list.length!=0 && loading==false">
@@ -564,6 +568,7 @@ function paginatorChange(val: number){
   margin-top: 10px;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
 }
 
@@ -575,7 +580,6 @@ function paginatorChange(val: number){
   gap: 8px;
   overflow-x: auto;
   overflow-y: hidden;
-  scrollbar-width: thin;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -583,7 +587,40 @@ function paginatorChange(val: number){
   display: flex;
   align-items: center;
   gap: 12px;
-} 
+}
+
+.action_scroll_area,
+.add_action{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.add_action{
+  flex: 0 0 auto;
+}
+
+.action_group_mobile{
+  flex: 0 0 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.action_group_mobile .action_scroll_area{
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.filter_tags::-webkit-scrollbar,
+.action_group_mobile .action_scroll_area::-webkit-scrollbar{
+  display: none;
+}
+
+.action_group_mobile .action_scroll_area>*{
+  flex: 0 0 auto;
+}
 
 @media screen and (max-width: 900px) {
   .item_header {
