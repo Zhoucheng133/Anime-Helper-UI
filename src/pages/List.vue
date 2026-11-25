@@ -76,21 +76,15 @@
       <Paginator v-else :rows="20" :totalRecords="list.length" @update:first="paginatorChange" :first="list.offset" ></Paginator>
     </div>
     <div v-else-if="list.list.length==0 && loading==false" class="empty">
-      <div class="empty_list">
-        <i class="pi pi-ban" style="margin-right: 5px;" />
-        <div>列表为空</div>
-      </div>
-      <div class="add_tip">
-        <div>在此页面点击</div>
-        <Tag>添加</Tag>
-        <div>或者在</div>
-        <Tag>每日放送</Tag>
-        <div>页面中点击正在连载的动画</div>
-      </div>
-      <div class="add_tip">
-        <div>你也可以在</div>
-        <Tag>添加</Tag>
-        <div>旁的下拉菜单中修改筛选方式</div>
+      <div class="empty_container">
+        <i class="pi pi-list" />
+        <div>没有添加番剧或者没有筛选的结果</div>
+        <div class="flex items-center">
+          <div>你可点击</div>
+          <Tag size="small" class="ml-1 mr-1">添加</Tag>
+          <div>手动添加或者从Bangumi中添加</div>
+        </div>
+        <div>或者通过顶部工具栏修改筛选条件</div>
       </div>
     </div>
     <Add ref="addRef" />
@@ -645,9 +639,20 @@ function paginatorChange(val: number){
   left: 50%;
   transform: translate(-50%, -50%);
 }
-.empty_list{
+.empty_container{
+  padding: 32px 12px;
+  border: 1px dashed var(--p-surface-200);
+  border-radius: 10px;
+  color: var(--p-text-muted-color);
   display: flex;
+  flex-direction: column;
+  gap: 10px;
   align-items: center;
+}
+.empty_container i{
+  font-size: 20px;
+  flex-wrap: wrap;
+  color: var(--p-primary-color);
 }
 .add_tip{
   display: flex;
