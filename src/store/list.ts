@@ -51,8 +51,6 @@ export default defineStore("list", ()=>{
     {name: "已完结", code: "updateDone"},
     {name: "已看完", code: "watchDone"},
     {name: "未看完", code: "unwatched"},
-    {name: "搜索", code: "search"},
-    {name: "更新周", code: "weekday"},
   ])
   const selectedFilter=ref(filters.value[1]);
   const weekdays=ref([
@@ -66,13 +64,11 @@ export default defineStore("list", ()=>{
   ])
   const sort=ref("add_new_old");
 
-  const today = new Date().getDay();
-  const selectedWeekday=ref(weekdays.value.find(day => day.code === (today || 0))??weekdays.value[0]);
-  
+  const selectedWeekday=ref<number | ''>('');
 
   const length=ref(0);
 
-  const searchKeyWord=ref("");
+  const keyword=ref("");
 
   const offset=ref(0);
   const limit=ref(20);
@@ -85,7 +81,8 @@ export default defineStore("list", ()=>{
         offset: offset.value,
         limit: limit.value,
         filter: selectedFilter.value.code,
-        param: selectedFilter.value.code=='weekday' ? selectedWeekday.value.code : searchKeyWord.value,
+        weekday: selectedWeekday.value,
+        keyword: keyword.value,
         sort: sort.value
       },
       headers: {
@@ -133,10 +130,15 @@ export default defineStore("list", ()=>{
     return item.now / analyseEpisode(item) * 100;
   }
 
-  watch(searchKeyWord, ()=>{
-    if(selectedFilter.value.code=='search'){
-      getList();
+  let keywordTimer: ReturnType<typeof setTimeout> | undefined;
+  watch(keyword, ()=>{
+    if(keywordTimer){
+      clearTimeout(keywordTimer);
     }
+    keywordTimer=setTimeout(()=>{
+      offset.value=0;
+      getList();
+    }, 300);
   })
 
   async function add(item: ListItem, retry=false){
@@ -393,7 +395,7 @@ export default defineStore("list", ()=>{
     getTimestampOfFirstEpisode,
     add,
     minus,
-    searchKeyWord,
+    keyword,
     calProgress,
     analyseEpisode,
     calculateEpisodesReleased,

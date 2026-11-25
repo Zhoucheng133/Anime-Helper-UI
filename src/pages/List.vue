@@ -1,20 +1,36 @@
 <template>
   <div class="page">
-    <div class="tool_bar">
-      <div class="tool_bar_left">
-        <Button v-if="mobile" size="small" @click="toggleMenu" icon="pi pi-plus" style="width: 35px;" />
-        <Button v-else label="添加" size="small" @click="toggleMenu" style="width: 60px;" />
-        <Menu ref="addmenuRef" id="overlay_menu" :model="addMenu" :popup="true" />
-
-        <Select size="small" v-model="list.selectedFilter" :options="list.filters" scroll-height="20rem" optionLabel="name" @change="filterChanged" style="width: 120px;" />
-        <Select size="small" v-if="list.selectedFilter.name=='更新周'" v-model="list.selectedWeekday" :options="list.weekdays" scroll-height="20rem" style="width: 120px;" optionLabel="name" @change="filterChanged"/>
+    <div class="filter_bar" :class="{ 'filter_bar_mobile': mobile }">
+      <div class="filter_tags">
+        <Button v-for="filter in list.filters" :key="filter.code" class="filter_tag" size="small" :label="filter.name"
+          :severity="list.selectedFilter.code==filter.code ? 'primary' : 'secondary'" :outlined="list.selectedFilter.code!=filter.code"
+          @click="selectFilter(filter)" />
       </div>
-
-      <div class="tool_bar_right" :class="{ 'search_active': list.selectedFilter.name=='Search' || list.selectedFilter.code=='search' }">
-        <InputText size="small" style="width: 100%;" v-if="list.selectedFilter.name=='搜索'" v-model="list.searchKeyWord" @change="list.getList()" @keyup.enter="searchHandler" ref="searchInputRef" placeholder="输入关键字搜索..." />
-        <Button v-if="list.selectedFilter.code!='search'" variant="text" size="small" @click="refreshList" style="width: 35px; height: 35px;" icon="pi pi-refresh" v-tooltip.left="'刷新'" />
-        <Button variant="text" size="small" @click="toggleSort" style="width: 35px; height: 35px;" icon="pi pi-sort-alt" v-tooltip.left="'排序方式'" />
+      <div class="action_group">
+        <div class="expand_control" :class="{ 'expanded': searchExpanded }" style="--field-width: 180px;">
+          <Transition name="field-fade">
+            <InputText v-if="searchExpanded" ref="searchInputRef" class="filter_field filter_search_input" size="small" v-model="list.keyword"
+              @keyup.enter="searchHandler" placeholder="输入关键字搜索..." />
+          </Transition>
+          <Button class="move_icon" :class="{ 'active': searchExpanded }" variant="text" icon="pi pi-search"
+            v-tooltip.top="'搜索'" @click="toggleSearch" />
+        </div>
+        <div class="expand_control" :class="{ 'expanded': weekdayExpanded }" style="--field-width: 110px;">
+          <Transition name="field-fade">
+            <Select v-if="weekdayExpanded" class="filter_field filter_weekday_select" size="small" v-model="list.selectedWeekday"
+              :options="weekdayOptions" optionLabel="name" optionValue="code" scroll-height="20rem" @change="filterChanged" />
+          </Transition>
+          <Button class="move_icon" :class="{ 'active': weekdayExpanded }" variant="text" icon="pi pi-calendar"
+            v-tooltip.top="'更新周'" @click="toggleWeekday" />
+        </div>
+        <Button class="action_button" variant="text" icon="pi pi-sort-alt" v-tooltip.top="'排序方式'" @click="toggleSort" />
         <Menu ref="sortmenuRef" id="sort_menu" :model="sortMenu" :popup="true" />
+        <Button class="action_button" variant="text" icon="pi pi-refresh" v-tooltip.top="'刷新'" @click="refreshList" />
+      </div>
+      <div class="add_button">
+        <Button v-if="mobile" size="small" @click="toggleMenu" icon="pi pi-plus" style="width: 35px;" />
+        <Button v-else size="small" label="添加" @click="toggleMenu" style="width: 60px;" />
+        <Menu ref="addmenuRef" id="overlay_menu" :model="addMenu" :popup="true" />
       </div>
     </div>
     <div class="list_card" v-if="list.list.length!=0 && loading==false">
@@ -96,7 +112,7 @@ import Add from '../components/list/Add.vue';
 import Edit from "../components/list/Edit.vue";
 import AddDownloader from '../components/list/AddDownloader.vue';
 import BgmSearch from '../components/list/BgmSearch.vue';
-import { computed, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
 import Info from '../components/list/Info.vue';
 import Bind from '../components/list/Bind.vue';
 import Store from '../store';
@@ -105,6 +121,8 @@ import { storeToRefs } from 'pinia';
 document.title="AnimeHelper | 列表";
 
 const loading=ref(true);
+const searchExpanded=ref(false);
+const weekdayExpanded=ref(false);
 const searchInputRef=ref();
 const confirm = useConfirm();
 const toast = useToast();
@@ -117,14 +135,42 @@ const sortmenuRef=ref();
 const store=Store();
 const mobile=storeToRefs(store).mobile;
 const sort=storeToRefs(list).sort;
+const weekdayOptions=computed(()=>[{ name: '无更新周', code: -1 }, ...list.weekdays]);
 
 const filterChanged=async ()=>{
   list.offset=0;
   await list.getList();
-  if(list.selectedFilter.code=='search'){
-    const inputEl = searchInputRef.value?.$el ?? searchInputRef.value;
-    inputEl.focus();
+}
+
+const selectFilter=async (filter: { name: string, code: string })=>{
+  list.selectedFilter=filter;
+  await filterChanged();
+}
+
+const toggleSearch=async ()=>{
+  if(searchExpanded.value){
+    searchExpanded.value=false;
+    list.keyword='';
+    return;
   }
+  searchExpanded.value=true;
+  await nextTick();
+  const inputEl = searchInputRef.value?.$el ?? searchInputRef.value;
+  inputEl?.focus?.();
+}
+
+const toggleWeekday=async ()=>{
+  if(weekdayExpanded.value){
+    weekdayExpanded.value=false;
+    list.selectedWeekday='';
+    await filterChanged();
+    return;
+  }
+  weekdayExpanded.value=true;
+  if(list.selectedWeekday===''){
+    list.selectedWeekday=new Date().getDay();
+  }
+  await filterChanged();
 }
 
 function searchHandler(){
@@ -478,38 +524,126 @@ function paginatorChange(val: number){
   user-select: none;
 }
 
-.tool_bar{
+.filter_bar{
   margin-top: 10px;
-  height: 35px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-}
-.tool_bar_left{
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
 }
-.tool_bar_right{
+
+.filter_tags{
+  order: 1;
+  flex: 1 1 auto;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 8px;
-  flex: 1;
-  justify-content: flex-end;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
 }
-.tool_bar_right.search_active{
-  max-width: none;
+
+.filter_tag{
+  flex: 0 0 auto;
+  border-radius: 16px;
+  padding: 4px 14px;
 }
+
+.action_group{
+  order: 2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+
+.action_group > .p-button,
+.expand_control .move_icon{
+  width: 32px;
+  padding: 4px;
+  border-radius: 16px;
+}
+
+.action_group > .p-button.active,
+.expand_control .move_icon.active{
+  color: var(--p-primary-color);
+}
+
+.add_button{
+  order: 3;
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.add_button > .p-button{
+  padding: 4px 12px;
+}
+
+.expand_control{
+  --icon-size: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: var(--icon-size);
+  flex: 0 0 auto;
+  transition: width 0.18s ease 0.12s;
+}
+
+.expand_control.expanded{
+  width: calc(var(--field-width) + 8px + var(--icon-size));
+  transition: width 0.18s ease 0s;
+}
+
+.expand_control .move_icon{
+  order: -1;
+  flex: 0 0 auto;
+  font-size: 12px;
+}
+
+.filter_field{
+  flex: 0 0 auto;
+  width: var(--field-width);
+}
+
+.filter_field.p-inputtext{
+  padding: 4px 10px;
+}
+
+.filter_field.p-select :deep(.p-select-label){
+  padding: 6px 10px;
+}
+
+.field-fade-enter-active{
+  transition: opacity 0.16s ease 0.18s;
+}
+
+.field-fade-leave-active{
+  transition: opacity 0.12s ease 0s;
+}
+
+.field-fade-enter-from,
+.field-fade-leave-to{
+  opacity: 0;
+}
+
+.field-fade-enter-to,
+.field-fade-leave-from{
+  opacity: 1;
+}
+
+.filter_bar_mobile .action_group{
+  order: 3;
+  flex-basis: 100%;
+}
+
+.filter_bar_mobile .add_button{
+  order: 2;
+}
+
 @media screen and (max-width: 900px) {
-  .tool_bar {
-    height: auto;
-    flex-wrap: wrap;
-  }
-  .tool_bar_right {
-    width: 100%;
-    justify-content: flex-start;
-  }
   .item_header {
     align-items: flex-start;
     flex-direction: column;
