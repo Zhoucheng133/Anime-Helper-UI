@@ -1,35 +1,24 @@
 <template>
   <div class="page">
-    <div class="filter_bar" :class="{ 'filter_bar_mobile': mobile }">
+    <div class="filter_bar">
       <div class="filter_tags">
-        <Button v-for="filter in list.filters" :key="filter.code" class="filter_tag" size="small" :label="filter.name"
+        <Button rounded v-for="filter in list.filters" :key="filter.code" class="filter_tag" size="small" :label="filter.name"
           :severity="list.selectedFilter.code==filter.code ? 'primary' : 'secondary'" :outlined="list.selectedFilter.code!=filter.code"
           @click="selectFilter(filter)" />
       </div>
-      <div class="action_group">
-        <div class="expand_control" :class="{ 'expanded': searchExpanded }" style="--field-width: 180px;">
-          <Transition name="field-fade">
-            <InputText v-if="searchExpanded" ref="searchInputRef" class="filter_field filter_search_input" size="small" v-model="list.keyword"
-              @keyup.enter="searchHandler" placeholder="输入关键字搜索..." />
-          </Transition>
-          <Button class="move_icon" :class="{ 'active': searchExpanded }" variant="text" icon="pi pi-search"
-            v-tooltip.top="'搜索'" @click="toggleSearch" />
+      <div class="action_group" v-if="!mobile">
+        <div class="expand_control">
+          <Button class="move_icon" rounded variant="text" icon="pi pi-search" v-tooltip.top="'搜索'" @click="toggleSearch" />
+          <InputText v-if="searchExpanded" ref="searchInputRef" size="small" v-model="list.keyword" @keyup.enter="searchHandler" placeholder="关键字搜索..." />
         </div>
-        <div class="expand_control" :class="{ 'expanded': weekdayExpanded }" style="--field-width: 110px;">
-          <Transition name="field-fade">
-            <Select v-if="weekdayExpanded" class="filter_field filter_weekday_select" size="small" v-model="list.selectedWeekday"
-              :options="weekdayOptions" optionLabel="name" optionValue="code" scroll-height="20rem" @change="filterChanged" />
-          </Transition>
-          <Button class="move_icon" :class="{ 'active': weekdayExpanded }" variant="text" icon="pi pi-calendar"
-            v-tooltip.top="'更新周'" @click="toggleWeekday" />
+        <div class="expand_control">
+          <Button class="move_icon" rounded variant="text" icon="pi pi-calendar" v-tooltip.top="'更新周'" @click="toggleWeekday" />
+          <Select class="weekday_selector" v-if="weekdayExpanded" size="small" v-model="list.selectedWeekday" :options="weekdayOptions" optionLabel="name" optionValue="code" @change="filterChanged" scroll-height="20rem" />
         </div>
-        <Button class="action_button" variant="text" icon="pi pi-sort-alt" v-tooltip.top="'排序方式'" @click="toggleSort" />
+        <Button class="action_button" rounded variant="text" icon="pi pi-sort-alt" v-tooltip.top="'排序方式'" @click="toggleSort" />
         <Menu ref="sortmenuRef" id="sort_menu" :model="sortMenu" :popup="true" />
-        <Button class="action_button" variant="text" icon="pi pi-refresh" v-tooltip.top="'刷新'" @click="refreshList" />
-      </div>
-      <div class="add_button">
-        <Button v-if="mobile" size="small" @click="toggleMenu" icon="pi pi-plus" style="width: 35px;" />
-        <Button v-else size="small" label="添加" @click="toggleMenu" style="width: 60px;" />
+        <Button class="action_button" rounded variant="text" icon="pi pi-refresh" v-tooltip.top="'刷新'" @click="refreshList" />
+        <Button size="small" label="添加" icon="pi pi-plus" @click="toggleMenu" />
         <Menu ref="addmenuRef" id="overlay_menu" :model="addMenu" :popup="true" />
       </div>
     </div>
@@ -112,7 +101,7 @@ import Add from '../components/list/Add.vue';
 import Edit from "../components/list/Edit.vue";
 import AddDownloader from '../components/list/AddDownloader.vue';
 import BgmSearch from '../components/list/BgmSearch.vue';
-import { computed, nextTick, onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import Info from '../components/list/Info.vue';
 import Bind from '../components/list/Bind.vue';
 import Store from '../store';
@@ -123,7 +112,6 @@ document.title="AnimeHelper | 列表";
 const loading=ref(true);
 const searchExpanded=ref(false);
 const weekdayExpanded=ref(false);
-const searchInputRef=ref();
 const confirm = useConfirm();
 const toast = useToast();
 const list=listStore();
@@ -147,30 +135,12 @@ const selectFilter=async (filter: { name: string, code: string })=>{
   await filterChanged();
 }
 
-const toggleSearch=async ()=>{
-  if(searchExpanded.value){
-    searchExpanded.value=false;
-    list.keyword='';
-    return;
-  }
-  searchExpanded.value=true;
-  await nextTick();
-  const inputEl = searchInputRef.value?.$el ?? searchInputRef.value;
-  inputEl?.focus?.();
+function toggleSearch(){
+  searchExpanded.value=!searchExpanded.value;
 }
 
-const toggleWeekday=async ()=>{
-  if(weekdayExpanded.value){
-    weekdayExpanded.value=false;
-    list.selectedWeekday='';
-    await filterChanged();
-    return;
-  }
-  weekdayExpanded.value=true;
-  if(list.selectedWeekday===''){
-    list.selectedWeekday=new Date().getDay();
-  }
-  await filterChanged();
+function toggleWeekday(){
+  weekdayExpanded.value=!weekdayExpanded.value;
 }
 
 function searchHandler(){
@@ -332,6 +302,19 @@ function paginatorChange(val: number){
 </script>
 
 <style scoped>
+.expand_control{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.filter_tags>*{
+  flex-shrink: 0
+}
+
+.weekday_selector{
+  width: 120px;
+}
+
 :deep(.pi-external-link){
   font-size: 12px;
 }
@@ -528,14 +511,12 @@ function paginatorChange(val: number){
   margin-top: 10px;
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
   gap: 10px;
 }
 
 .filter_tags{
-  order: 1;
-  flex: 1 1 auto;
-  min-width: 0;
+  width: 100%;
+  flex: 1;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -545,103 +526,11 @@ function paginatorChange(val: number){
   -webkit-overflow-scrolling: touch;
 }
 
-.filter_tag{
-  flex: 0 0 auto;
-  border-radius: 16px;
-  padding: 4px 14px;
-}
-
 .action_group{
-  order: 2;
   display: flex;
   align-items: center;
   gap: 12px;
-  flex: 0 0 auto;
-}
-
-.action_group > .p-button,
-.expand_control .move_icon{
-  width: 32px;
-  padding: 4px;
-  border-radius: 16px;
-}
-
-.action_group > .p-button.active,
-.expand_control .move_icon.active{
-  color: var(--p-primary-color);
-}
-
-.add_button{
-  order: 3;
-  display: flex;
-  align-items: center;
-  flex: 0 0 auto;
-}
-
-.add_button > .p-button{
-  padding: 4px 12px;
-}
-
-.expand_control{
-  --icon-size: 32px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: var(--icon-size);
-  flex: 0 0 auto;
-  transition: width 0.18s ease 0.12s;
-}
-
-.expand_control.expanded{
-  width: calc(var(--field-width) + 8px + var(--icon-size));
-  transition: width 0.18s ease 0s;
-}
-
-.expand_control .move_icon{
-  order: -1;
-  flex: 0 0 auto;
-  font-size: 12px;
-}
-
-.filter_field{
-  flex: 0 0 auto;
-  width: var(--field-width);
-}
-
-.filter_field.p-inputtext{
-  padding: 4px 10px;
-}
-
-.filter_field.p-select :deep(.p-select-label){
-  padding: 6px 10px;
-}
-
-.field-fade-enter-active{
-  transition: opacity 0.16s ease 0.18s;
-}
-
-.field-fade-leave-active{
-  transition: opacity 0.12s ease 0s;
-}
-
-.field-fade-enter-from,
-.field-fade-leave-to{
-  opacity: 0;
-}
-
-.field-fade-enter-to,
-.field-fade-leave-from{
-  opacity: 1;
-}
-
-.filter_bar_mobile .action_group{
-  order: 3;
-  flex-basis: 100%;
-}
-
-.filter_bar_mobile .add_button{
-  order: 2;
-}
+} 
 
 @media screen and (max-width: 900px) {
   .item_header {
