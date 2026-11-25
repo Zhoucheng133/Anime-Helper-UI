@@ -18,8 +18,8 @@
       </div>
     </div>
     <div class="list_card" v-if="list.list.length!=0 && loading==false">
-      <div v-for="item in list.list" :key="item.id" class="list_item">
-        <div class="item_header">
+      <div v-for="item in list.list" :key="item.id" class="list_item" :class="{ 'list_item_desktop': !mobile }">
+        <div class="item_header" :class="{ 'item_header_desktop': !mobile }">
           <div class="item_title" @click="showInfo(item, $event)" v-tooltip.top="{ value: item.title, showDelay: 500, }">
             {{ item.title }}
           </div>
@@ -38,18 +38,24 @@
         </div>
         <div class="progress_area">
           <ProgressBar :class="percent(item)==100 ? 'finished':'progress'" :value="percent(item)" :showValue="false" />
-        </div>
-        <div class="item_actions">
-          <ButtonGroup>
-            <Button severity="secondary" variant="text" v-tooltip.top="'编辑'" @click="editRef.showEditHandler(item)" icon="pi pi-pen-to-square" size="small" style="font-size: 12px;"></Button>
-            <Button severity="secondary" variant="text" v-tooltip.top="'添加到下载列表'" @click="downloaderRef.showAddHandler(item.title)" icon="pi pi-download" size="small" style="font-size: 12px;"></Button>
-            <Button severity="danger" variant="text" v-tooltip.top="'删除'" @click="list.deleteItem($event, item)" icon="pi pi-trash" size="small" style="font-size: 12px;"></Button>
-          </ButtonGroup>
           <div class="counter">
             <Button severity="secondary" size="small" @click="list.minus(item)" :disabled="item.now<=0" icon="pi pi-minus" style="font-size: 12px;"></Button>
             <div class="episode_count">{{ item.now }}集</div>
             <Button severity="secondary" size="small" @click="list.add(item)" :disabled="item.now>=list.analyseEpisode(item)" style="font-size: 12px;" icon="pi pi-plus"></Button>
           </div>
+        </div>
+        <div class="item_actions">
+          <ButtonGroup>
+            <Button severity="secondary" variant="text" v-tooltip.top="'编辑'" @click="editRef.showEditHandler(item)" icon="pi pi-pen-to-square" size="small" style="font-size: 12px;"></Button>
+            <Button severity="secondary" variant="text" v-tooltip.top="'添加到下载列表'" @click="downloaderRef.showAddHandler(item.title)" icon="pi pi-download" size="small" style="font-size: 12px;"></Button>
+            <Button v-if="mobile" class="bgm_button" :class="{ 'bgm_button_unbound': item.bgmId.length==0 }" :severity="item.bgmId.length==0 ? 'secondary' : 'primary'" variant="text"
+              v-tooltip.top="item.bgmId.length==0 ? '绑定Bangumi' : '查看Bangumi条目'" @click="openBgm(item, $event)"
+              :icon="item.bgmId.length==0 ? 'pi pi-link' : 'pi pi-external-link'" size="small" style="font-size: 12px;"></Button>
+            <Button severity="danger" variant="text" v-tooltip.top="'删除'" @click="list.deleteItem($event, item)" icon="pi pi-trash" size="small" style="font-size: 12px;"></Button>
+          </ButtonGroup>
+          <Button v-if="!mobile" class="bgm_button" :class="{ 'bgm_button_unbound': item.bgmId.length==0 }" :severity="item.bgmId.length==0 ? 'secondary' : 'primary'" variant="text"
+            v-tooltip.top="item.bgmId.length==0 ? '绑定Bangumi' : '查看Bangumi条目'" @click="openBgm(item, $event)"
+            :icon="item.bgmId.length==0 ? 'pi pi-link' : 'pi pi-external-link'" size="small"></Button>
         </div>
       </div>
       <Paginator v-if="mobile" :rows="20" :totalRecords="list.length" @update:first="paginatorChange" template="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink" :first="list.offset"
@@ -126,12 +132,7 @@ function searchHandler(){
   document.activeElement.blur();
 }
 
-function showInfo(data: ListItem, event: any, ){
-  if(data.bgmId.length!=0){
-    infoRef.value.showInfoHanlder(data.bgmId, false, data.id);
-    return;
-  }
-
+function requireBind(data: ListItem, event: any){
   confirm.require({
     target: event.currentTarget,
     message: '没有绑定Bangumi信息, 是否要绑定?',
@@ -149,6 +150,22 @@ function showInfo(data: ListItem, event: any, ){
       bindRef.value.bindHandler(data.title, data.id)
     },
   });
+}
+
+function showInfo(data: ListItem, event: any, ){
+  if(data.bgmId.length!=0){
+    infoRef.value.showInfoHanlder(data.bgmId, false, data.id);
+    return;
+  }
+  requireBind(data, event);
+}
+
+function openBgm(data: ListItem, event: any){
+  if(data.bgmId.length!=0){
+    window.open(`https://bgm.tv/subject/${data.bgmId}`, '_blank', 'noopener,noreferrer');
+    return;
+  }
+  requireBind(data, event);
 }
 
 function toggleSort(event: any){
@@ -269,6 +286,9 @@ function paginatorChange(val: number){
 </script>
 
 <style scoped>
+:deep(.pi-external-link){
+  font-size: 12px;
+}
 
 :deep(.p-progressbar){
   height: 7px;
@@ -286,6 +306,23 @@ function paginatorChange(val: number){
   border: 1px solid var(--p-surface-200);
   border-radius: 10px;
   background: var(--p-surface-0);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 160px;
+  grid-template-areas:
+    "header header"
+    "progress_header progress_header"
+    "progress progress"
+    "actions counter";
+  column-gap: 10px;
+}
+
+.list_item_desktop{
+  grid-template-areas:
+    "header header"
+    "progress_header counter"
+    "progress counter"
+    "actions counter";
+  column-gap: 16px;
 }
 
 .helper-page-dark .list_item{
@@ -294,10 +331,24 @@ function paginatorChange(val: number){
 }
 
 .item_header{
+  grid-area: header;
   display: flex;
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+.item_header_desktop{
+  justify-content: space-between;
+}
+
+.item_header_desktop .item_title{
+  width: auto;
+}
+
+.item_header_desktop .item_meta{
+  width: auto;
+  gap: 16px;
 }
 
 .item_title{
@@ -359,6 +410,7 @@ function paginatorChange(val: number){
 }
 
 .progress_header{
+  grid-area: progress_header;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -368,7 +420,23 @@ function paginatorChange(val: number){
 }
 
 .progress_area{
+  grid-area: progress;
+  display: contents;
+}
+
+.progress_area :deep(.p-progressbar){
+  grid-area: progress;
+  min-width: 0;
   margin-top: 6px;
+}
+
+.list_item_desktop .counter{
+  margin-top: 0;
+  align-self: center;
+}
+
+.bgm_button_unbound{
+  opacity: 0.55;
 }
 
 :deep(.finished > .p-progressbar-value){
@@ -384,6 +452,7 @@ function paginatorChange(val: number){
 }
 
 .item_actions{
+  grid-area: actions;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -392,9 +461,14 @@ function paginatorChange(val: number){
 }
 
 .counter{
+  grid-area: counter;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 6px;
+  width: 160px;
+  flex: 0 0 160px;
+  margin-top: 12px;
 }
 
 .episode_count{
@@ -427,7 +501,7 @@ function paginatorChange(val: number){
 .tool_bar_right.search_active{
   max-width: none;
 }
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 900px) {
   .tool_bar {
     height: auto;
     flex-wrap: wrap;
