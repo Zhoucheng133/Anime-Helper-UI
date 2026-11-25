@@ -41,14 +41,14 @@
         </div>
         <div class="item_actions">
           <ButtonGroup>
-            <Button severity="secondary" size="small" v-tooltip.top="'编辑'" @click="editRef.showEditHandler(item)"><i class="pi pi-pen-to-square" style="font-size: 12px;" /></Button>
-            <Button severity="secondary" size="small" v-tooltip.top="'添加到下载列表'" @click="downloaderRef.showAddHandler(item.title)"><i class="pi pi-download" style="font-size: 12px;" /></Button>
-            <Button severity="secondary" size="small" v-tooltip.top="'删除'" @click="list.deleteItem($event, item)"><i class="pi pi-trash" style="font-size: 12px;" /></Button>
+            <Button severity="secondary" variant="text" v-tooltip.top="'编辑'" @click="editRef.showEditHandler(item)" icon="pi pi-pen-to-square" size="small" style="font-size: 12px;"></Button>
+            <Button severity="secondary" variant="text" v-tooltip.top="'添加到下载列表'" @click="downloaderRef.showAddHandler(item.title)" icon="pi pi-download" size="small" style="font-size: 12px;"></Button>
+            <Button severity="danger" variant="text" v-tooltip.top="'删除'" @click="list.deleteItem($event, item)" icon="pi pi-trash" size="small" style="font-size: 12px;"></Button>
           </ButtonGroup>
           <div class="counter">
-            <Button severity="secondary" size="small" @click="list.minus(item)" :disabled="item.now<=0"><i class="pi pi-minus" style="font-size: 12px;" /></Button>
+            <Button severity="secondary" size="small" @click="list.minus(item)" :disabled="item.now<=0" icon="pi pi-minus" style="font-size: 12px;"></Button>
             <div class="episode_count">{{ item.now }}集</div>
-            <Button severity="secondary" size="small" @click="list.add(item)" :disabled="item.now>=list.analyseEpisode(item)"><i class="pi pi-plus" style="font-size: 12px;" /></Button>
+            <Button severity="secondary" size="small" @click="list.add(item)" :disabled="item.now>=list.analyseEpisode(item)" style="font-size: 12px;" icon="pi pi-plus"></Button>
           </div>
         </div>
       </div>
@@ -271,7 +271,7 @@ function paginatorChange(val: number){
 <style scoped>
 
 :deep(.p-progressbar){
-  height: 5px;
+  height: 7px;
 }
 
 .list_card{
@@ -304,6 +304,7 @@ function paginatorChange(val: number){
   flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
+  width: 100%;
   white-space: nowrap;
   text-overflow: ellipsis;
   cursor: pointer;
@@ -313,6 +314,8 @@ function paginatorChange(val: number){
 .item_meta{
   display: flex;
   align-items: center;
+  width: 100%;
+  justify-content: space-between;
   gap: 8px;
   flex-shrink: 0;
 }
