@@ -80,24 +80,23 @@
               <div class="status_tag" :class="list.onUpudate(item) ? 'updating' : 'done'">
                 {{ statusText(item) }}
               </div>
-              <div class="episode_text">共{{ item.episode }}集</div>
-              <div class="episode_text">观看进度 {{ item.now }} / {{ list.analyseEpisode(item) }}</div>
+              <div class="episode_text">共{{ item.episode }}集 · 观看进度 {{ item.now }} / {{ list.analyseEpisode(item) }}</div>
             </div>
           </div>
           <div class="desktop_item_controls">
             <div class="desktop_counter">
-              <Button class="desktop_counter_button" severity="secondary" variant="text" v-tooltip.top="'减少一集'" @click="list.minus(item)" :disabled="item.now<=0" icon="pi pi-minus" />
+              <Button size="small" class="desktop_counter_button" severity="secondary" variant="text" v-tooltip.top="'减少一集'" @click="list.minus(item)" :disabled="item.now<=0" icon="pi pi-minus" />
               <div class="desktop_episode_count">{{ item.now }}</div>
-              <Button class="desktop_counter_button" severity="secondary" variant="text" v-tooltip.top="'增加一集'" @click="list.add(item)" :disabled="item.now>=list.analyseEpisode(item)" icon="pi pi-plus" />
+              <Button size="small" class="desktop_counter_button" severity="secondary" variant="text" v-tooltip.top="'增加一集'" @click="list.add(item)" :disabled="item.now>=list.analyseEpisode(item)" icon="pi pi-plus" />
             </div>
-            <div class="desktop_item_actions">
-              <Button severity="secondary" variant="text" v-tooltip.top="'编辑'" @click="editRef.showEditHandler(item)" icon="pi pi-pen-to-square" />
-              <Button severity="secondary" variant="text" v-tooltip.top="'添加到下载列表'" @click="downloaderRef.showAddHandler(item.title)" icon="pi pi-download" />
-              <Button severity="danger" variant="text" v-tooltip.top="'删除'" @click="list.deleteItem($event, item)" icon="pi pi-trash" />
-              <Button class="bgm_button" :class="{ 'bgm_button_unbound': item.bgmId.length==0 }" :severity="item.bgmId.length==0 ? 'secondary' : 'primary'" variant="text"
+            <ButtonGroup class="desktop_item_actions">
+              <Button size="small" severity="secondary" variant="text" v-tooltip.top="'编辑'" @click="editRef.showEditHandler(item)" icon="pi pi-pen-to-square" />
+              <Button size="small" severity="secondary" variant="text" v-tooltip.top="'添加到下载列表'" @click="downloaderRef.showAddHandler(item.title)" icon="pi pi-download" />
+              <Button size="small" severity="danger" variant="text" v-tooltip.top="'删除'" @click="list.deleteItem($event, item)" icon="pi pi-trash" />
+              <Button size="small" class="bgm_button" :class="{ 'bgm_button_unbound': item.bgmId.length==0 }" :severity="item.bgmId.length==0 ? 'secondary' : 'primary'" variant="text"
                 v-tooltip.top="item.bgmId.length==0 ? '绑定Bangumi' : '查看Bangumi条目'" @click="openBgm(item, $event)"
                 :icon="item.bgmId.length==0 ? 'pi pi-link' : 'pi pi-external-link'" />
-            </div>
+            </ButtonGroup>
             <ProgressBar class="desktop_progress" :class="percent(item)==100 ? 'finished':'progress'" :value="percent(item)" :showValue="false" />
           </div>
         </div>
@@ -417,7 +416,7 @@ function paginatorChange(val: number){
   gap: 0;
   overflow: hidden;
   border: 1px solid var(--p-surface-200);
-  border-radius: 24px;
+  border-radius: 16px;
   background: var(--p-surface-0);
 }
 
@@ -578,11 +577,11 @@ function paginatorChange(val: number){
 
 .desktop_list_item{
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 424px;
+  grid-template-columns: minmax(0, 1fr) 360px;
   align-items: center;
-  gap: 32px;
-  min-height: 164px;
-  padding: 28px 24px;
+  gap: 20px;
+  min-height: 92px;
+  padding: 14px 20px;
 }
 
 .desktop_list_item + .desktop_list_item{
@@ -600,9 +599,9 @@ function paginatorChange(val: number){
 .desktop_item_title{
   overflow: hidden;
   color: var(--p-text-color);
-  font-size: 1.35rem;
+  font-size: 1.05rem;
   font-weight: 600;
-  line-height: 1.35;
+  line-height: 1.3;
   text-overflow: ellipsis;
   white-space: nowrap;
   cursor: pointer;
@@ -611,24 +610,24 @@ function paginatorChange(val: number){
 .desktop_item_meta{
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-top: 14px;
+  gap: 10px;
+  margin-top: 6px;
   min-width: 0;
 }
 
 .desktop_item_meta .episode_text{
-  font-size: 1rem;
+  font-size: 0.875rem;
 }
 
 .desktop_item_controls{
   display: grid;
-  grid-template-columns: 208px minmax(0, 1fr);
+  grid-template-columns: 160px minmax(0, 1fr);
   grid-template-areas:
     "counter actions"
     "progress .";
-  column-gap: 20px;
-  row-gap: 8px;
-  width: 424px;
+  column-gap: 12px;
+  row-gap: 6px;
+  width: 360px;
 }
 
 .desktop_counter{
@@ -638,18 +637,10 @@ function paginatorChange(val: number){
   justify-content: space-between;
 }
 
-.desktop_counter :deep(.p-button),
-.desktop_item_actions :deep(.p-button){
-  width: 40px;
-  height: 40px;
-  padding: 0;
-}
-
 .desktop_episode_count{
-  min-width: 48px;
+  min-width: 36px;
   color: var(--p-text-color);
-  font-size: 1.85rem;
-  font-weight: 600;
+  font-weight: bold;
   line-height: 1;
   text-align: center;
   user-select: none;
@@ -660,17 +651,19 @@ function paginatorChange(val: number){
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 4px;
 }
 
-.desktop_item_actions :deep(.pi-external-link){
-  font-size: 16px;
+.desktop_counter :deep(.p-button),
+.desktop_item_actions :deep(.p-button){
+  width: 32px;
+  height: 32px;
+  padding: 0;
 }
 
 .desktop_progress{
   grid-area: progress;
   align-self: start;
-  margin-top: 2px;
+  margin-top: 0;
 }
 
 .filter_bar{
