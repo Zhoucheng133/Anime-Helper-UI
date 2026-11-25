@@ -9,20 +9,20 @@
       <div class="action_group" :class="{ 'action_group_mobile': mobile }">
         <div class="action_scroll_area">
           <div class="expand_control" :class="{ 'is-expanded': searchExpanded }">
-            <Button class="move_icon" rounded variant="text" icon="pi pi-search" v-tooltip.top="'搜索'" @click="toggleSearch" />
+            <Button class="move_icon" rounded variant="text" icon="pi pi-search"@click="toggleSearch" />
             <div class="expand_field search_field" :aria-hidden="!searchExpanded">
               <InputText ref="searchInputRef" size="small" v-model="list.keyword" :tabindex="searchExpanded ? 0 : -1" @keyup.enter="searchHandler" placeholder="关键字搜索..." />
             </div>
           </div>
           <div class="expand_control" :class="{ 'is-expanded': weekdayExpanded }">
-            <Button class="move_icon" rounded variant="text" icon="pi pi-calendar" v-tooltip.top="'更新周'" @click="toggleWeekday" />
+            <Button class="move_icon" rounded variant="text" icon="pi pi-calendar" @click="toggleWeekday" />
             <div class="expand_field weekday_field" :aria-hidden="!weekdayExpanded">
               <Select class="weekday_selector" size="small" v-model="list.selectedWeekday" :tabindex="weekdayExpanded ? 0 : -1" :options="weekdayOptions" optionLabel="name" optionValue="code" @change="filterChanged" scroll-height="20rem" />
             </div>
           </div>
-          <Button class="action_button" rounded variant="text" icon="pi pi-sort-alt" v-tooltip.top="'排序方式'" @click="toggleSort" />
+          <Button class="action_button" rounded variant="text" icon="pi pi-sort-alt" @click="toggleSort" />
           <Menu ref="sortmenuRef" id="sort_menu" :model="sortMenu" :popup="true" />
-          <Button class="action_button" rounded variant="text" icon="pi pi-refresh" v-tooltip.top="'刷新'" @click="refreshList" />
+          <Button class="action_button" rounded variant="text" icon="pi pi-refresh" @click="refreshList" />
         </div>
         <div class="add_action">
           <Button size="small" label="添加" icon="pi pi-plus" @click="toggleMenu" />
@@ -85,9 +85,9 @@
           </div>
           <div class="desktop_item_controls">
             <div class="desktop_counter">
-              <Button size="small" class="desktop_counter_button" severity="secondary" variant="text" v-tooltip.top="'减少一集'" @click="list.minus(item)" :disabled="item.now<=0" icon="pi pi-minus" />
+              <Button size="small" class="desktop_counter_button" severity="secondary" variant="text" @click="list.minus(item)" :disabled="item.now<=0" icon="pi pi-minus" />
               <div class="desktop_episode_count">{{ item.now }}</div>
-              <Button size="small" class="desktop_counter_button" severity="secondary" variant="text" v-tooltip.top="'增加一集'" @click="list.add(item)" :disabled="item.now>=list.analyseEpisode(item)" icon="pi pi-plus" />
+              <Button size="small" class="desktop_counter_button" severity="secondary" variant="text" @click="list.add(item)" :disabled="item.now>=list.analyseEpisode(item)" icon="pi pi-plus" />
             </div>
             <ButtonGroup class="desktop_item_actions">
               <Button size="small" severity="secondary" variant="text" v-tooltip.top="'编辑'" @click="editRef.showEditHandler(item)" icon="pi pi-pen-to-square" />
@@ -624,7 +624,7 @@ function paginatorChange(val: number){
   grid-template-columns: 160px minmax(0, 1fr);
   grid-template-areas:
     "counter actions"
-    "progress .";
+    "progress actions";
   column-gap: 12px;
   row-gap: 6px;
   width: 360px;
@@ -651,6 +651,7 @@ function paginatorChange(val: number){
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  align-self: center;
 }
 
 .desktop_counter :deep(.p-button),
