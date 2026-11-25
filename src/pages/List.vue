@@ -438,6 +438,7 @@ function paginatorChange(val: number){
     "progress progress"
     "actions counter";
   column-gap: 10px;
+  user-select: none;
 }
 
 .helper-page-dark .list_item{
@@ -462,6 +463,7 @@ function paginatorChange(val: number){
   text-overflow: ellipsis;
   cursor: pointer;
   font-weight: 500;
+  user-select: text;
 }
 
 .item_meta{
@@ -582,6 +584,7 @@ function paginatorChange(val: number){
   gap: 20px;
   min-height: 92px;
   padding: 14px 20px;
+  user-select: none;
 }
 
 .desktop_list_item + .desktop_list_item{
@@ -605,6 +608,7 @@ function paginatorChange(val: number){
   text-overflow: ellipsis;
   white-space: nowrap;
   cursor: pointer;
+  user-select: text;
 }
 
 .desktop_item_meta{
