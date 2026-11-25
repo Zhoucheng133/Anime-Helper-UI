@@ -30,7 +30,7 @@
         </div>
       </div>
     </div>
-    <div class="list_card" v-if="list.list.length!=0 && loading==false">
+    <div v-auto-animate class="list_card" v-if="list.list.length!=0 && loading==false">
       <div v-for="item in list.list" :key="item.id" class="list_item" :class="{ 'list_item_desktop': !mobile }">
         <div class="item_header" :class="{ 'item_header_desktop': !mobile }">
           <div class="item_title" @click="showInfo(item, $event)" v-tooltip.top="{ value: item.title, showDelay: 500, }">
@@ -98,6 +98,7 @@
 
 <script lang="ts" setup>
 import { Button, Menu, Select, InputText, Paginator, ProgressBar, ButtonGroup, Tag, useConfirm, useToast } from 'primevue';
+import { vAutoAnimate } from '@formkit/auto-animate/vue';
 import listStore, { type ListItem } from '../store/list';
 import Add from '../components/list/Add.vue';
 import Edit from "../components/list/Edit.vue";
