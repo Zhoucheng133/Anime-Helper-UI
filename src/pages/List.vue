@@ -7,13 +7,17 @@
           @click="selectFilter(filter)" />
       </div>
       <div class="action_group" v-if="!mobile">
-        <div class="expand_control">
+        <div class="expand_control" :class="{ 'is-expanded': searchExpanded }">
           <Button class="move_icon" rounded variant="text" icon="pi pi-search" v-tooltip.top="'搜索'" @click="toggleSearch" />
-          <InputText v-if="searchExpanded" ref="searchInputRef" size="small" v-model="list.keyword" @keyup.enter="searchHandler" placeholder="关键字搜索..." />
+          <div class="expand_field search_field" :aria-hidden="!searchExpanded">
+            <InputText ref="searchInputRef" size="small" v-model="list.keyword" :tabindex="searchExpanded ? 0 : -1" @keyup.enter="searchHandler" placeholder="关键字搜索..." />
+          </div>
         </div>
-        <div class="expand_control">
+        <div class="expand_control" :class="{ 'is-expanded': weekdayExpanded }">
           <Button class="move_icon" rounded variant="text" icon="pi pi-calendar" v-tooltip.top="'更新周'" @click="toggleWeekday" />
-          <Select class="weekday_selector" v-if="weekdayExpanded" size="small" v-model="list.selectedWeekday" :options="weekdayOptions" optionLabel="name" optionValue="code" @change="filterChanged" scroll-height="20rem" />
+          <div class="expand_field weekday_field" :aria-hidden="!weekdayExpanded">
+            <Select class="weekday_selector" size="small" v-model="list.selectedWeekday" :tabindex="weekdayExpanded ? 0 : -1" :options="weekdayOptions" optionLabel="name" optionValue="code" @change="filterChanged" scroll-height="20rem" />
+          </div>
         </div>
         <Button class="action_button" rounded variant="text" icon="pi pi-sort-alt" v-tooltip.top="'排序方式'" @click="toggleSort" />
         <Menu ref="sortmenuRef" id="sort_menu" :model="sortMenu" :popup="true" />
@@ -137,10 +141,19 @@ const selectFilter=async (filter: { name: string, code: string })=>{
 
 function toggleSearch(){
   searchExpanded.value=!searchExpanded.value;
+  if(!searchExpanded.value){
+    list.keyword="";
+  }
 }
 
 function toggleWeekday(){
   weekdayExpanded.value=!weekdayExpanded.value;
+  if(weekdayExpanded.value){
+    list.selectedWeekday=new Date().getDay();
+  }else{
+    list.selectedWeekday='';
+  }
+  filterChanged();
 }
 
 function searchHandler(){
@@ -304,8 +317,48 @@ function paginatorChange(val: number){
 <style scoped>
 .expand_control{
   display: flex;
-  gap: 10px;
   align-items: center;
+}
+
+.expand_field{
+  display: flex;
+  align-items: center;
+  width: 0;
+  margin-left: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: width 200ms cubic-bezier(0.2, 0.8, 0.2, 1), margin-left 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.search_field :deep(.p-inputtext),
+.weekday_field :deep(.p-select){
+  opacity: 0;
+  transform: translateX(6px);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.search_field :deep(.p-inputtext){
+  width: 180px;
+}
+
+.expand_control.is-expanded .search_field{
+  width: 180px;
+}
+
+.expand_control.is-expanded .weekday_field{
+  width: 120px;
+}
+
+.expand_control.is-expanded .expand_field{
+  margin-left: 10px;
+  pointer-events: auto;
+}
+
+.expand_control.is-expanded .expand_field :deep(.p-inputtext),
+.expand_control.is-expanded .expand_field :deep(.p-select){
+  opacity: 1;
+  transform: translateX(0);
+  transition-delay: 200ms;
 }
 .filter_tags>*{
   flex-shrink: 0
